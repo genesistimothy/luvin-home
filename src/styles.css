@@ -7,6 +7,7 @@
 :root {
   color: #3e2c23;
   background: #fff9f0;
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
   font-synthesis: none;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
@@ -23,11 +24,17 @@ body {
   min-width: 320px;
   overflow-x: hidden;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.6;
 }
 
 img {
   display: block;
   max-width: 100%;
+}
+
+::selection {
+  color: #fff9f0;
+  background: #6f4e37;
 }
 
 section[id] {
@@ -40,19 +47,68 @@ section[id] {
 }
 
 @layer components {
+  .section-shell {
+    @apply px-5 py-24 sm:px-8 sm:py-28 lg:py-32;
+  }
+
   .section-kicker {
-    @apply text-sm font-bold uppercase tracking-[0.26em] text-clay;
+    @apply text-xs font-bold uppercase tracking-[0.28em] text-clay sm:text-sm;
+  }
+
+  .premium-button {
+    @apply rounded-full transition duration-300;
+    transition-timing-function: var(--ease-premium);
+  }
+
+  .premium-button:hover {
+    transform: translateY(-2px);
+  }
+
+  .premium-card {
+    @apply rounded-[1.5rem] border border-oat/55 bg-linen/65 shadow-[0_20px_60px_rgba(62,44,35,0.06)] transition duration-500;
+    transition-timing-function: var(--ease-premium);
+  }
+
+  .premium-card:hover {
+    @apply -translate-y-1 border-clay/30 bg-white shadow-[0_28px_70px_rgba(62,44,35,0.1)];
   }
 
   .fade-up {
-    animation: fade-up 700ms ease-out both;
+    opacity: 0;
+    transform: translateY(1.75rem);
+    transition:
+      opacity 800ms var(--ease-premium),
+      transform 800ms var(--ease-premium);
+  }
+
+  .fade-up.is-visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@keyframes fade-up {
+@keyframes hero-settle {
+  from {
+    transform: scale(1.045);
+  }
+
+  to {
+    transform: scale(1.015);
+  }
+}
+
+.hero-media {
+  animation: hero-settle 1800ms var(--ease-premium) both;
+}
+
+.answer-reveal {
+  animation: answer-reveal 320ms var(--ease-premium) both;
+}
+
+@keyframes answer-reveal {
   from {
     opacity: 0;
-    transform: translateY(1.25rem);
+    transform: translateY(-0.35rem);
   }
 
   to {
@@ -61,12 +117,31 @@ section[id] {
   }
 }
 
+@media (max-width: 639px) {
+  .premium-button {
+    min-height: 3.25rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
-  .fade-up {
+  .fade-up,
+  .fade-up.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .hero-media,
+  .answer-reveal {
     animation: none;
+  }
+
+  .premium-button,
+  .premium-card {
+    transition: none;
   }
 }
