@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.codex-npm-cache/
+.pnpm-store/
+.vercel/
+.env
+.env.*
+!.env.example
