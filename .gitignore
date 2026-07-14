@@ -3,6 +3,7 @@ dist/
 .codex-npm-cache/
 .pnpm-store/
 .vercel/
+sanity/.sanity/
 .env
 .env.*
 !.env.example

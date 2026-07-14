@@ -5,20 +5,32 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "lint": "eslint src sanity --max-warnings=0",
+    "typecheck": "tsc --noEmit",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "studio": "cd sanity && sanity dev",
+    "studio:build": "cd sanity && sanity build dist --yes",
+    "studio:deploy": "cd sanity && sanity deploy",
+    "cms:migrate": "cd sanity && sanity exec migrations/importExistingContent.mjs --with-user-token"
   },
   "dependencies": {
+    "@sanity/client": "^7.23.1",
+    "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^6.4.0",
     "@vitejs/plugin-react": "^4.3.4",
-    "vite": "^6.0.5",
-    "typescript": "^5.7.2",
+    "lucide-react": "^0.468.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "lucide-react": "^0.468.0"
+    "sanity": "^6.4.0",
+    "styled-components": "^6.4.3",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.17",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.0.0",
     "postcss": "^8.4.49",
-    "autoprefixer": "^10.4.20"
+    "tailwindcss": "^3.4.17"
   }
 }

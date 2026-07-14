@@ -11,19 +11,9 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import {
-  collections,
-  faqs,
-  galleryImages,
-  materialDescriptions,
-  philosophy,
-  products,
-  testimonials,
-  whyLuvin,
-} from "./data/products";
-import { createWhatsAppLink, INSTAGRAM_LINK } from "./config/contact";
-
-const whatsAppLink = createWhatsAppLink();
+import { materialDescriptions } from "./data/products";
+import { createWhatsAppLink } from "./config/contact";
+import { useCmsContent, useHomepageSeo } from "./hooks/useCmsContent";
 const externalLinkProps = {
   target: "_blank",
   rel: "noopener noreferrer",
@@ -55,7 +45,7 @@ function useScrollReveal() {
   }, []);
 }
 
-function SectionHeader({ kicker, title, description, align = "left" }) {
+function SectionHeader({ kicker, title, description = "", align = "left" }) {
   return (
     <div className={align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}>
       {kicker && <p className="section-kicker">{kicker}</p>}
@@ -69,7 +59,7 @@ function SectionHeader({ kicker, title, description, align = "left" }) {
   );
 }
 
-function Navbar() {
+function Navbar({ siteSettings, whatsAppLink }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -99,9 +89,9 @@ function Navbar() {
             LH
           </span>
           <span className="min-w-0">
-            <span className="block font-display text-xl text-cocoa">Luvin Home</span>
+            <span className="block font-display text-xl text-cocoa">{siteSettings.brandName}</span>
             <span className="hidden text-xs uppercase tracking-[0.24em] text-umber/70 sm:block">
-              Stories of Living
+              {siteSettings.brandPromise}
             </span>
           </span>
         </a>
@@ -167,12 +157,12 @@ function Navbar() {
   );
 }
 
-function Hero() {
+function Hero({ homepage }) {
   return (
     <section id="home" className="relative min-h-[100svh] overflow-hidden bg-cocoa text-cream lg:min-h-[min(960px,100svh)]">
       <img
-        src="/hero-living-room.jpg"
-        alt="Warm modern living room with Luvin Home furniture"
+        src={homepage.heroImage?.url || "/hero-living-room.jpg"}
+        alt={homepage.heroImage?.altText || "Warm modern living room with Luvin Home furniture"}
         width="1694"
         height="928"
         loading="eager"
@@ -190,29 +180,27 @@ function Hero() {
         <div className="fade-up max-w-3xl">
           <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-cream/30 bg-cocoa/10 px-4 py-2 text-xs font-semibold tracking-[0.04em] backdrop-blur-md sm:text-sm">
             <Sparkles size={16} />
-            Thoughtful furniture for the life within
+            {homepage.heroEyebrow}
           </p>
           <h1 className="max-w-2xl font-display text-[2.8rem] leading-[0.98] tracking-[-0.035em] text-cream min-[390px]:text-5xl sm:text-6xl lg:text-[5.25rem]">
-            Every Space
-            <span className="block">Tells a Story.</span>
+            {homepage.heroTitle}
           </h1>
           <p className="mt-7 max-w-xl text-base leading-7 text-cream/82 sm:text-lg sm:leading-8">
-            We create timeless, comfortable pieces for the rooms where life unfolds—
-            and the homes people love coming back to.
+            {homepage.heroDescription}
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <a
-              href="#collections"
+              href={homepage.heroPrimaryCtaTarget || "#collections"}
               className="premium-button inline-flex items-center justify-center gap-2 bg-cream px-7 py-4 text-sm font-bold text-cocoa hover:bg-linen"
             >
-              Explore the Collection
+              {homepage.heroPrimaryCtaLabel}
               <ArrowRight size={17} />
             </a>
             <a
-              href="#about"
+              href={homepage.heroSecondaryCtaTarget || "#about"}
               className="premium-button inline-flex items-center justify-center border border-cream/40 bg-cream/[0.04] px-7 py-4 text-sm font-bold text-cream backdrop-blur-sm hover:border-cream/65 hover:bg-cream/10"
             >
-              Discover Our Story
+              {homepage.heroSecondaryCtaLabel}
             </a>
           </div>
         </div>
@@ -221,37 +209,39 @@ function Hero() {
   );
 }
 
-function About() {
+function About({ homepage }) {
   return (
     <section id="about" className="section-shell bg-linen">
       <div className="fade-up mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.82fr_1.18fr] lg:gap-24 lg:items-start">
         <div>
-          <p className="section-kicker">Our Story</p>
+          <p className="section-kicker">{homepage.brandStoryEyebrow}</p>
           <h2 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl lg:text-[3.4rem]">
-            The beauty of coming home.
+            {homepage.brandStoryTitle}
           </h2>
         </div>
         <div className="max-w-2xl space-y-7 text-[1.05rem] leading-8 text-cocoa/72 sm:text-lg sm:leading-9">
-          <p>A home is shaped slowly—in morning light, familiar rituals, and conversations that linger.</p>
-          <p>We design furniture to belong to these moments. Each piece balances quiet beauty with genuine comfort, made to feel natural from the very first day.</p>
-          <p>Because a room should hold more than furniture.</p>
-          <p className="border-l-2 border-clay/60 pl-6 font-display text-3xl leading-tight tracking-[-0.02em] text-cocoa sm:text-[2rem]">
-            It should hold the story of your life.
-          </p>
+          {homepage.brandStoryParagraphs?.map((paragraph, index) => (
+            <p
+              key={`${index}-${paragraph}`}
+              className={index === homepage.brandStoryParagraphs.length - 1 ? "border-l-2 border-clay/60 pl-6 font-display text-3xl leading-tight tracking-[-0.02em] text-cocoa sm:text-[2rem]" : undefined}
+            >
+              {paragraph}
+            </p>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-function Philosophy() {
+function PhilosophySection({ homepage, philosophy }) {
   return (
     <section className="section-shell bg-cream">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
-          kicker="Our Philosophy"
-          title="A quieter way of living."
-          description="We believe good design feels instinctive: beautiful without being precious, comfortable without compromise, and made to remain."
+          kicker={homepage.philosophyEyebrow}
+          title={homepage.philosophyTitle}
+          description={homepage.philosophyDescription}
         />
         <div className="mt-14 grid gap-5 md:grid-cols-3 lg:mt-16">
           {philosophy.map((item) => (
@@ -272,7 +262,7 @@ function Philosophy() {
   );
 }
 
-function CollectionSection() {
+function CollectionSection({ collections }) {
   return (
     <section id="collections" className="section-shell bg-linen">
       <div className="mx-auto max-w-7xl">
@@ -306,6 +296,26 @@ function materialKey(material) {
 }
 
 function ProductVisual({ product }) {
+  if (product.mainImageUrl) {
+    return (
+      <div className="relative aspect-[16/10] overflow-hidden bg-oat">
+        <img
+          src={product.mainImageUrl}
+          alt={product.mainImage?.altText || product.name}
+          width="900"
+          height="562"
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-cocoa/35 via-transparent to-transparent" />
+        <div className="absolute left-5 top-5 rounded-full border border-white/40 bg-cream/85 px-3.5 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.08em] text-cocoa backdrop-blur-md">
+          {product.category}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative aspect-[16/10] overflow-hidden bg-[radial-gradient(circle_at_20%_15%,#fffaf2,#e7d6c0_42%,#bfa181)]">
       <div className="absolute inset-x-8 bottom-10 h-16 rounded-[50%] bg-cocoa/15 blur-xl" />
@@ -320,10 +330,21 @@ function ProductVisual({ product }) {
   );
 }
 
-function ProductCard({ product }) {
+function formatPrice(price, currency = "IDR") {
+  if (typeof price !== "number") return price;
+  return new Intl.NumberFormat("id-ID", { style: "currency", currency, maximumFractionDigits: 0 }).format(price);
+}
+
+function ProductCard({ product, siteSettings }) {
+  const productMessage = product.whatsAppMessage
+    || siteSettings.defaultWhatsAppMessage?.replace(/collection/i, product.name)
+    || `Hello Luvin Home, I would like to know more about the ${product.name}.`;
   const detailLink = createWhatsAppLink(
-    `Hello Luvin Home, I would like to know more about the ${product.name}.`,
+    productMessage,
+    siteSettings.whatsAppNumber,
   );
+  const isUnavailable = product.status === "soldOut" || product.stockStatus === "soldOut";
+  const isComingSoon = product.status === "comingSoon";
 
   return (
     <article className="group fade-up flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-oat/55 bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-500 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]">
@@ -335,7 +356,7 @@ function ProductCard({ product }) {
             <p className="mt-2 text-sm text-cocoa/58">{product.dimensions}</p>
           </div>
           <div className="flex shrink-0 gap-1.5 pt-1">
-            {product.palette.map((color) => (
+            {(product.palette || []).map((color) => (
               <span
                 key={color}
                 className="h-4 w-4 rounded-full border border-cocoa/10"
@@ -351,14 +372,14 @@ function ProductCard({ product }) {
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">
               The Story
             </h4>
-            <p className="mt-2">{product.benefits[0]}</p>
+            <p className="mt-2">{product.productStory || product.shortDescription || product.benefits?.[0]}</p>
           </section>
           <section>
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">
               Material Notes
             </h4>
             <div className="mt-2 space-y-2">
-              {product.materials.map((material) => {
+              {(product.materials || []).map((material) => {
                 const key = materialKey(material);
                 return (
                   <p key={material}>
@@ -374,7 +395,7 @@ function ProductCard({ product }) {
               Made for Living
             </h4>
             <ul className="mt-2 space-y-2">
-              {product.benefits.slice(1).map((benefit) => (
+              {(product.benefits || []).slice(product.productStory || product.shortDescription ? 0 : 1).map((benefit) => (
                 <li key={benefit} className="flex gap-2">
                   <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-clay" />
                   <span>{benefit}</span>
@@ -386,19 +407,25 @@ function ProductCard({ product }) {
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">
               Details
             </h4>
-            <p className="mt-2">Color: {product.colors.join(", ")}</p>
+            {product.colors?.length > 0 && <p className="mt-2">Color: {product.colors.join(", ")}</p>}
             {product.weight && <p>Weight: {product.weight}</p>}
+            {(isUnavailable || isComingSoon) && (
+              <p className="mt-2 font-semibold text-clay">{isComingSoon ? "Coming soon" : "Sold out — enquire for availability"}</p>
+            )}
           </section>
         </div>
 
         <div className="mt-auto flex items-center justify-between gap-4 border-t border-oat/50 pt-6">
-          <p className="font-display text-2xl tracking-[-0.02em] text-cocoa">{product.price}</p>
+          <div>
+            {product.compareAtPrice && <p className="text-sm text-cocoa/45 line-through">{formatPrice(product.compareAtPrice, product.currency)}</p>}
+            <p className="font-display text-2xl tracking-[-0.02em] text-cocoa">{formatPrice(product.price, product.currency)}</p>
+          </div>
           <a
             href={detailLink}
             {...externalLinkProps}
             className="premium-button inline-flex items-center gap-2 bg-cocoa px-5 py-3 text-sm font-semibold text-cream hover:bg-clay"
           >
-            Enquire <ArrowRight size={15} aria-hidden="true" />
+            {isComingSoon ? "Notify Me" : "Enquire"} <ArrowRight size={15} aria-hidden="true" />
           </a>
         </div>
       </div>
@@ -406,7 +433,7 @@ function ProductCard({ product }) {
   );
 }
 
-function Products() {
+function Products({ products, siteSettings }) {
   return (
     <section id="products" className="section-shell bg-cream">
       <div className="mx-auto max-w-7xl">
@@ -421,7 +448,7 @@ function Products() {
         </div>
         <div className="mt-14 grid items-stretch gap-7 md:grid-cols-2 xl:grid-cols-3 lg:mt-16">
           {products.map((product) => (
-            <ProductCard key={product.name} product={product} />
+            <ProductCard key={product._id || product.name} product={product} siteSettings={siteSettings} />
           ))}
         </div>
       </div>
@@ -429,25 +456,25 @@ function Products() {
   );
 }
 
-function InspiredSpaces() {
+function InspiredSpaces({ homepage, inspiredSpaces }) {
   return (
     <section id="spaces" className="section-shell bg-linen">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
-          kicker="At Home"
-          title="Rooms with a point of view."
-          description="A glimpse into spaces shaped by texture, light, and the people who make them their own."
+          kicker={homepage.galleryEyebrow}
+          title={homepage.galleryTitle}
+          description={homepage.galleryDescription}
           align="center"
         />
         <div className="mt-14 grid auto-rows-[15rem] gap-4 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3 lg:auto-rows-[17rem]">
-          {galleryImages.map((src, index) => (
+          {inspiredSpaces.map((space, index) => (
             <figure
-              key={src}
+              key={space._id || space.url}
               className={`group fade-up relative overflow-hidden rounded-[1.5rem] bg-oat shadow-[0_20px_60px_rgba(62,44,35,0.08)] ${index === 0 ? "sm:row-span-2 lg:col-span-2" : ""} ${index === 4 ? "lg:col-span-2" : ""}`}
             >
               <img
-                src={src}
-                alt={`Luvin inspired space ${index + 1}`}
+                src={space.url}
+                alt={space.altText || `Luvin inspired space ${index + 1}`}
                 width="1200"
                 height="900"
                 loading="lazy"
@@ -459,7 +486,7 @@ function InspiredSpaces() {
               />
               <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(255,249,240,0.06),rgba(42,29,22,0.3))] transition duration-700 group-hover:bg-[linear-gradient(160deg,rgba(255,249,240,0.02),rgba(42,29,22,0.2))]" />
               <figcaption className="absolute bottom-5 left-5 rounded-full border border-white/35 bg-cream/82 px-3.5 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.1em] text-cocoa backdrop-blur-md">
-                Story {String(index + 1).padStart(2, "0")}
+                {space.title || `Story ${String(index + 1).padStart(2, "0")}`}
               </figcaption>
             </figure>
           ))}
@@ -469,13 +496,13 @@ function InspiredSpaces() {
   );
 }
 
-function WhyLuvin() {
+function WhyLuvin({ homepage, whyLuvin }) {
   return (
     <section className="section-shell bg-cream">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
-          kicker="Our Approach"
-          title="Considered in every sense."
+          kicker={homepage.valuesEyebrow}
+          title={homepage.valuesTitle}
         />
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:mt-16 lg:grid-cols-5">
           {whyLuvin.map((reason) => (
@@ -496,19 +523,24 @@ function WhyLuvin() {
   );
 }
 
-function Testimonials() {
+function Testimonials({ homepage, testimonials }) {
   return (
     <section className="section-shell bg-linen">
       <div className="mx-auto max-w-7xl">
-        <SectionHeader kicker="Notes from Home" title="In their own words." />
+        <SectionHeader kicker={homepage.testimonialEyebrow} title={homepage.testimonialTitle} />
         <div className="mt-14 grid gap-5 md:grid-cols-3 lg:mt-16">
-          {testimonials.map((quote) => (
+          {testimonials.map((testimonial) => (
             <blockquote
-              key={quote}
+              key={testimonial._id || testimonial.quote}
               className="fade-up relative rounded-[1.5rem] border border-oat/55 bg-white/65 p-8 pt-14 text-lg leading-8 text-cocoa/76 shadow-[0_20px_60px_rgba(62,44,35,0.06)] transition duration-500 hover:-translate-y-1 hover:bg-white/85 hover:shadow-[0_28px_70px_rgba(62,44,35,0.1)]"
             >
               <span aria-hidden="true" className="absolute left-8 top-6 font-display text-5xl leading-none text-clay/60">“</span>
-              {quote}
+              {testimonial.quote}
+              {(testimonial.customerName || testimonial.city) && (
+                <footer className="mt-6 text-sm font-semibold text-cocoa/55">
+                  {[testimonial.customerName, testimonial.city].filter(Boolean).join(" · ")}
+                </footer>
+              )}
             </blockquote>
           ))}
         </div>
@@ -517,15 +549,15 @@ function Testimonials() {
   );
 }
 
-function FAQ() {
+function FAQ({ homepage, faqs }) {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
     <section className="section-shell bg-cream">
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
         <SectionHeader
-          kicker="FAQ"
-          title="A few things to know."
+          kicker={homepage.faqEyebrow}
+          title={homepage.faqTitle}
         />
         <div className="space-y-3">
           {faqs.map((faq, index) => {
@@ -562,7 +594,7 @@ function FAQ() {
   );
 }
 
-function IntelligenceComingSoon() {
+function IntelligenceComingSoon({ homepage, whatsAppLink }) {
   return (
     <section className="section-shell bg-linen">
       <div className="fade-up relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-oat/30 bg-cocoa px-6 py-14 text-cream shadow-[0_32px_90px_rgba(62,44,35,0.18)] sm:px-10 lg:px-16 lg:py-16">
@@ -574,24 +606,22 @@ function IntelligenceComingSoon() {
         </span>
         <div className="mt-8 grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
           <div>
-            <p className="section-kicker text-oat">Coming Soon</p>
+            <p className="section-kicker text-oat">{homepage.intelligenceEyebrow}</p>
             <h2 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] sm:text-5xl">
-              A thoughtful eye for your space.
+              {homepage.intelligenceTitle}
             </h2>
           </div>
           <div>
             <p className="text-xl font-semibold">Consider it a quiet conversation about home.</p>
             <p className="mt-4 max-w-2xl leading-8 text-cream/78">
-              Luvin Intelligence will help you find pieces that feel true to your room,
-              your rituals, and the way you live—guided by proportion, palette, and what
-              matters most to you.
+              {homepage.intelligenceDescription}
             </p>
             <a
               href={whatsAppLink}
               {...externalLinkProps}
               className="premium-button mt-8 inline-flex items-center gap-2 bg-cream px-7 py-4 text-sm font-bold text-cocoa hover:bg-linen"
             >
-              Keep Me Informed
+              {homepage.intelligenceCtaLabel}
               <Send size={17} />
             </a>
           </div>
@@ -601,21 +631,20 @@ function IntelligenceComingSoon() {
   );
 }
 
-function ContactCTA() {
+function ContactCTA({ homepage, siteSettings, whatsAppLink }) {
   return (
     <section id="contact" className="section-shell relative overflow-hidden bg-cocoa text-cream">
       <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_80%_50%,rgba(184,111,77,0.2),transparent_65%)]" />
       <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div className="fade-up">
           <p className="text-sm font-semibold uppercase tracking-[0.26em] text-oat">
-            A Personal Invitation
+            {homepage.contactEyebrow}
           </p>
           <h2 className="mt-5 max-w-2xl font-display text-[2.6rem] leading-[1.04] tracking-[-0.03em] sm:text-5xl lg:text-[3.8rem]">
-            Let the room
-            <span className="block">become yours.</span>
+            {homepage.contactTitle}
           </h2>
           <p className="mt-5 max-w-xl text-lg leading-8 text-cream/78">
-            Tell us how you live and what you hope your space might become. We’ll help you find pieces that feel naturally at home.
+            {homepage.contactDescription}
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:justify-end">
@@ -625,15 +654,15 @@ function ContactCTA() {
             className="premium-button inline-flex items-center justify-center gap-2 bg-cream px-7 py-4 text-sm font-bold text-cocoa hover:bg-linen"
           >
             <MessageCircle size={18} />
-            Begin a Conversation
+            {homepage.contactPrimaryCtaLabel}
           </a>
           <a
-            href={INSTAGRAM_LINK}
+            href={siteSettings.instagramUrl}
             {...externalLinkProps}
             className="premium-button inline-flex items-center justify-center gap-2 border border-cream/35 px-7 py-4 text-sm font-bold text-cream hover:border-cream/60 hover:bg-cream/10"
           >
             <Instagram size={18} />
-            Instagram
+            {homepage.contactSecondaryCtaLabel}
           </a>
           <span className="inline-flex items-center justify-center rounded-full border border-cream/15 px-7 py-4 text-sm font-semibold text-cream/60">
             Online Store Coming Soon
@@ -644,7 +673,7 @@ function ContactCTA() {
   );
 }
 
-function FloatingWhatsApp() {
+function FloatingWhatsApp({ whatsAppLink }) {
   return (
     <a
       href={whatsAppLink}
@@ -657,13 +686,13 @@ function FloatingWhatsApp() {
   );
 }
 
-function Footer() {
+function Footer({ collections, siteSettings, whatsAppLink }) {
   return (
     <footer className="bg-[#2a1d18] px-5 py-16 text-cream/68 sm:px-8 lg:py-20">
       <div className="mx-auto grid max-w-7xl gap-12 border-b border-cream/10 pb-12 text-sm sm:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_1fr]">
         <div>
-          <h3 className="font-display text-3xl tracking-[-0.02em] text-cream">Luvin Home</h3>
-          <p className="mt-5 max-w-xs leading-7">Creating homes people love coming back to.</p>
+          <h3 className="font-display text-3xl tracking-[-0.02em] text-cream">{siteSettings.brandName}</h3>
+          <p className="mt-5 max-w-xs leading-7">{siteSettings.footerText}</p>
         </div>
         <div>
           <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-cream">Collections</h3>
@@ -695,8 +724,8 @@ function Footer() {
             <a href={whatsAppLink} {...externalLinkProps} className="block transition hover:text-cream">
               WhatsApp
             </a>
-            <a href={INSTAGRAM_LINK} {...externalLinkProps} className="block transition hover:text-cream">
-              @luvinhome.id
+            <a href={siteSettings.instagramUrl} {...externalLinkProps} className="block transition hover:text-cream">
+              {siteSettings.instagramUsername}
             </a>
             <p>Online store coming soon</p>
           </div>
@@ -707,26 +736,31 @@ function Footer() {
 }
 
 export default function App() {
+  const content = useCmsContent();
+  const { homepage, siteSettings, collections, products, inspiredSpaces, testimonials, faqs, philosophy, whyLuvin } = content;
+  const whatsAppLink = createWhatsAppLink(siteSettings.defaultWhatsAppMessage, siteSettings.whatsAppNumber);
+
   useScrollReveal();
+  useHomepageSeo(siteSettings);
 
   return (
     <>
-      <Navbar />
+      <Navbar siteSettings={siteSettings} whatsAppLink={whatsAppLink} />
       <main>
-        <Hero />
-        <About />
-        <Philosophy />
-        <CollectionSection />
-        <Products />
-        <InspiredSpaces />
-        <WhyLuvin />
-        <Testimonials />
-        <FAQ />
-        <IntelligenceComingSoon />
-        <ContactCTA />
+        <Hero homepage={homepage} />
+        <About homepage={homepage} />
+        <PhilosophySection homepage={homepage} philosophy={philosophy} />
+        <CollectionSection collections={collections} />
+        <Products products={products} siteSettings={siteSettings} />
+        <InspiredSpaces homepage={homepage} inspiredSpaces={inspiredSpaces} />
+        <WhyLuvin homepage={homepage} whyLuvin={whyLuvin} />
+        <Testimonials homepage={homepage} testimonials={testimonials} />
+        <FAQ homepage={homepage} faqs={faqs} />
+        <IntelligenceComingSoon homepage={homepage} whatsAppLink={whatsAppLink} />
+        <ContactCTA homepage={homepage} siteSettings={siteSettings} whatsAppLink={whatsAppLink} />
       </main>
-      <Footer />
-      <FloatingWhatsApp />
+      <Footer collections={collections} siteSettings={siteSettings} whatsAppLink={whatsAppLink} />
+      <FloatingWhatsApp whatsAppLink={whatsAppLink} />
     </>
   );
 }
