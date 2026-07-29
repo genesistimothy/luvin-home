@@ -1,4 +1,7 @@
 import js from '@eslint/js'
+import react from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
+import jsxA11y from 'eslint-plugin-jsx-a11y'
 
 export default [
   {
@@ -23,13 +26,22 @@ export default [
         window: 'readonly',
       },
     },
-  },
-  {
-    files: ['src/**/*.jsx'],
+    plugins: {
+      react,
+      'react-hooks': reactHooks,
+      'jsx-a11y': jsxA11y,
+    },
+    settings: {
+      react: {version: 'detect'},
+    },
     rules: {
-      // Core ESLint does not resolve JSX references without a React plugin.
-      // Vite and TypeScript still validate imports and JSX during build/typecheck.
-      'no-unused-vars': 'off',
+      ...react.configs.flat.recommended.rules,
+      ...react.configs.flat['jsx-runtime'].rules,
+      ...jsxA11y.configs.recommended.rules,
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      // This codebase doesn't use PropTypes (TypeScript/JSDoc cover typing instead).
+      'react/prop-types': 'off',
     },
   },
   {

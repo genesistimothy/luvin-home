@@ -1,13 +1,15 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
-import AdminApp from "./admin/AdminApp.jsx";
 import "./styles.css";
 
-const RootApp = window.location.pathname.startsWith("/admin") ? AdminApp : App;
+const RootApp = window.location.pathname.startsWith("/admin")
+  ? lazy(() => import("./admin/AdminApp.jsx"))
+  : lazy(() => import("./App.jsx"));
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RootApp />
+    <Suspense fallback={null}>
+      <RootApp />
+    </Suspense>
   </React.StrictMode>,
 );
