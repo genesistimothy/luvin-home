@@ -19,7 +19,7 @@ const externalLinkProps = {
   rel: "noopener noreferrer",
 };
 
-function useScrollReveal() {
+function useScrollReveal(content) {
   useEffect(() => {
     const elements = document.querySelectorAll(".fade-up");
 
@@ -42,7 +42,9 @@ function useScrollReveal() {
 
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
-  }, []);
+    // Re-run whenever CMS content swaps in: list items keyed by CMS _id (e.g.
+    // products) remount as new DOM nodes and would otherwise never get observed.
+  }, [content]);
 }
 
 function SectionHeader({ kicker, title, description = "", align = "left" }) {
@@ -103,10 +105,7 @@ function Navbar({ siteSettings, whatsAppLink }) {
             Collections
           </a>
           <a className="transition hover:text-clay" href="#products">
-            The Edit
-          </a>
-          <a className="transition hover:text-clay" href="#spaces">
-            At Home
+            Products
           </a>
           <a className="transition hover:text-clay" href="#contact">
             Visit Us
@@ -140,8 +139,7 @@ function Navbar({ siteSettings, whatsAppLink }) {
         {[
           ["Our Story", "#about"],
           ["Collections", "#collections"],
-          ["The Edit", "#products"],
-          ["At Home", "#spaces"],
+          ["Products", "#products"],
           ["Visit Us", "#contact"],
         ].map(([label, href]) => (
           <a key={href} href={href} onClick={closeMenu} className="rounded-xl px-3 py-3.5 text-base font-medium text-cocoa/80 transition duration-300 hover:bg-linen hover:text-clay">
@@ -456,99 +454,6 @@ function Products({ products, siteSettings }) {
   );
 }
 
-function InspiredSpaces({ homepage, inspiredSpaces }) {
-  return (
-    <section id="spaces" className="section-shell bg-linen">
-      <div className="mx-auto max-w-7xl">
-        <SectionHeader
-          kicker={homepage.galleryEyebrow}
-          title={homepage.galleryTitle}
-          description={homepage.galleryDescription}
-          align="center"
-        />
-        <div className="mt-14 grid auto-rows-[15rem] gap-4 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3 lg:auto-rows-[17rem]">
-          {inspiredSpaces.map((space, index) => (
-            <figure
-              key={space._id || space.url}
-              className={`group fade-up relative overflow-hidden rounded-[1.5rem] bg-oat shadow-[0_20px_60px_rgba(62,44,35,0.08)] ${index === 0 ? "sm:row-span-2 lg:col-span-2" : ""} ${index === 4 ? "lg:col-span-2" : ""}`}
-            >
-              <img
-                src={space.url}
-                alt={space.altText || `Luvin inspired space ${index + 1}`}
-                width="1200"
-                height="900"
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover transition duration-1000 ease-out group-hover:scale-[1.035]"
-                onError={(event) => {
-                  event.currentTarget.style.opacity = "0";
-                }}
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(255,249,240,0.06),rgba(42,29,22,0.3))] transition duration-700 group-hover:bg-[linear-gradient(160deg,rgba(255,249,240,0.02),rgba(42,29,22,0.2))]" />
-              <figcaption className="absolute bottom-5 left-5 rounded-full border border-white/35 bg-cream/82 px-3.5 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.1em] text-cocoa backdrop-blur-md">
-                {space.title || `Story ${String(index + 1).padStart(2, "0")}`}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function WhyLuvin({ homepage, whyLuvin }) {
-  return (
-    <section className="section-shell bg-cream">
-      <div className="mx-auto max-w-7xl">
-        <SectionHeader
-          kicker={homepage.valuesEyebrow}
-          title={homepage.valuesTitle}
-        />
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:mt-16 lg:grid-cols-5">
-          {whyLuvin.map((reason) => (
-            <article
-              key={reason.title}
-              className="fade-up rounded-[1.35rem] border border-oat/50 bg-linen/65 p-6 transition duration-500 hover:-translate-y-1 hover:border-clay/30 hover:bg-white hover:shadow-[0_22px_55px_rgba(62,44,35,0.08)]"
-            >
-              <Sparkles className="text-clay" size={19} aria-hidden="true" />
-              <h3 className="mt-6 text-lg font-semibold leading-snug tracking-[-0.01em] text-cocoa">
-                {reason.title}
-              </h3>
-              <p className="mt-3 text-sm leading-6 text-cocoa/68">{reason.description}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Testimonials({ homepage, testimonials }) {
-  return (
-    <section className="section-shell bg-linen">
-      <div className="mx-auto max-w-7xl">
-        <SectionHeader kicker={homepage.testimonialEyebrow} title={homepage.testimonialTitle} />
-        <div className="mt-14 grid gap-5 md:grid-cols-3 lg:mt-16">
-          {testimonials.map((testimonial) => (
-            <blockquote
-              key={testimonial._id || testimonial.quote}
-              className="fade-up relative rounded-[1.5rem] border border-oat/55 bg-white/65 p-8 pt-14 text-lg leading-8 text-cocoa/76 shadow-[0_20px_60px_rgba(62,44,35,0.06)] transition duration-500 hover:-translate-y-1 hover:bg-white/85 hover:shadow-[0_28px_70px_rgba(62,44,35,0.1)]"
-            >
-              <span aria-hidden="true" className="absolute left-8 top-6 font-display text-5xl leading-none text-clay/60">“</span>
-              {testimonial.quote}
-              {(testimonial.customerName || testimonial.city) && (
-                <footer className="mt-6 text-sm font-semibold text-cocoa/55">
-                  {[testimonial.customerName, testimonial.city].filter(Boolean).join(" · ")}
-                </footer>
-              )}
-            </blockquote>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function FAQ({ homepage, faqs }) {
   const [openIndex, setOpenIndex] = useState(0);
 
@@ -710,9 +615,6 @@ function Footer({ collections, siteSettings, whatsAppLink }) {
             <a href="#products" className="block transition hover:text-cream">
               The Luvin Edit
             </a>
-            <a href="#spaces" className="block transition hover:text-cream">
-              Stories at Home
-            </a>
             <a href="#about" className="block transition hover:text-cream">
               Our Story
             </a>
@@ -737,10 +639,10 @@ function Footer({ collections, siteSettings, whatsAppLink }) {
 
 export default function App() {
   const content = useCmsContent();
-  const { homepage, siteSettings, collections, products, inspiredSpaces, testimonials, faqs, philosophy, whyLuvin } = content;
+  const { homepage, siteSettings, collections, products, faqs, philosophy } = content;
   const whatsAppLink = createWhatsAppLink(siteSettings.defaultWhatsAppMessage, siteSettings.whatsAppNumber);
 
-  useScrollReveal();
+  useScrollReveal(content);
   useHomepageSeo(siteSettings);
 
   return (
@@ -752,9 +654,6 @@ export default function App() {
         <PhilosophySection homepage={homepage} philosophy={philosophy} />
         <CollectionSection collections={collections} />
         <Products products={products} siteSettings={siteSettings} />
-        <InspiredSpaces homepage={homepage} inspiredSpaces={inspiredSpaces} />
-        <WhyLuvin homepage={homepage} whyLuvin={whyLuvin} />
-        <Testimonials homepage={homepage} testimonials={testimonials} />
         <FAQ homepage={homepage} faqs={faqs} />
         <IntelligenceComingSoon homepage={homepage} whatsAppLink={whatsAppLink} />
         <ContactCTA homepage={homepage} siteSettings={siteSettings} whatsAppLink={whatsAppLink} />

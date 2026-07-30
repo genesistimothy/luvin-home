@@ -5,6 +5,24 @@ import {sanityImageUrl} from '../lib/sanityImage'
 import {cmsContentQuery} from '../lib/queries'
 
 const populated = (value) => Array.isArray(value) && value.length > 0
+const CMS_CACHE_KEY = 'luvin:cmsContent:v1'
+
+function readCachedContent() {
+  try {
+    const raw = window.localStorage.getItem(CMS_CACHE_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+function writeCachedContent(content) {
+  try {
+    window.localStorage.setItem(CMS_CACHE_KEY, JSON.stringify(content))
+  } catch {
+    // Storage unavailable (private mode, quota) — cache is best-effort only.
+  }
+}
 
 function normalizeCms(data) {
   const homepage = {...fallbackContent.homepage, ...(data.homepage || {})}
@@ -31,16 +49,12 @@ function normalizeCms(data) {
           mainImageUrl: sanityImageUrl(product.mainImage, {width: 900}),
         }))
       : fallbackContent.products,
-    inspiredSpaces: populated(data.inspiredSpaces)
-      ? data.inspiredSpaces.map((space) => ({...space, url: sanityImageUrl(space.image, {width: 1200})}))
-      : fallbackContent.inspiredSpaces,
-    testimonials: populated(data.testimonials) ? data.testimonials : fallbackContent.testimonials,
     faqs: populated(data.faqs) ? data.faqs : fallbackContent.faqs,
   }
 }
 
 export function useCmsContent() {
-  const [content, setContent] = useState(fallbackContent)
+  const [content, setContent] = useState(() => readCachedContent() || fallbackContent)
 
   useEffect(() => {
     if (!sanityClient) return undefined
@@ -48,7 +62,11 @@ export function useCmsContent() {
 
     sanityClient
       .fetch(cmsContentQuery, {}, {signal: controller.signal})
-      .then((data) => setContent(normalizeCms(data || {})))
+      .then((data) => {
+        const normalized = normalizeCms(data || {})
+        setContent(normalized)
+        writeCachedContent(normalized)
+      })
       .catch((error) => {
         if (error?.name !== 'AbortError' && import.meta.env.DEV) {
           console.info('Sanity content unavailable; using local fallback.')

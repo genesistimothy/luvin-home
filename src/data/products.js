@@ -144,40 +144,6 @@ export const philosophy = [
   },
 ];
 
-export const whyLuvin = [
-  {
-    title: "Quietly Considered",
-    description:
-      "Calm tones and enduring forms, composed to live beautifully with what you already love.",
-  },
-  {
-    title: "Made to Be Lived In",
-    description:
-      "Comfort shaped around real days—from the first coffee to the last conversation.",
-  },
-  {
-    title: "Honest Materials",
-    description:
-      "Chosen for their touch, resilience, and ability to grow familiar over time.",
-  },
-  {
-    title: "Luxury, Within Reach",
-    description:
-      "Beautifully resolved pieces at a considered price, without excess or compromise.",
-  },
-  {
-    title: "At Home for Years",
-    description:
-      "Enduring pieces for changing rooms, growing families, and the life lived between them.",
-  },
-];
-
-export const testimonials = [
-  "It feels as though the piece has always belonged here. The room is warmer, yet still entirely ours.",
-  "Our sofa bed gives our apartment room to change—quiet evenings for us, a welcoming place when family stays.",
-  "Luvin brought a sense of calm to the room. Nothing feels overdone; everything simply feels more considered.",
-];
-
 export const faqs = [
   {
     question: "When will my piece arrive?",
@@ -199,13 +165,4 @@ export const faqs = [
     answer:
       "Yes. Speak with us on WhatsApp and we will gladly confirm delivery options for your city.",
   },
-];
-
-export const galleryImages = [
-  "/images/gallery-1.jpg",
-  "/images/gallery-2.jpg",
-  "/images/gallery-3.jpg",
-  "/images/gallery-4.jpg",
-  "/images/gallery-5.jpg",
-  "/images/gallery-6.jpg",
 ];

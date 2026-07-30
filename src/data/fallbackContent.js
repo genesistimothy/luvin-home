@@ -1,11 +1,8 @@
 import {
   collections,
   faqs,
-  galleryImages,
   philosophy,
   products,
-  testimonials,
-  whyLuvin,
 } from './products'
 import {INSTAGRAM_LINK, WHATSAPP_NUMBER} from '../config/contact'
 
@@ -30,13 +27,6 @@ export const fallbackContent = {
     philosophyEyebrow: 'Our Philosophy',
     philosophyTitle: 'A quieter way of living.',
     philosophyDescription: 'We believe good design feels instinctive: beautiful without being precious, comfortable without compromise, and made to remain.',
-    galleryEyebrow: 'At Home',
-    galleryTitle: 'Rooms with a point of view.',
-    galleryDescription: 'A glimpse into spaces shaped by texture, light, and the people who make them their own.',
-    valuesEyebrow: 'Our Approach',
-    valuesTitle: 'Considered in every sense.',
-    testimonialEyebrow: 'Notes from Home',
-    testimonialTitle: 'In their own words.',
     faqEyebrow: 'FAQ',
     faqTitle: 'A few things to know.',
     intelligenceEyebrow: 'Coming Soon',
@@ -62,13 +52,6 @@ export const fallbackContent = {
   },
   collections,
   products,
-  inspiredSpaces: galleryImages.map((url, index) => ({
-    title: `Story ${String(index + 1).padStart(2, '0')}`,
-    url,
-    altText: `Luvin inspired space ${index + 1}`,
-  })),
-  testimonials: testimonials.map((quote) => ({quote})),
   faqs,
   philosophy,
-  whyLuvin,
 }
