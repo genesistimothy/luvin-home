@@ -16,12 +16,14 @@
     "cms:migrate": "cd sanity && sanity exec migrations/importExistingContent.mjs --with-user-token"
   },
   "dependencies": {
+    "@portabletext/react": "^8.0.0",
     "@sanity/client": "^7.23.1",
     "@sanity/image-url": "^2.1.1",
     "@vitejs/plugin-react": "^4.3.4",
     "lucide-react": "^0.468.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^6.30.6",
     "typescript": "^5.7.2",
     "vite": "^6.0.5"
   },

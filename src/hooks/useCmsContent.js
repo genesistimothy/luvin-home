@@ -47,6 +47,10 @@ function normalizeCms(data) {
       ? data.products.map((product) => ({
           ...product,
           mainImageUrl: sanityImageUrl(product.mainImage, {width: 900}),
+          galleryImageUrls: (product.galleryImages || []).map((galleryImage) => ({
+            url: sanityImageUrl(galleryImage, {width: 1400}),
+            altText: galleryImage.altText,
+          })),
         }))
       : fallbackContent.products,
     faqs: populated(data.faqs) ? data.faqs : fallbackContent.faqs,

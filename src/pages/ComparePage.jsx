@@ -1,0 +1,122 @@
+import { Link, useOutletContext } from "react-router-dom";
+import { Scale, X } from "lucide-react";
+import Breadcrumb from "../components/Breadcrumb";
+import ProductVisualPlaceholder from "../components/ProductVisualPlaceholder";
+import { useSavedProducts } from "../context/SavedProductsContext";
+import { formatPrice } from "../lib/format";
+import { productSlug } from "../lib/slug";
+
+const ROWS = [
+  { label: "Kategori", value: (product) => product.category || "—" },
+  { label: "Harga", value: (product) => formatPrice(product.price, product.currency) },
+  { label: "Dimensi", value: (product) => product.dimensions || "—" },
+  { label: "Berat", value: (product) => product.weight || "—" },
+  { label: "Material", value: (product) => (product.materials?.length ? product.materials.join(", ") : "—") },
+  { label: "Varian Warna", value: (product) => (product.colors?.length ? product.colors.join(", ") : "—") },
+  { label: "Status Stok", value: (product) => product.stockStatus || product.status || "—" },
+  { label: "SKU", value: (product) => product.sku || "—" },
+];
+
+export default function ComparePage() {
+  const { products } = /** @type {any} */ (useOutletContext());
+  const { compareIds, removeFromCompare, clearCompare } = useSavedProducts();
+
+  const compared = compareIds
+    .map((slug) => products.find((product) => productSlug(product) === slug))
+    .filter(Boolean);
+
+  return (
+    <section className="section-shell bg-cream pt-32">
+      <div className="mx-auto max-w-6xl">
+        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Bandingkan" }]} />
+        <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="section-kicker">Bandingkan</p>
+            <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
+              Bandingkan Produk
+            </h1>
+          </div>
+          {compared.length > 0 && (
+            <button type="button" onClick={clearCompare} className="text-sm font-semibold text-clay hover:text-cocoa">
+              Kosongkan
+            </button>
+          )}
+        </div>
+
+        {compared.length >= 2 ? (
+          <div className="mt-10 overflow-x-auto">
+            <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+              <thead>
+                <tr>
+                  <th className="w-40 border-b border-oat/50 pb-4 align-bottom text-xs font-bold uppercase tracking-[0.15em] text-clay">
+                    &nbsp;
+                  </th>
+                  {compared.map((product) => (
+                    <th key={product._id || product.name} className="border-b border-oat/50 px-4 pb-4 align-bottom">
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => removeFromCompare(productSlug(product))}
+                          aria-label={`Hapus ${product.name} dari perbandingan`}
+                          className="absolute -right-1 -top-1 inline-grid h-7 w-7 place-items-center rounded-full bg-cream/90 text-cocoa shadow-sm hover:bg-linen"
+                        >
+                          <X size={14} />
+                        </button>
+                        <div className="overflow-hidden rounded-xl">
+                          {product.mainImageUrl ? (
+                            <img
+                              src={product.mainImageUrl}
+                              alt={product.name}
+                              className="aspect-[4/3] w-full object-cover"
+                            />
+                          ) : (
+                            <ProductVisualPlaceholder category={product.category} />
+                          )}
+                        </div>
+                        <Link
+                          to={`/produk/${productSlug(product)}`}
+                          className="mt-3 block font-display text-lg font-normal normal-case tracking-normal text-cocoa hover:text-clay"
+                        >
+                          {product.name}
+                        </Link>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {ROWS.map((row) => (
+                  <tr key={row.label} className="border-b border-oat/40">
+                    <th scope="row" className="py-4 pr-4 align-top text-xs font-bold uppercase tracking-[0.15em] text-clay">
+                      {row.label}
+                    </th>
+                    {compared.map((product) => (
+                      <td key={(product._id || product.name) + row.label} className="px-4 py-4 align-top text-cocoa/75">
+                        {row.value(product)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="mt-16 flex flex-col items-center gap-4 text-center">
+            <Scale size={40} className="text-cocoa/30" aria-hidden="true" />
+            <p className="max-w-sm text-cocoa/60">
+              {compared.length === 1
+                ? "Pilih minimal satu produk lagi (maksimal 3) untuk membandingkan."
+                : "Pilih 2–3 produk dari katalog untuk membandingkan spesifikasinya berdampingan."}
+            </p>
+            <Link
+              to="/produk"
+              className="premium-button inline-flex items-center gap-2 bg-cocoa px-7 py-3.5 text-sm font-bold text-cream hover:bg-umber"
+            >
+              Jelajahi Produk
+            </Link>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}

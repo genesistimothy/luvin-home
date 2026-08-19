@@ -1,0 +1,48 @@
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import Breadcrumb from "../components/Breadcrumb";
+import { useSanityQuery } from "../hooks/useSanityQuery";
+import { servicesQuery } from "../lib/queries";
+import { mergeServiceContent } from "../data/services";
+
+export default function ServicesPage() {
+  const { data } = useSanityQuery(servicesQuery);
+  const services = mergeServiceContent(data);
+
+  return (
+    <section className="section-shell bg-cream pt-32">
+      <div className="mx-auto max-w-7xl">
+        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Layanan" }]} />
+        <div className="mt-6 max-w-2xl">
+          <p className="section-kicker">Layanan</p>
+          <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
+            Layanan Kami
+          </h1>
+          <p className="mt-6 leading-8 text-cocoa/68">
+            Dari konsultasi desain hingga pengerjaan proyek skala penuh, tim kami mendampingi setiap tahap
+            perjalanan ruang Anda.
+          </p>
+        </div>
+
+        <div className="mt-12 grid gap-6 sm:grid-cols-2">
+          {services.map((service) => (
+            <Link
+              key={service.slug}
+              to={`/layanan/${service.slug}`}
+              className="group flex flex-col justify-between rounded-[1.5rem] border border-oat/55 bg-linen/60 p-8 transition duration-500 hover:-translate-y-1 hover:border-clay/40 hover:bg-white/85 hover:shadow-[0_28px_70px_rgba(62,44,35,0.1)]"
+            >
+              <div>
+                <h2 className="font-display text-2xl tracking-[-0.02em] text-cocoa">{service.name}</h2>
+                <p className="mt-3 leading-7 text-cocoa/68">{service.summary}</p>
+              </div>
+              <span className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-clay">
+                Pelajari Selengkapnya
+                <ArrowRight size={16} className="transition group-hover:translate-x-1" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,0 +1,25 @@
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+
+export default function NotFoundPage() {
+  return (
+    <section className="section-shell flex min-h-[70vh] items-center bg-cream pt-32">
+      <div className="mx-auto max-w-xl text-center">
+        <p className="section-kicker">404</p>
+        <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
+          Halaman ini belum ada ruangnya.
+        </h1>
+        <p className="mt-6 leading-8 text-cocoa/68">
+          Halaman yang Anda cari tidak ditemukan. Mari kembali menjelajahi koleksi kami.
+        </p>
+        <Link
+          to="/"
+          className="premium-button mt-9 inline-flex items-center justify-center gap-2 bg-cocoa px-7 py-4 text-sm font-bold text-cream hover:bg-umber"
+        >
+          Kembali ke Beranda
+          <ArrowRight size={17} />
+        </Link>
+      </div>
+    </section>
+  );
+}

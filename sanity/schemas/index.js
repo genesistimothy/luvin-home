@@ -6,14 +6,22 @@ import {inspiredSpace} from './inspiredSpace.js'
 import {testimonial} from './testimonial.js'
 import {faq} from './faq.js'
 import {siteSettings} from './siteSettings.js'
+import {service} from './service.js'
+import {project} from './project.js'
+import {article} from './article.js'
+import {inquiry} from './inquiry.js'
 
 export const schemaTypes = [
   cmsImage,
   homepage,
   product,
   collection,
+  service,
+  project,
+  article,
   inspiredSpace,
   testimonial,
   faq,
+  inquiry,
   siteSettings,
 ]
