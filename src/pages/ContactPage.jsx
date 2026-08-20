@@ -20,7 +20,7 @@ function InfoRow({ icon: Icon, label, value }) {
 }
 
 export default function ContactPage() {
-  const { siteSettings } = /** @type {any} */ (useOutletContext());
+  const { siteSettings, faqs } = /** @type {any} */ (useOutletContext());
   const whatsAppLink = createWhatsAppLink(siteSettings.defaultWhatsAppMessage, siteSettings.whatsAppNumber);
   const mapQuery = encodeURIComponent(siteSettings.businessAddress || siteSettings.brandName || "Luvin Home");
 
@@ -70,6 +70,20 @@ export default function ContactPage() {
             <ContactForm />
           </div>
         </div>
+
+        {faqs?.length > 0 && (
+          <div className="mt-16 border-t border-oat/50 pt-10">
+            <p className="section-kicker">Pertanyaan Umum</p>
+            <div className="mt-6 grid gap-x-10 gap-y-6 sm:grid-cols-2">
+              {faqs.map((faq) => (
+                <div key={faq.question}>
+                  <p className="font-semibold text-cocoa">{faq.question}</p>
+                  <p className="mt-1.5 text-sm leading-6 text-cocoa/62">{faq.answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

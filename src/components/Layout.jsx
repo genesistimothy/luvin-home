@@ -19,7 +19,7 @@ export default function Layout() {
       <main>
         <Outlet context={content} />
       </main>
-      <Footer collections={collections} siteSettings={siteSettings} whatsAppLink={whatsAppLink} />
+      <Footer siteSettings={siteSettings} whatsAppLink={whatsAppLink} />
       <FloatingWhatsApp whatsAppLink={whatsAppLink} />
     </SavedProductsProvider>
   );
