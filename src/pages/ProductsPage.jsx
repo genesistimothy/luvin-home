@@ -21,7 +21,6 @@ export default function ProductsPage() {
   const q = searchParams.get("q") || "";
   const min = searchParams.get("min") || "";
   const max = searchParams.get("max") || "";
-  const material = searchParams.get("material") || "";
   const sort = searchParams.get("sort") || "terbaru";
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
 
@@ -32,12 +31,6 @@ export default function ProductsPage() {
     if (key !== "page") next.delete("page");
     setSearchParams(next);
   };
-
-  const materialOptions = useMemo(() => {
-    const set = new Set();
-    products.forEach((product) => (product.materials || []).forEach((item) => set.add(item)));
-    return Array.from(set).sort();
-  }, [products]);
 
   const filtered = useMemo(() => {
     let list = products.filter((product) => product.status !== "draft" && product.status !== "archived");
@@ -52,7 +45,6 @@ export default function ProductsPage() {
     }
     if (min) list = list.filter((product) => typeof product.price !== "number" || product.price >= Number(min));
     if (max) list = list.filter((product) => typeof product.price !== "number" || product.price <= Number(max));
-    if (material) list = list.filter((product) => (product.materials || []).includes(material));
 
     return [...list].sort((a, b) => {
       if (sort === "termurah" || sort === "termahal") {
@@ -65,14 +57,14 @@ export default function ProductsPage() {
       if (a._createdAt && b._createdAt) return new Date(b._createdAt).getTime() - new Date(a._createdAt).getTime();
       return (a.displayOrder ?? 100) - (b.displayOrder ?? 100);
     });
-  }, [products, kategori, q, min, max, material, sort]);
+  }, [products, kategori, q, min, max, sort]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const paged = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const activeCategory = collections.find((collection) => (collection.slug || slugify(collection.name)) === kategori);
-  const hasActiveFilters = Boolean(kategori || q || min || max || material);
+  const hasActiveFilters = Boolean(kategori || q || min || max);
 
   return (
     <section className="section-shell bg-cream pt-32">
@@ -105,7 +97,7 @@ export default function ProductsPage() {
         </div>
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[260px_1fr]">
-          <aside className="space-y-8">
+          <aside className="space-y-8 self-start">
             <div>
               <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Kategori</h3>
               <div className="mt-3 flex flex-wrap gap-2 lg:flex-col lg:gap-1.5">
@@ -156,32 +148,6 @@ export default function ProductsPage() {
                 />
               </div>
             </div>
-
-            {materialOptions.length > 0 && (
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Material</h3>
-                <div className="mt-3 space-y-2">
-                  <button
-                    type="button"
-                    onClick={() => updateParam("material", "")}
-                    className={`block w-full rounded-xl px-3.5 py-2 text-left text-sm transition ${!material ? "bg-cocoa text-cream" : "bg-linen text-cocoa/70 hover:bg-oat/50"}`}
-                  >
-                    Semua Material
-                  </button>
-                  {materialOptions.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => updateParam("material", option)}
-                      title={option}
-                      className={`block w-full truncate rounded-xl px-3.5 py-2 text-left text-sm transition ${material === option ? "bg-cocoa text-cream" : "bg-linen text-cocoa/70 hover:bg-oat/50"}`}
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {hasActiveFilters && (
               <button

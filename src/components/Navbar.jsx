@@ -16,20 +16,34 @@ const navLinkClass = ({ isActive }) =>
 function NavDropdown({ label, items }) {
   return (
     <div className="group relative">
-      <button type="button" className="flex items-center gap-1 text-cocoa/70 transition hover:text-clay">
+      <button
+        type="button"
+        aria-haspopup="true"
+        className="peer flex items-center gap-1 text-cocoa/70 transition hover:text-clay focus-visible:text-clay"
+      >
         {label}
         <ChevronDown size={14} className="transition duration-300 group-hover:rotate-180" />
       </button>
-      <div className="invisible absolute left-0 top-full z-10 mt-3 w-60 rounded-2xl border border-oat/60 bg-cream p-2 opacity-0 shadow-[0_20px_50px_rgba(62,44,35,0.14)] transition duration-200 group-hover:visible group-hover:opacity-100">
-        {items.map((item) => (
-          <Link
-            key={item.to}
-            to={item.to}
-            className="block rounded-xl px-3.5 py-2.5 text-sm text-cocoa/75 transition hover:bg-linen hover:text-clay"
-          >
-            {item.label}
-          </Link>
-        ))}
+      {/* pt-3 (not margin) keeps the gap to the trigger inside the hoverable/focusable
+          hit-area, so moving the cursor down into the panel doesn't cross dead space
+          and drop the hover state before a click can register. */}
+      <div
+        className="invisible absolute left-0 top-full z-10 w-60 pt-3
+          group-hover:visible
+          group-focus-within:visible
+          peer-focus:visible"
+      >
+        <div className="rounded-2xl border border-oat/60 bg-cream p-2 shadow-[0_20px_50px_rgba(62,44,35,0.14)]">
+          {items.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="block rounded-xl px-3.5 py-2.5 text-sm text-cocoa/75 transition hover:bg-linen hover:text-clay focus-visible:bg-linen focus-visible:text-clay focus-visible:outline-none"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -144,6 +144,15 @@ export const philosophy = [
   },
 ];
 
+export const vision =
+  "To become the quiet, lasting presence in every home we help shape — furniture that feels less like a purchase, and more like it always belonged.";
+
+export const mission = [
+  "Choosing honest materials and considered proportions over passing trends.",
+  "Guiding every step, from first conversation to the moment a piece settles into your space.",
+  "Designing pieces meant to be lived with for years, not seasons.",
+];
+
 export const faqs = [
   {
     question: "When will my piece arrive?",

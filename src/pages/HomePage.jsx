@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
-import { ArrowRight, Instagram, MessageCircle, Sparkles } from "lucide-react";
+import { ArrowRight, HeartHandshake, Instagram, MessageCircle, Sparkles } from "lucide-react";
 import { createWhatsAppLink } from "../config/contact";
-import { slugify } from "../lib/slug";
+import { philosophy, vision, mission } from "../data/products";
 
 const externalLinkProps = {
   target: "_blank",
@@ -32,8 +32,6 @@ function useScrollReveal(content) {
 
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
-    // Re-run whenever CMS content swaps in: list items keyed by CMS _id (e.g.
-    // collections) remount as new DOM nodes and would otherwise never get observed.
   }, [content]);
 }
 
@@ -84,7 +82,7 @@ function Hero({ homepage }) {
           </p>
           <div className="mt-9">
             <a
-              href={homepage.heroPrimaryCtaTarget || "#collections"}
+              href={homepage.heroPrimaryCtaTarget || "/produk"}
               className="premium-button inline-flex items-center justify-center gap-2 bg-cream px-7 py-4 text-sm font-bold text-cocoa hover:bg-linen"
             >
               {homepage.heroPrimaryCtaLabel}
@@ -97,35 +95,51 @@ function Hero({ homepage }) {
   );
 }
 
-function CollectionSection({ collections }) {
+function ValuesSection() {
   return (
-    <section id="collections" className="section-shell bg-linen">
+    <section id="values" className="section-shell bg-linen">
       <div className="mx-auto max-w-7xl">
-        <SectionHeader
-          kicker="Collections"
-          title="For every rhythm of home."
-          description="From a quiet corner to the table everyone gathers around, each collection is designed for the way a space feels—and the life it welcomes."
-        />
-        <div className="mt-14 grid gap-5 md:grid-cols-3 lg:mt-16">
-          {collections.map((collection) => {
-            const slug = collection.slug || slugify(collection.name);
-            return (
-              <article
-                key={collection.name}
-                className="group fade-up flex flex-col rounded-[1.5rem] border border-oat/55 bg-white/60 p-7 shadow-[0_20px_60px_rgba(62,44,35,0.06)] transition duration-500 hover:-translate-y-1 hover:border-clay/40 hover:bg-white/85 hover:shadow-[0_28px_70px_rgba(62,44,35,0.1)] sm:p-8"
-              >
-                <div className="mb-9 h-px w-16 bg-clay transition-all duration-500 group-hover:w-24" />
-                <h3 className="font-display text-[1.65rem] leading-tight tracking-[-0.02em] text-cocoa">{collection.name}</h3>
-                <p className="mt-4 leading-7 text-cocoa/68">{collection.summary}</p>
-                <Link
-                  to={`/produk?kategori=${slug}`}
-                  className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-clay"
-                >
-                  Selengkapnya <ArrowRight size={15} className="transition group-hover:translate-x-1" />
-                </Link>
-              </article>
-            );
-          })}
+        <SectionHeader kicker="Who We Are" title="What we stand for." />
+
+        <div className="mt-14 grid gap-10 lg:grid-cols-2 lg:gap-16">
+          <div className="fade-up">
+            <p className="section-kicker">Our Vision</p>
+            <p className="mt-4 font-display text-2xl leading-snug tracking-[-0.01em] text-cocoa sm:text-[1.75rem]">
+              {vision}
+            </p>
+          </div>
+          <div className="fade-up">
+            <p className="section-kicker">Our Mission</p>
+            <ul className="mt-4 space-y-4">
+              {mission.map((item) => (
+                <li key={item} className="flex gap-3 leading-7 text-cocoa/72">
+                  <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-clay" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-16 grid gap-5 md:grid-cols-3 lg:mt-20">
+          {philosophy.map((item) => (
+            <article key={item.title} className="premium-card fade-up p-7 sm:p-8">
+              <span className="inline-grid h-11 w-11 place-items-center rounded-full bg-clay/10 text-clay">
+                <HeartHandshake size={22} aria-hidden="true" />
+              </span>
+              <h3 className="mt-8 font-display text-[1.65rem] tracking-[-0.02em] text-cocoa">{item.title}</h3>
+              <p className="mt-4 leading-7 text-cocoa/68">{item.description}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <Link
+            to="/tentang-kami"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-clay transition hover:text-umber"
+          >
+            Baca cerita kami <ArrowRight size={15} />
+          </Link>
         </div>
       </div>
     </section>
@@ -172,7 +186,7 @@ function ContactCTA({ homepage, siteSettings, whatsAppLink }) {
 
 export default function HomePage() {
   const content = /** @type {any} */ (useOutletContext());
-  const { homepage, siteSettings, collections } = content;
+  const { homepage, siteSettings } = content;
   const whatsAppLink = createWhatsAppLink(siteSettings.defaultWhatsAppMessage, siteSettings.whatsAppNumber);
 
   useScrollReveal(content);
@@ -180,7 +194,7 @@ export default function HomePage() {
   return (
     <>
       <Hero homepage={homepage} />
-      <CollectionSection collections={collections} />
+      <ValuesSection />
       <ContactCTA homepage={homepage} siteSettings={siteSettings} whatsAppLink={whatsAppLink} />
     </>
   );
