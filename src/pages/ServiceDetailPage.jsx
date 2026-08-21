@@ -22,12 +22,12 @@ export default function ServiceDetailPage() {
       <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32">
         <div className="mx-auto max-w-xl text-center">
           <p className="section-kicker">404</p>
-          <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Layanan tidak ditemukan.</h1>
+          <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Service not found.</h1>
           <Link
             to="/layanan"
             className="premium-button mt-8 inline-flex items-center justify-center gap-2 bg-cocoa px-7 py-4 text-sm font-bold text-cream hover:bg-umber"
           >
-            Kembali ke Layanan <ArrowRight size={17} />
+            Back to Services <ArrowRight size={17} />
           </Link>
         </div>
       </section>
@@ -37,10 +37,10 @@ export default function ServiceDetailPage() {
   return (
     <section className="section-shell bg-cream pt-32">
       <div className="mx-auto max-w-6xl">
-        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Layanan", to: "/layanan" }, { label: service.name }]} />
+        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Services", to: "/layanan" }, { label: service.name }]} />
 
         <div className="mt-6 max-w-2xl">
-          <p className="section-kicker">Layanan</p>
+          <p className="section-kicker">Services</p>
           <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
             {service.name}
           </h1>
@@ -59,7 +59,7 @@ export default function ServiceDetailPage() {
 
         {service.processSteps?.length > 0 && (
           <div className="mt-14">
-            <p className="section-kicker">Proses Kerja</p>
+            <p className="section-kicker">Our Process</p>
             <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {service.processSteps.map((step, index) => (
                 <div key={step.title} className="premium-card p-6">
@@ -73,8 +73,8 @@ export default function ServiceDetailPage() {
         )}
 
         <div className="mt-14">
-          <p className="section-kicker">Mulai Konsultasi</p>
-          <h2 className="mt-3 font-display text-2xl tracking-[-0.02em] text-cocoa">Ceritakan Kebutuhan Ruang Anda</h2>
+          <p className="section-kicker">Start a Consultation</p>
+          <h2 className="mt-3 font-display text-2xl tracking-[-0.02em] text-cocoa">Tell Us About Your Space</h2>
           <div className="mt-6 max-w-2xl">
             <ConsultationForm
               serviceName={service.name}

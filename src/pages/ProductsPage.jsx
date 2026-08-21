@@ -8,9 +8,9 @@ import { productCategorySlug, slugify } from "../lib/slug";
 const PAGE_SIZE = 9;
 
 const SORT_OPTIONS = [
-  { value: "terbaru", label: "Terbaru" },
-  { value: "termurah", label: "Harga: Termurah" },
-  { value: "termahal", label: "Harga: Termahal" },
+  { value: "terbaru", label: "Newest" },
+  { value: "termurah", label: "Price: Low to High" },
+  { value: "termahal", label: "Price: High to Low" },
 ];
 
 export default function ProductsPage() {
@@ -72,15 +72,15 @@ export default function ProductsPage() {
         <Breadcrumb
           items={
             activeCategory
-              ? [{ label: "Home", to: "/" }, { label: "Produk", to: "/produk" }, { label: activeCategory.name }]
-              : [{ label: "Home", to: "/" }, { label: "Produk" }]
+              ? [{ label: "Home", to: "/" }, { label: "Products", to: "/produk" }, { label: activeCategory.name }]
+              : [{ label: "Home", to: "/" }, { label: "Products" }]
           }
         />
         <div className="mt-6 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
-            <p className="section-kicker">Katalog</p>
+            <p className="section-kicker">Catalog</p>
             <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
-              {activeCategory ? activeCategory.name : "Semua Produk"}
+              {activeCategory ? activeCategory.name : "All Products"}
             </h1>
           </div>
           <div className="relative w-full max-w-sm">
@@ -89,8 +89,8 @@ export default function ProductsPage() {
               type="search"
               value={q}
               onChange={(event) => updateParam("q", event.target.value)}
-              placeholder="Cari produk..."
-              aria-label="Cari produk"
+              placeholder="Search products..."
+              aria-label="Search products"
               className="w-full rounded-full border border-oat/60 bg-white/70 py-3 pl-11 pr-4 text-sm text-cocoa placeholder:text-cocoa/40 focus:border-clay/50 focus:outline-none"
             />
           </div>
@@ -99,14 +99,14 @@ export default function ProductsPage() {
         <div className="mt-10 grid gap-8 lg:grid-cols-[260px_1fr]">
           <aside className="space-y-8 self-start">
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Kategori</h3>
+              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Category</h3>
               <div className="mt-3 flex flex-wrap gap-2 lg:flex-col lg:gap-1.5">
                 <button
                   type="button"
                   onClick={() => updateParam("kategori", "")}
                   className={`rounded-full px-4 py-2 text-left text-sm transition lg:rounded-xl ${!kategori ? "bg-cocoa text-cream" : "bg-linen text-cocoa/70 hover:bg-oat/50"}`}
                 >
-                  Semua Kategori
+                  All Categories
                 </button>
                 {collections.map((collection) => {
                   const slug = collection.slug || slugify(collection.name);
@@ -125,7 +125,7 @@ export default function ProductsPage() {
             </div>
 
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Rentang Harga</h3>
+              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Price Range</h3>
               <div className="mt-3 flex items-center gap-2">
                 <input
                   type="number"
@@ -133,7 +133,7 @@ export default function ProductsPage() {
                   value={min}
                   onChange={(event) => updateParam("min", event.target.value)}
                   placeholder="Min"
-                  aria-label="Harga minimum"
+                  aria-label="Minimum price"
                   className="w-full rounded-xl border border-oat/60 bg-white/70 px-3 py-2.5 text-sm text-cocoa focus:border-clay/50 focus:outline-none"
                 />
                 <span className="text-cocoa/40">–</span>
@@ -142,8 +142,8 @@ export default function ProductsPage() {
                   min="0"
                   value={max}
                   onChange={(event) => updateParam("max", event.target.value)}
-                  placeholder="Maks"
-                  aria-label="Harga maksimum"
+                  placeholder="Max"
+                  aria-label="Maximum price"
                   className="w-full rounded-xl border border-oat/60 bg-white/70 px-3 py-2.5 text-sm text-cocoa focus:border-clay/50 focus:outline-none"
                 />
               </div>
@@ -155,14 +155,14 @@ export default function ProductsPage() {
                 onClick={() => setSearchParams({})}
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-clay hover:text-cocoa"
               >
-                <X size={14} /> Reset Filter
+                <X size={14} /> Reset Filters
               </button>
             )}
           </aside>
 
           <div>
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-oat/50 pb-5">
-              <p className="text-sm text-cocoa/60">{filtered.length} produk ditemukan</p>
+              <p className="text-sm text-cocoa/60">{filtered.length} products found</p>
               <label className="flex items-center gap-2 text-sm text-cocoa/70">
                 <SlidersHorizontal size={15} aria-hidden="true" />
                 <select
@@ -186,7 +186,7 @@ export default function ProductsPage() {
                 ))}
               </div>
             ) : (
-              <p className="mt-14 text-center text-cocoa/60">Tidak ada produk yang cocok dengan filter ini.</p>
+              <p className="mt-14 text-center text-cocoa/60">No products match these filters.</p>
             )}
 
             {totalPages > 1 && (

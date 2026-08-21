@@ -36,7 +36,7 @@ export default function CatalogProductCard({ product }) {
         <button
           type="button"
           onClick={() => toggleWishlist(slug)}
-          aria-label={wishlisted ? "Hapus dari wishlist" : "Simpan ke wishlist"}
+          aria-label={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
           aria-pressed={wishlisted}
           className={`absolute right-4 top-4 inline-grid h-9 w-9 place-items-center rounded-full backdrop-blur-md transition ${wishlisted ? "bg-clay text-cream" : "bg-cream/[0.85] text-cocoa hover:bg-cream"}`}
         >
@@ -71,7 +71,7 @@ export default function CatalogProductCard({ product }) {
           }`}
         >
           {compared ? <Check size={14} /> : <Scale size={14} />}
-          {compared ? "Ditambahkan ke Bandingkan" : "Bandingkan"}
+          {compared ? "Added to Compare" : "Compare"}
         </button>
       </div>
     </article>

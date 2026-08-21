@@ -22,12 +22,12 @@ function validateInquiry(body) {
 
   const errors = []
   if (honeypot) errors.push('Invalid submission.')
-  if (!name) errors.push('Nama wajib diisi.')
+  if (!name) errors.push('Name is required.')
   const normalizedContact = contact.replace(/[\s-]/g, '')
   if (!contact || !(EMAIL_RE.test(contact) || PHONE_RE.test(normalizedContact))) {
-    errors.push('Kontak harus berupa email atau nomor telepon yang valid.')
+    errors.push('Contact must be a valid email or phone number.')
   }
-  if (type === 'service' && !serviceSlug) errors.push('Layanan tidak valid.')
+  if (type === 'service' && !serviceSlug) errors.push('Invalid service.')
   if (errors.length) return { errors }
 
   const inquiry = {
@@ -59,6 +59,6 @@ export default async function handler(req, res) {
     await sanityWriteClient().create({ ...inquiry, _id: id })
     return json(res, 201, { id })
   } catch (error) {
-    return json(res, 500, { error: error.message === 'Request body is too large.' ? error.message : 'Gagal mengirim permintaan.' })
+    return json(res, 500, { error: error.message === 'Request body is too large.' ? error.message : 'Failed to send request.' })
   }
 }

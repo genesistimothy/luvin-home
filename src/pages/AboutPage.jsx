@@ -9,7 +9,7 @@ export default function AboutPage() {
     <>
       <section className="section-shell bg-linen pt-32">
         <div className="mx-auto max-w-7xl">
-          <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Tentang Kami" }]} />
+          <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "About Us" }]} />
           <div className="mt-8 grid gap-12 lg:grid-cols-[0.82fr_1.18fr] lg:gap-24 lg:items-start">
             <div>
               <p className="section-kicker">{homepage.brandStoryEyebrow}</p>

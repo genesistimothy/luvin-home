@@ -7,13 +7,13 @@ import { formatPrice } from "../lib/format";
 import { productSlug } from "../lib/slug";
 
 const ROWS = [
-  { label: "Kategori", value: (product) => product.category || "—" },
-  { label: "Harga", value: (product) => formatPrice(product.price, product.currency) },
-  { label: "Dimensi", value: (product) => product.dimensions || "—" },
-  { label: "Berat", value: (product) => product.weight || "—" },
+  { label: "Category", value: (product) => product.category || "—" },
+  { label: "Price", value: (product) => formatPrice(product.price, product.currency) },
+  { label: "Dimensions", value: (product) => product.dimensions || "—" },
+  { label: "Weight", value: (product) => product.weight || "—" },
   { label: "Material", value: (product) => (product.materials?.length ? product.materials.join(", ") : "—") },
-  { label: "Varian Warna", value: (product) => (product.colors?.length ? product.colors.join(", ") : "—") },
-  { label: "Status Stok", value: (product) => product.stockStatus || product.status || "—" },
+  { label: "Color Options", value: (product) => (product.colors?.length ? product.colors.join(", ") : "—") },
+  { label: "Stock Status", value: (product) => product.stockStatus || product.status || "—" },
   { label: "SKU", value: (product) => product.sku || "—" },
 ];
 
@@ -28,17 +28,17 @@ export default function ComparePage() {
   return (
     <section className="section-shell bg-cream pt-32">
       <div className="mx-auto max-w-6xl">
-        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Bandingkan" }]} />
+        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Compare" }]} />
         <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="section-kicker">Bandingkan</p>
+            <p className="section-kicker">Compare</p>
             <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
-              Bandingkan Produk
+              Compare Products
             </h1>
           </div>
           {compared.length > 0 && (
             <button type="button" onClick={clearCompare} className="text-sm font-semibold text-clay hover:text-cocoa">
-              Kosongkan
+              Clear All
             </button>
           )}
         </div>
@@ -57,7 +57,7 @@ export default function ComparePage() {
                         <button
                           type="button"
                           onClick={() => removeFromCompare(productSlug(product))}
-                          aria-label={`Hapus ${product.name} dari perbandingan`}
+                          aria-label={`Remove ${product.name} from comparison`}
                           className="absolute -right-1 -top-1 inline-grid h-7 w-7 place-items-center rounded-full bg-cream/90 text-cocoa shadow-sm hover:bg-linen"
                         >
                           <X size={14} />
@@ -105,14 +105,14 @@ export default function ComparePage() {
             <Scale size={40} className="text-cocoa/30" aria-hidden="true" />
             <p className="max-w-sm text-cocoa/60">
               {compared.length === 1
-                ? "Pilih minimal satu produk lagi (maksimal 3) untuk membandingkan."
-                : "Pilih 2–3 produk dari katalog untuk membandingkan spesifikasinya berdampingan."}
+                ? "Choose at least one more product (up to 3) to compare."
+                : "Choose 2–3 products from the catalog to compare their specifications side by side."}
             </p>
             <Link
               to="/produk"
               className="premium-button inline-flex items-center gap-2 bg-cocoa px-7 py-3.5 text-sm font-bold text-cream hover:bg-umber"
             >
-              Jelajahi Produk
+              Browse Products
             </Link>
           </div>
         )}

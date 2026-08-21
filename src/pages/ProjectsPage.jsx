@@ -17,13 +17,13 @@ export default function ProjectsPage() {
   return (
     <section className="section-shell bg-cream pt-32">
       <div className="mx-auto max-w-7xl">
-        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Proyek" }]} />
+        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Projects" }]} />
         <div className="mt-6 max-w-2xl">
-          <p className="section-kicker">Proyek</p>
+          <p className="section-kicker">Projects</p>
           <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
-            Proyek Kami
+            Our Projects
           </h1>
-          <p className="mt-6 leading-8 text-cocoa/[0.68]">Studi kasus ruang yang telah kami rancang dan wujudkan bersama klien.</p>
+          <p className="mt-6 leading-8 text-cocoa/[0.68]">Case studies of spaces we&apos;ve designed and brought to life with our clients.</p>
         </div>
 
         {projects.length > 0 && (
@@ -33,7 +33,7 @@ export default function ProjectsPage() {
               onClick={() => setSearchParams({})}
               className={`rounded-full px-4 py-2 text-sm transition ${!roomType ? "bg-cocoa text-cream" : "bg-linen text-cocoa/70 hover:bg-oat/50"}`}
             >
-              Semua Ruang
+              All Rooms
             </button>
             {ROOM_TYPES.filter((type) => projects.some((project) => project.roomType === type)).map((type) => (
               <button
@@ -80,7 +80,7 @@ export default function ProjectsPage() {
         ) : (
           !loading && (
             <p className="mt-16 text-center text-cocoa/60">
-              {projects.length === 0 ? "Belum ada proyek yang dipublikasikan. Nantikan studi kasus terbaru kami." : "Tidak ada proyek untuk tipe ruang ini."}
+              {projects.length === 0 ? "No projects published yet. Stay tuned for our latest case studies." : "No projects for this room type."}
             </p>
           )
         )}

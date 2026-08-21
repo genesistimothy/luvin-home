@@ -5,8 +5,8 @@ import { isValidContact } from "../../lib/validate";
 import { parseJsonSafe } from "../../lib/api";
 import { createWhatsAppLink } from "../../config/contact";
 
-const ROOM_TYPES = ["Ruang Tamu", "Ruang Makan", "Kamar Tidur", "Dapur", "Ruang Kerja", "Lainnya"];
-const BUDGET_RANGES = ["< Rp 10 juta", "Rp 10–30 juta", "Rp 30–75 juta", "> Rp 75 juta", "Belum yakin"];
+const ROOM_TYPES = ["Living Room", "Dining Room", "Bedroom", "Kitchen", "Workspace", "Other"];
+const BUDGET_RANGES = ["< Rp 10 million", "Rp 10–30 million", "Rp 30–75 million", "> Rp 75 million", "Not sure yet"];
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -31,12 +31,12 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
     }
     if (!ALLOWED_IMAGE_TYPES.includes(selected.type)) {
       setFile(null);
-      setFileError("Gunakan gambar JPG, PNG, atau WebP.");
+      setFileError("Please use a JPG, PNG, or WebP image.");
       return;
     }
     if (selected.size > MAX_IMAGE_BYTES) {
       setFile(null);
-      setFileError("Ukuran gambar maksimal 4 MB.");
+      setFileError("Image size must be 4 MB or less.");
       return;
     }
     setFile(selected);
@@ -45,9 +45,9 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
 
   const validate = () => {
     const nextErrors = /** @type {Record<string, string>} */ ({});
-    if (!form.name.trim()) nextErrors.name = "Nama wajib diisi.";
-    if (!isValidContact(form.contact)) nextErrors.contact = "Masukkan email atau nomor WhatsApp yang valid.";
-    if (!form.message.trim()) nextErrors.message = "Ceritakan kebutuhan Anda secara singkat.";
+    if (!form.name.trim()) nextErrors.name = "Name is required.";
+    if (!isValidContact(form.contact)) nextErrors.contact = "Enter a valid email or WhatsApp number.";
+    if (!form.message.trim()) nextErrors.message = "Tell us briefly about what you need.";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -67,7 +67,7 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
           body: file,
         });
         const uploadData = await parseJsonSafe(uploadResponse);
-        if (!uploadResponse.ok) throw new Error(uploadData.error || "Unggah gambar gagal.");
+        if (!uploadResponse.ok) throw new Error(uploadData.error || "Image upload failed.");
         referenceImageAssetId = uploadData.assetId;
       }
 
@@ -84,31 +84,31 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
         }),
       });
       const data = await parseJsonSafe(response);
-      if (!response.ok) throw new Error(data.error || "Gagal mengirim permintaan.");
+      if (!response.ok) throw new Error(data.error || "Failed to send your request.");
 
       setStatus("success");
       setForm(initialForm);
       setFile(null);
     } catch (error) {
       setStatus("error");
-      setServerError(error.message || "Gagal mengirim permintaan. Silakan coba lagi.");
+      setServerError(error.message || "Failed to send your request. Please try again.");
     }
   };
 
   if (status === "success") {
-    const followUpMessage = `Halo Luvin Home, saya baru saja mengirimkan permintaan konsultasi untuk layanan ${serviceName}. Nama saya ${form.name || ""}.`;
+    const followUpMessage = `Hello Luvin Home, I just submitted a consultation request for the ${serviceName} service. My name is ${form.name || ""}.`;
     return (
       <div className="rounded-[1.5rem] border border-clay/30 bg-linen p-8 text-center">
         <CheckCircle2 className="mx-auto text-clay" size={40} />
-        <h3 className="mt-4 font-display text-2xl text-cocoa">Permintaan Terkirim</h3>
-        <p className="mt-2 text-cocoa/[0.68]">Tim kami akan menghubungi Anda segera. Anda juga bisa langsung chat via WhatsApp.</p>
+        <h3 className="mt-4 font-display text-2xl text-cocoa">Request Sent</h3>
+        <p className="mt-2 text-cocoa/[0.68]">Our team will reach out to you shortly. You can also chat with us directly on WhatsApp.</p>
         <a
           href={createWhatsAppLink(followUpMessage, whatsAppNumber)}
           target="_blank"
           rel="noopener noreferrer"
           className="premium-button mt-6 inline-flex items-center gap-2 bg-cocoa px-6 py-3.5 text-sm font-bold text-cream hover:bg-umber"
         >
-          <MessageCircle size={18} /> Lanjutkan via WhatsApp
+          <MessageCircle size={18} /> Continue on WhatsApp
         </a>
       </div>
     );
@@ -126,30 +126,30 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
         onChange={updateField("company")}
       />
 
-      <FormField label="Nama" htmlFor="consult-name" error={errors.name}>
+      <FormField label="Name" htmlFor="consult-name" error={errors.name}>
         <input
           id="consult-name"
           type="text"
           value={form.name}
           onChange={updateField("name")}
           className={fieldInputClass}
-          placeholder="Nama lengkap"
+          placeholder="Full name"
         />
       </FormField>
 
-      <FormField label="Kontak (Email / No. WhatsApp)" htmlFor="consult-contact" error={errors.contact}>
+      <FormField label="Contact (Email / WhatsApp Number)" htmlFor="consult-contact" error={errors.contact}>
         <input
           id="consult-contact"
           type="text"
           value={form.contact}
           onChange={updateField("contact")}
           className={fieldInputClass}
-          placeholder="nama@email.com atau 08xxxxxxxxxx"
+          placeholder="name@email.com or 08xxxxxxxxxx"
         />
       </FormField>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="Jenis Ruangan" htmlFor="consult-room">
+        <FormField label="Room Type" htmlFor="consult-room">
           <select id="consult-room" value={form.roomType} onChange={updateField("roomType")} className={fieldInputClass}>
             {ROOM_TYPES.map((room) => (
               <option key={room} value={room}>
@@ -158,7 +158,7 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
             ))}
           </select>
         </FormField>
-        <FormField label="Perkiraan Anggaran" htmlFor="consult-budget">
+        <FormField label="Estimated Budget" htmlFor="consult-budget">
           <select id="consult-budget" value={form.budgetRange} onChange={updateField("budgetRange")} className={fieldInputClass}>
             {BUDGET_RANGES.map((budget) => (
               <option key={budget} value={budget}>
@@ -169,24 +169,24 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
         </FormField>
       </div>
 
-      <FormField label="Ceritakan Kebutuhan Anda" htmlFor="consult-message" error={errors.message}>
+      <FormField label="Tell Us What You Need" htmlFor="consult-message" error={errors.message}>
         <textarea
           id="consult-message"
           rows={4}
           value={form.message}
           onChange={updateField("message")}
           className={fieldInputClass}
-          placeholder={`Saya tertarik dengan layanan ${serviceName}...`}
+          placeholder={`I'm interested in the ${serviceName} service...`}
         />
       </FormField>
 
-      <FormField label="Foto Referensi (Opsional)" htmlFor="consult-file" error={fileError} hint="JPG, PNG, atau WebP. Maksimal 4 MB.">
+      <FormField label="Reference Photo (Optional)" htmlFor="consult-file" error={fileError} hint="JPG, PNG, or WebP. Max 4 MB.">
         <label
           htmlFor="consult-file"
           className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-oat/70 bg-white/50 px-4 py-3 text-sm text-cocoa/[0.65] hover:border-clay/40"
         >
           <Paperclip size={16} />
-          {file ? file.name : "Pilih gambar referensi"}
+          {file ? file.name : "Choose a reference image"}
         </label>
         <input id="consult-file" type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFileChange} className="hidden" />
       </FormField>
@@ -202,7 +202,7 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
         disabled={status === "submitting"}
         className="premium-button inline-flex w-full items-center justify-center gap-2 bg-cocoa px-7 py-4 text-sm font-bold text-cream hover:bg-clay disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
-        {status === "submitting" ? "Mengirim..." : "Kirim Permintaan Konsultasi"}
+        {status === "submitting" ? "Sending..." : "Send Consultation Request"}
       </button>
     </form>
   );

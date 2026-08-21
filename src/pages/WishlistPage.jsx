@@ -18,7 +18,7 @@ export default function WishlistPage() {
         <div className="mt-6">
           <p className="section-kicker">Wishlist</p>
           <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
-            Produk Tersimpan
+            Saved Products
           </h1>
         </div>
 
@@ -32,14 +32,14 @@ export default function WishlistPage() {
           <div className="mt-16 flex flex-col items-center gap-4 text-center">
             <HeartOff size={40} className="text-cocoa/30" aria-hidden="true" />
             <p className="max-w-sm text-cocoa/60">
-              Belum ada produk yang disimpan. Jelajahi katalog dan tekan ikon hati untuk menyimpan produk favorit
-              Anda.
+              No products saved yet. Browse the catalog and tap the heart icon to save your favorite
+              pieces.
             </p>
             <Link
               to="/produk"
               className="premium-button inline-flex items-center gap-2 bg-cocoa px-7 py-3.5 text-sm font-bold text-cream hover:bg-umber"
             >
-              Jelajahi Produk
+              Browse Products
             </Link>
           </div>
         )}

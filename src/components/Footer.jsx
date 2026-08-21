@@ -9,7 +9,7 @@ export default function Footer({ siteSettings, whatsAppLink }) {
         <div className="flex flex-col items-center gap-5 text-center">
           <img src="/luvin-logo-mark.svg" alt="" className="h-12 w-auto" />
           <h3 className="font-display text-3xl tracking-[-0.02em] text-cream">{siteSettings.brandName}</h3>
-          <p className="text-sm">Punya pertanyaan? Hubungi kami.</p>
+          <p className="text-sm">Have a question? Get in touch.</p>
           <div className="flex items-center gap-3">
             {socialLinks.map(({ id, label, href, Icon }) => (
               <a

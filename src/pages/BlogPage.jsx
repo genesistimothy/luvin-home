@@ -6,7 +6,7 @@ import { articlesQuery } from "../lib/queries";
 
 function formatDate(value) {
   if (!value) return "";
-  return new Intl.DateTimeFormat("id-ID", { dateStyle: "long" }).format(new Date(value));
+  return new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(new Date(value));
 }
 
 export default function BlogPage() {
@@ -20,7 +20,7 @@ export default function BlogPage() {
         <div className="mt-6 max-w-2xl">
           <p className="section-kicker">Blog</p>
           <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
-            Tips Interior &amp; Desain
+            Interior &amp; Design Tips
           </h1>
         </div>
 
@@ -56,7 +56,7 @@ export default function BlogPage() {
             ))}
           </div>
         ) : (
-          !loading && <p className="mt-16 text-center text-cocoa/60">Belum ada artikel yang dipublikasikan. Nantikan tulisan terbaru kami.</p>
+          !loading && <p className="mt-16 text-center text-cocoa/60">No articles published yet. Stay tuned for our latest stories.</p>
         )}
       </div>
     </section>

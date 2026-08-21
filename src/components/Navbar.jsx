@@ -90,7 +90,7 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
   const closeMenu = () => setIsMenuOpen(false);
 
   const productItems = [
-    { to: "/produk", label: "Semua Produk" },
+    { to: "/produk", label: "All Products" },
     ...collections.map((collection) => ({
       to: `/produk?kategori=${collection.slug || slugify(collection.name)}`,
       label: collection.name,
@@ -98,19 +98,19 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
   ];
 
   const serviceItems = [
-    { to: "/layanan", label: "Semua Layanan" },
+    { to: "/layanan", label: "All Services" },
     ...serviceLinks.map((service) => ({ to: `/layanan/${service.slug}`, label: service.name })),
   ];
 
   const mobileLinks = [
-    ["Produk", "/produk"],
-    ["Layanan", "/layanan"],
-    ["Proyek", "/proyek"],
+    ["Products", "/produk"],
+    ["Services", "/layanan"],
+    ["Projects", "/proyek"],
     ["Blog", "/blog"],
-    ["Tentang Kami", "/tentang-kami"],
-    ["Kontak", "/kontak"],
+    ["About Us", "/tentang-kami"],
+    ["Contact", "/kontak"],
     [`Wishlist${wishlist.length ? ` (${wishlist.length})` : ""}`, "/wishlist"],
-    [`Bandingkan${compareIds.length ? ` (${compareIds.length})` : ""}`, "/compare"],
+    [`Compare${compareIds.length ? ` (${compareIds.length})` : ""}`, "/compare"],
   ];
 
   return (
@@ -120,7 +120,7 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
       <nav
         className={`mx-auto flex max-w-7xl items-center justify-between px-5 transition-all duration-500 sm:px-8 ${isScrolled ? "py-3" : "py-4"}`}
       >
-        <Link to="/" className="flex min-w-0 items-center gap-3" aria-label="Luvin Home — beranda" onClick={closeMenu}>
+        <Link to="/" className="flex min-w-0 items-center gap-3" aria-label="Luvin Home — home" onClick={closeMenu}>
           <img src="/luvin-logo-mark.svg" alt="" className="h-10 w-auto shrink-0" />
           <span className="min-w-0">
             <span className="block font-display text-xl text-cocoa">{siteSettings.brandName}</span>
@@ -130,26 +130,26 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
           </span>
         </Link>
         <div className="hidden items-center gap-8 text-[0.82rem] font-semibold tracking-[0.02em] lg:flex">
-          <NavDropdown label="Produk" items={productItems} />
-          <NavDropdown label="Layanan" items={serviceItems} />
+          <NavDropdown label="Products" items={productItems} />
+          <NavDropdown label="Services" items={serviceItems} />
           <NavLink to="/proyek" className={navLinkClass}>
-            Proyek
+            Projects
           </NavLink>
           <NavLink to="/blog" className={navLinkClass}>
             Blog
           </NavLink>
           <NavLink to="/tentang-kami" className={navLinkClass}>
-            Tentang Kami
+            About Us
           </NavLink>
           <NavLink to="/kontak" className={navLinkClass}>
-            Kontak
+            Contact
           </NavLink>
         </div>
         <div className="flex items-center gap-2">
           <NavIconLink to="/wishlist" label="Wishlist" count={wishlist.length}>
             <Heart size={19} aria-hidden="true" />
           </NavIconLink>
-          <NavIconLink to="/compare" label="Bandingkan produk" count={compareIds.length}>
+          <NavIconLink to="/compare" label="Compare products" count={compareIds.length}>
             <Scale size={19} aria-hidden="true" />
           </NavIconLink>
           <a

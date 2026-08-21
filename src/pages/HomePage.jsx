@@ -138,7 +138,7 @@ function ValuesSection() {
             to="/tentang-kami"
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-clay transition hover:text-umber"
           >
-            Baca cerita kami <ArrowRight size={15} />
+            Read our story <ArrowRight size={15} />
           </Link>
         </div>
       </div>

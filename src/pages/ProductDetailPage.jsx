@@ -11,11 +11,11 @@ import { useSavedProducts } from "../context/SavedProductsContext";
 function buildSpecs(product) {
   if (product.specifications?.length) return product.specifications;
   const specs = [];
-  if (product.dimensions) specs.push({ label: "Dimensi", value: product.dimensions });
-  if (product.weight) specs.push({ label: "Berat", value: product.weight });
+  if (product.dimensions) specs.push({ label: "Dimensions", value: product.dimensions });
+  if (product.weight) specs.push({ label: "Weight", value: product.weight });
   if (product.materials?.length) specs.push({ label: "Material", value: product.materials.join(", ") });
-  if (product.colors?.length) specs.push({ label: "Varian Warna", value: product.colors.join(", ") });
-  if (product.leadTime) specs.push({ label: "Estimasi Produksi", value: product.leadTime });
+  if (product.colors?.length) specs.push({ label: "Color Options", value: product.colors.join(", ") });
+  if (product.leadTime) specs.push({ label: "Production Estimate", value: product.leadTime });
   if (product.sku) specs.push({ label: "SKU", value: product.sku });
   return specs;
 }
@@ -33,13 +33,13 @@ export default function ProductDetailPage() {
       <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32">
         <div className="mx-auto max-w-xl text-center">
           <p className="section-kicker">404</p>
-          <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Produk tidak ditemukan.</h1>
-          <p className="mt-4 leading-7 text-cocoa/[0.68]">Produk yang Anda cari mungkin sudah tidak tersedia.</p>
+          <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Product not found.</h1>
+          <p className="mt-4 leading-7 text-cocoa/[0.68]">The product you&apos;re looking for may no longer be available.</p>
           <Link
             to="/produk"
             className="premium-button mt-8 inline-flex items-center justify-center gap-2 bg-cocoa px-7 py-4 text-sm font-bold text-cream hover:bg-umber"
           >
-            Kembali ke Katalog <ArrowRight size={17} />
+            Back to Catalog <ArrowRight size={17} />
           </Link>
         </div>
       </section>
@@ -69,7 +69,7 @@ export default function ProductDetailPage() {
         <Breadcrumb
           items={[
             { label: "Home", to: "/" },
-            { label: "Produk", to: "/produk" },
+            { label: "Products", to: "/produk" },
             ...(product.collection ? [{ label: product.collection.name, to: `/produk?kategori=${product.collection.slug}` }] : []),
             { label: product.name },
           ]}
@@ -93,7 +93,7 @@ export default function ProductDetailPage() {
                         key={image.url}
                         type="button"
                         onClick={() => setActiveImage(index)}
-                        aria-label={`Lihat gambar ${index + 1} dari ${images.length}`}
+                        aria-label={`View image ${index + 1} of ${images.length}`}
                         aria-current={index === activeImage}
                         className={`h-20 w-24 shrink-0 overflow-hidden rounded-xl border-2 transition ${index === activeImage ? "border-clay" : "border-transparent opacity-70 hover:opacity-100"}`}
                       >
@@ -141,7 +141,7 @@ export default function ProductDetailPage() {
                 className="premium-button inline-flex items-center justify-center gap-2 bg-cocoa px-7 py-4 text-sm font-bold text-cream hover:bg-clay"
               >
                 <MessageCircle size={18} />
-                {isComingSoon ? "Notify Me via WhatsApp" : "Konsultasi via WhatsApp"}
+                {isComingSoon ? "Notify Me via WhatsApp" : "Consult via WhatsApp"}
               </a>
               <button
                 type="button"
@@ -150,7 +150,7 @@ export default function ProductDetailPage() {
                 className={`premium-button inline-flex items-center justify-center gap-2 border px-6 py-4 text-sm font-bold transition ${wishlisted ? "border-clay bg-clay/10 text-clay" : "border-cocoa/25 text-cocoa hover:border-clay/40 hover:text-clay"}`}
               >
                 <Heart size={18} fill={wishlisted ? "currentColor" : "none"} />
-                {wishlisted ? "Tersimpan" : "Wishlist"}
+                {wishlisted ? "Saved" : "Wishlist"}
               </button>
               <button
                 type="button"
@@ -165,13 +165,13 @@ export default function ProductDetailPage() {
                 }`}
               >
                 {compared ? <Check size={18} /> : <Scale size={18} />}
-                {compared ? "Ditambahkan" : "Bandingkan"}
+                {compared ? "Added" : "Compare"}
               </button>
             </div>
 
             {specs.length > 0 && (
               <div className="mt-10 border-t border-oat/50 pt-8">
-                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Spesifikasi</h2>
+                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Specifications</h2>
                 <dl className="mt-4 divide-y divide-oat/40">
                   {specs.map((spec) => (
                     <div key={spec.label} className="flex justify-between gap-6 py-3 text-sm">

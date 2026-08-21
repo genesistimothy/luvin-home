@@ -17,9 +17,9 @@ export default function ContactForm() {
 
   const validate = () => {
     const nextErrors = /** @type {Record<string, string>} */ ({});
-    if (!form.name.trim()) nextErrors.name = "Nama wajib diisi.";
-    if (!isValidEmail(form.email)) nextErrors.email = "Masukkan alamat email yang valid.";
-    if (!form.message.trim()) nextErrors.message = "Pesan wajib diisi.";
+    if (!form.name.trim()) nextErrors.name = "Name is required.";
+    if (!isValidEmail(form.email)) nextErrors.email = "Enter a valid email address.";
+    if (!form.message.trim()) nextErrors.message = "Message is required.";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -38,18 +38,18 @@ export default function ContactForm() {
           type: "contact",
           name: form.name,
           contact: form.email,
-          message: `${form.message}${form.phone.trim() ? `\n\nTelepon: ${form.phone.trim()}` : ""}`,
+          message: `${form.message}${form.phone.trim() ? `\n\nPhone: ${form.phone.trim()}` : ""}`,
           company,
         }),
       });
       const data = await parseJsonSafe(response);
-      if (!response.ok) throw new Error(data.error || "Gagal mengirim pesan.");
+      if (!response.ok) throw new Error(data.error || "Failed to send your message.");
 
       setStatus("success");
       setForm(initialForm);
     } catch (error) {
       setStatus("error");
-      setServerError(error.message || "Gagal mengirim pesan. Silakan coba lagi.");
+      setServerError(error.message || "Failed to send your message. Please try again.");
     }
   };
 
@@ -57,8 +57,8 @@ export default function ContactForm() {
     return (
       <div className="rounded-[1.5rem] border border-clay/30 bg-linen p-8 text-center">
         <CheckCircle2 className="mx-auto text-clay" size={40} />
-        <h3 className="mt-4 font-display text-2xl text-cocoa">Pesan Terkirim</h3>
-        <p className="mt-2 text-cocoa/[0.68]">Terima kasih sudah menghubungi kami. Tim Luvin Home akan membalas secepatnya.</p>
+        <h3 className="mt-4 font-display text-2xl text-cocoa">Message Sent</h3>
+        <p className="mt-2 text-cocoa/[0.68]">Thank you for reaching out. The Luvin Home team will get back to you soon.</p>
       </div>
     );
   }
@@ -76,14 +76,14 @@ export default function ContactForm() {
         onChange={(event) => setCompany(event.target.value)}
       />
 
-      <FormField label="Nama" htmlFor="contact-name" error={errors.name}>
+      <FormField label="Name" htmlFor="contact-name" error={errors.name}>
         <input
           id="contact-name"
           type="text"
           value={form.name}
           onChange={updateField("name")}
           className={fieldInputClass}
-          placeholder="Nama lengkap"
+          placeholder="Full name"
         />
       </FormField>
 
@@ -95,10 +95,10 @@ export default function ContactForm() {
             value={form.email}
             onChange={updateField("email")}
             className={fieldInputClass}
-            placeholder="nama@email.com"
+            placeholder="name@email.com"
           />
         </FormField>
-        <FormField label="No. Telepon (Opsional)" htmlFor="contact-phone">
+        <FormField label="Phone Number (Optional)" htmlFor="contact-phone">
           <input
             id="contact-phone"
             type="tel"
@@ -110,14 +110,14 @@ export default function ContactForm() {
         </FormField>
       </div>
 
-      <FormField label="Pesan" htmlFor="contact-message" error={errors.message}>
+      <FormField label="Message" htmlFor="contact-message" error={errors.message}>
         <textarea
           id="contact-message"
           rows={5}
           value={form.message}
           onChange={updateField("message")}
           className={fieldInputClass}
-          placeholder="Tulis pesan Anda..."
+          placeholder="Write your message..."
         />
       </FormField>
 
@@ -132,7 +132,7 @@ export default function ContactForm() {
         disabled={status === "submitting"}
         className="premium-button inline-flex w-full items-center justify-center gap-2 bg-cocoa px-7 py-4 text-sm font-bold text-cream hover:bg-clay disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
-        {status === "submitting" ? "Mengirim..." : "Kirim Pesan"}
+        {status === "submitting" ? "Sending..." : "Send Message"}
       </button>
     </form>
   );

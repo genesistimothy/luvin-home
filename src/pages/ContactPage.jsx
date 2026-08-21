@@ -27,20 +27,20 @@ export default function ContactPage() {
   return (
     <section className="section-shell bg-cream pt-32">
       <div className="mx-auto max-w-6xl">
-        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Kontak" }]} />
+        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Contact" }]} />
         <div className="mt-6 max-w-2xl">
-          <p className="section-kicker">Kontak</p>
+          <p className="section-kicker">Contact</p>
           <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
-            Mari Berbincang Tentang Ruang Anda
+            Let&apos;s Talk About Your Space
           </h1>
         </div>
 
         <div className="mt-12 grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
           <div className="space-y-8">
             <div className="space-y-6 rounded-[1.5rem] border border-oat/[0.55] bg-linen/50 p-7">
-              <InfoRow icon={MapPin} label="Alamat" value={siteSettings.businessAddress} />
-              <InfoRow icon={Clock} label="Jam Operasional" value={siteSettings.operatingHours} />
-              <InfoRow icon={Truck} label="Area Pengiriman" value={siteSettings.deliveryArea} />
+              <InfoRow icon={MapPin} label="Address" value={siteSettings.businessAddress} />
+              <InfoRow icon={Clock} label="Operating Hours" value={siteSettings.operatingHours} />
+              <InfoRow icon={Truck} label="Delivery Area" value={siteSettings.deliveryArea} />
               <InfoRow icon={Mail} label="Email" value={siteSettings.email} />
             </div>
 
@@ -56,7 +56,7 @@ export default function ContactPage() {
             {siteSettings.businessAddress && (
               <div className="aspect-[4/3] overflow-hidden rounded-[1.5rem] border border-oat/[0.55]">
                 <iframe
-                  title="Lokasi Luvin Home"
+                  title="Luvin Home Location"
                   src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}
                   className="h-full w-full border-0"
                   loading="lazy"
@@ -73,7 +73,7 @@ export default function ContactPage() {
 
         {faqs?.length > 0 && (
           <div className="mt-16 border-t border-oat/50 pt-10">
-            <p className="section-kicker">Pertanyaan Umum</p>
+            <p className="section-kicker">Frequently Asked Questions</p>
             <div className="mt-6 grid gap-x-10 gap-y-6 sm:grid-cols-2">
               {faqs.map((faq) => (
                 <div key={faq.question}>

@@ -8,7 +8,7 @@ import { portableTextComponents } from "../lib/portableTextComponents";
 
 function formatDate(value) {
   if (!value) return "";
-  return new Intl.DateTimeFormat("id-ID", { dateStyle: "long" }).format(new Date(value));
+  return new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(new Date(value));
 }
 
 export default function BlogDetailPage() {
@@ -22,12 +22,12 @@ export default function BlogDetailPage() {
       <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32">
         <div className="mx-auto max-w-xl text-center">
           <p className="section-kicker">404</p>
-          <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Artikel tidak ditemukan.</h1>
+          <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Article not found.</h1>
           <Link
             to="/blog"
             className="premium-button mt-8 inline-flex items-center justify-center gap-2 bg-cocoa px-7 py-4 text-sm font-bold text-cream hover:bg-umber"
           >
-            Kembali ke Blog <ArrowRight size={17} />
+            Back to Blog <ArrowRight size={17} />
           </Link>
         </div>
       </section>
