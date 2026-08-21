@@ -34,7 +34,7 @@ export default function ProductDetailPage() {
         <div className="mx-auto max-w-xl text-center">
           <p className="section-kicker">404</p>
           <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Produk tidak ditemukan.</h1>
-          <p className="mt-4 leading-7 text-cocoa/68">Produk yang Anda cari mungkin sudah tidak tersedia.</p>
+          <p className="mt-4 leading-7 text-cocoa/[0.68]">Produk yang Anda cari mungkin sudah tidak tersedia.</p>
           <Link
             to="/produk"
             className="premium-button mt-8 inline-flex items-center justify-center gap-2 bg-cocoa px-7 py-4 text-sm font-bold text-cream hover:bg-umber"
@@ -123,7 +123,7 @@ export default function ProductDetailPage() {
             )}
 
             {(product.shortDescription || product.productStory) && (
-              <p className="mt-6 max-w-xl leading-8 text-cocoa/72">{product.productStory || product.shortDescription}</p>
+              <p className="mt-6 max-w-xl leading-8 text-cocoa/[0.72]">{product.productStory || product.shortDescription}</p>
             )}
 
             <div className="mt-8 flex items-baseline gap-3">
@@ -175,7 +175,7 @@ export default function ProductDetailPage() {
                 <dl className="mt-4 divide-y divide-oat/40">
                   {specs.map((spec) => (
                     <div key={spec.label} className="flex justify-between gap-6 py-3 text-sm">
-                      <dt className="text-cocoa/55">{spec.label}</dt>
+                      <dt className="text-cocoa/[0.55]">{spec.label}</dt>
                       <dd className="text-right font-medium text-cocoa">{spec.value}</dd>
                     </div>
                   ))}
@@ -186,7 +186,7 @@ export default function ProductDetailPage() {
             {product.benefits?.length > 0 && (
               <div className="mt-8 border-t border-oat/50 pt-8">
                 <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Made for Living</h2>
-                <ul className="mt-4 space-y-2.5 text-sm leading-6 text-cocoa/68">
+                <ul className="mt-4 space-y-2.5 text-sm leading-6 text-cocoa/[0.68]">
                   {product.benefits.map((benefit) => (
                     <li key={benefit} className="flex gap-2">
                       <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-clay" />

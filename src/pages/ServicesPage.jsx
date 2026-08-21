@@ -18,7 +18,7 @@ export default function ServicesPage() {
           <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
             Layanan Kami
           </h1>
-          <p className="mt-6 leading-8 text-cocoa/68">
+          <p className="mt-6 leading-8 text-cocoa/[0.68]">
             Dari konsultasi desain hingga pengerjaan proyek skala penuh, tim kami mendampingi setiap tahap
             perjalanan ruang Anda.
           </p>
@@ -29,11 +29,11 @@ export default function ServicesPage() {
             <Link
               key={service.slug}
               to={`/layanan/${service.slug}`}
-              className="group flex flex-col justify-between rounded-[1.5rem] border border-oat/55 bg-linen/60 p-8 transition duration-500 hover:-translate-y-1 hover:border-clay/40 hover:bg-white/85 hover:shadow-[0_28px_70px_rgba(62,44,35,0.1)]"
+              className="group flex flex-col justify-between rounded-[1.5rem] border border-oat/[0.55] bg-linen/60 p-8 transition duration-500 hover:-translate-y-1 hover:border-clay/40 hover:bg-white/[0.85] hover:shadow-[0_28px_70px_rgba(62,44,35,0.1)]"
             >
               <div>
                 <h2 className="font-display text-2xl tracking-[-0.02em] text-cocoa">{service.name}</h2>
-                <p className="mt-3 leading-7 text-cocoa/68">{service.summary}</p>
+                <p className="mt-3 leading-7 text-cocoa/[0.68]">{service.summary}</p>
               </div>
               <span className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-clay">
                 Pelajari Selengkapnya

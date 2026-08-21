@@ -65,7 +65,7 @@ section[id] {
   }
 
   .premium-card {
-    @apply rounded-[1.5rem] border border-oat/55 bg-linen/65 shadow-[0_20px_60px_rgba(62,44,35,0.06)] transition duration-500;
+    @apply rounded-[1.5rem] border border-oat/[0.55] bg-linen/[0.65] shadow-[0_20px_60px_rgba(62,44,35,0.06)] transition duration-500;
     transition-timing-function: var(--ease-premium);
   }
 

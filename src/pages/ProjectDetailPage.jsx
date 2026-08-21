@@ -62,7 +62,7 @@ export default function ProjectDetailPage() {
           <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
             {project.title}
           </h1>
-          {project.summary && <p className="mt-6 leading-8 text-cocoa/68">{project.summary}</p>}
+          {project.summary && <p className="mt-6 leading-8 text-cocoa/[0.68]">{project.summary}</p>}
         </div>
 
         {hasBeforeAfter ? (

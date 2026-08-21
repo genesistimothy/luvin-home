@@ -39,7 +39,7 @@ export default function BlogDetailPage() {
       <div className="mx-auto max-w-3xl">
         <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Blog", to: "/blog" }, { label: article.title }]} />
 
-        <p className="mt-6 text-xs font-semibold uppercase tracking-[0.1em] text-cocoa/45">
+        <p className="mt-6 text-xs font-semibold uppercase tracking-[0.1em] text-cocoa/[0.45]">
           {formatDate(article.publishedAt)}
           {article.author ? ` · ${article.author}` : ""}
         </p>

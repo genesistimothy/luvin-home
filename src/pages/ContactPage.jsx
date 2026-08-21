@@ -37,7 +37,7 @@ export default function ContactPage() {
 
         <div className="mt-12 grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
           <div className="space-y-8">
-            <div className="space-y-6 rounded-[1.5rem] border border-oat/55 bg-linen/50 p-7">
+            <div className="space-y-6 rounded-[1.5rem] border border-oat/[0.55] bg-linen/50 p-7">
               <InfoRow icon={MapPin} label="Alamat" value={siteSettings.businessAddress} />
               <InfoRow icon={Clock} label="Jam Operasional" value={siteSettings.operatingHours} />
               <InfoRow icon={Truck} label="Area Pengiriman" value={siteSettings.deliveryArea} />
@@ -54,7 +54,7 @@ export default function ContactPage() {
             </a>
 
             {siteSettings.businessAddress && (
-              <div className="aspect-[4/3] overflow-hidden rounded-[1.5rem] border border-oat/55">
+              <div className="aspect-[4/3] overflow-hidden rounded-[1.5rem] border border-oat/[0.55]">
                 <iframe
                   title="Lokasi Luvin Home"
                   src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}
@@ -78,7 +78,7 @@ export default function ContactPage() {
               {faqs.map((faq) => (
                 <div key={faq.question}>
                   <p className="font-semibold text-cocoa">{faq.question}</p>
-                  <p className="mt-1.5 text-sm leading-6 text-cocoa/62">{faq.answer}</p>
+                  <p className="mt-1.5 text-sm leading-6 text-cocoa/[0.62]">{faq.answer}</p>
                 </div>
               ))}
             </div>

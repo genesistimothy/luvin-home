@@ -23,7 +23,7 @@ export default function ProjectsPage() {
           <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
             Proyek Kami
           </h1>
-          <p className="mt-6 leading-8 text-cocoa/68">Studi kasus ruang yang telah kami rancang dan wujudkan bersama klien.</p>
+          <p className="mt-6 leading-8 text-cocoa/[0.68]">Studi kasus ruang yang telah kami rancang dan wujudkan bersama klien.</p>
         </div>
 
         {projects.length > 0 && (
@@ -54,7 +54,7 @@ export default function ProjectsPage() {
               <Link
                 key={project._id}
                 to={`/proyek/${project.slug}`}
-                className="group overflow-hidden rounded-[1.5rem] border border-oat/55 bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-500 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]"
+                className="group overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-500 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]"
               >
                 <div className="aspect-[4/3] overflow-hidden bg-oat">
                   {project.coverImage?.image?.asset?.url ? (
@@ -72,7 +72,7 @@ export default function ProjectsPage() {
                 <div className="p-6">
                   <p className="text-xs font-bold uppercase tracking-[0.15em] text-clay">{project.roomType}</p>
                   <h2 className="mt-2 font-display text-xl tracking-[-0.02em] text-cocoa">{project.title}</h2>
-                  {project.summary && <p className="mt-2 text-sm leading-6 text-cocoa/65">{project.summary}</p>}
+                  {project.summary && <p className="mt-2 text-sm leading-6 text-cocoa/[0.65]">{project.summary}</p>}
                 </div>
               </Link>
             ))}

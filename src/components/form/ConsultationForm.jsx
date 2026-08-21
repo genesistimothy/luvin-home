@@ -101,7 +101,7 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
       <div className="rounded-[1.5rem] border border-clay/30 bg-linen p-8 text-center">
         <CheckCircle2 className="mx-auto text-clay" size={40} />
         <h3 className="mt-4 font-display text-2xl text-cocoa">Permintaan Terkirim</h3>
-        <p className="mt-2 text-cocoa/68">Tim kami akan menghubungi Anda segera. Anda juga bisa langsung chat via WhatsApp.</p>
+        <p className="mt-2 text-cocoa/[0.68]">Tim kami akan menghubungi Anda segera. Anda juga bisa langsung chat via WhatsApp.</p>
         <a
           href={createWhatsAppLink(followUpMessage, whatsAppNumber)}
           target="_blank"
@@ -115,7 +115,7 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 rounded-[1.5rem] border border-oat/55 bg-cream p-6 sm:p-8" noValidate>
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-[1.5rem] border border-oat/[0.55] bg-cream p-6 sm:p-8" noValidate>
       <input
         type="text"
         name="company"
@@ -183,7 +183,7 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
       <FormField label="Foto Referensi (Opsional)" htmlFor="consult-file" error={fileError} hint="JPG, PNG, atau WebP. Maksimal 4 MB.">
         <label
           htmlFor="consult-file"
-          className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-oat/70 bg-white/50 px-4 py-3 text-sm text-cocoa/65 hover:border-clay/40"
+          className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-oat/70 bg-white/50 px-4 py-3 text-sm text-cocoa/[0.65] hover:border-clay/40"
         >
           <Paperclip size={16} />
           {file ? file.name : "Pilih gambar referensi"}

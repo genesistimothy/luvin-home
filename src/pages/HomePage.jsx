@@ -43,7 +43,7 @@ function SectionHeader({ kicker, title, description = "", align = "left" }) {
         {title}
       </h2>
       {description && (
-        <p className="mt-6 max-w-2xl text-[1.05rem] leading-8 text-cocoa/68 sm:text-lg">{description}</p>
+        <p className="mt-6 max-w-2xl text-[1.05rem] leading-8 text-cocoa/[0.68] sm:text-lg">{description}</p>
       )}
     </div>
   );
@@ -77,7 +77,7 @@ function Hero({ homepage }) {
           <h1 className="max-w-2xl font-display text-[2.8rem] leading-[0.98] tracking-[-0.035em] text-cream min-[390px]:text-5xl sm:text-6xl lg:text-[5.25rem]">
             {homepage.heroTitle}
           </h1>
-          <p className="mt-7 max-w-xl text-base leading-7 text-cream/82 sm:text-lg sm:leading-8">
+          <p className="mt-7 max-w-xl text-base leading-7 text-cream/[0.82] sm:text-lg sm:leading-8">
             {homepage.heroDescription}
           </p>
           <div className="mt-9">
@@ -112,7 +112,7 @@ function ValuesSection() {
             <p className="section-kicker">Our Mission</p>
             <ul className="mt-4 space-y-4">
               {mission.map((item) => (
-                <li key={item} className="flex gap-3 leading-7 text-cocoa/72">
+                <li key={item} className="flex gap-3 leading-7 text-cocoa/[0.72]">
                   <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-clay" aria-hidden="true" />
                   <span>{item}</span>
                 </li>
@@ -128,7 +128,7 @@ function ValuesSection() {
                 <HeartHandshake size={22} aria-hidden="true" />
               </span>
               <h3 className="mt-8 font-display text-[1.65rem] tracking-[-0.02em] text-cocoa">{item.title}</h3>
-              <p className="mt-4 leading-7 text-cocoa/68">{item.description}</p>
+              <p className="mt-4 leading-7 text-cocoa/[0.68]">{item.description}</p>
             </article>
           ))}
         </div>
@@ -156,7 +156,7 @@ function ContactCTA({ homepage, siteSettings, whatsAppLink }) {
           <h2 className="mt-5 max-w-2xl font-display text-[2.6rem] leading-[1.04] tracking-[-0.03em] sm:text-5xl lg:text-[3.8rem]">
             {homepage.contactTitle}
           </h2>
-          <p className="mt-5 max-w-xl text-lg leading-8 text-cream/78">{homepage.contactDescription}</p>
+          <p className="mt-5 max-w-xl text-lg leading-8 text-cream/[0.78]">{homepage.contactDescription}</p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:justify-end">
           <a
@@ -170,12 +170,12 @@ function ContactCTA({ homepage, siteSettings, whatsAppLink }) {
           <a
             href={siteSettings.instagramUrl}
             {...externalLinkProps}
-            className="premium-button inline-flex items-center justify-center gap-2 border border-cream/35 px-7 py-4 text-sm font-bold text-cream hover:border-cream/60 hover:bg-cream/10"
+            className="premium-button inline-flex items-center justify-center gap-2 border border-cream/[0.35] px-7 py-4 text-sm font-bold text-cream hover:border-cream/60 hover:bg-cream/10"
           >
             <Instagram size={18} />
             {homepage.contactSecondaryCtaLabel}
           </a>
-          <span className="inline-flex items-center justify-center rounded-full border border-cream/15 px-7 py-4 text-sm font-semibold text-cream/60">
+          <span className="inline-flex items-center justify-center rounded-full border border-cream/[0.15] px-7 py-4 text-sm font-semibold text-cream/60">
             Online Store Coming Soon
           </span>
         </div>

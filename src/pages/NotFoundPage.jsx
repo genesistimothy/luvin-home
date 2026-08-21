@@ -9,7 +9,7 @@ export default function NotFoundPage() {
         <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
           Halaman ini belum ada ruangnya.
         </h1>
-        <p className="mt-6 leading-8 text-cocoa/68">
+        <p className="mt-6 leading-8 text-cocoa/[0.68]">
           Halaman yang Anda cari tidak ditemukan. Mari kembali menjelajahi koleksi kami.
         </p>
         <Link

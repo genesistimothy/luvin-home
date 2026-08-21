@@ -54,7 +54,7 @@ function NavIconLink({ to, label, count, children }) {
     <Link
       to={to}
       aria-label={count > 0 ? `${label} (${count})` : label}
-      className="relative inline-grid h-11 w-11 place-items-center rounded-full border border-cocoa/20 text-cocoa transition duration-300 hover:border-cocoa/35 hover:bg-cocoa/5"
+      className="relative inline-grid h-11 w-11 place-items-center rounded-full border border-cocoa/20 text-cocoa transition duration-300 hover:border-cocoa/[0.35] hover:bg-cocoa/5"
     >
       {children}
       {count > 0 && (
@@ -115,15 +115,13 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b backdrop-blur-xl transition-all duration-500 ${isScrolled ? "border-cocoa/10 bg-cream/[0.94] shadow-[0_12px_40px_rgba(62,44,35,0.07)]" : "border-white/35 bg-cream/[0.88]"}`}
+      className={`fixed inset-x-0 top-0 z-50 border-b backdrop-blur-xl transition-all duration-500 ${isScrolled ? "border-cocoa/10 bg-cream/[0.94] shadow-[0_12px_40px_rgba(62,44,35,0.07)]" : "border-white/[0.35] bg-cream/[0.88]"}`}
     >
       <nav
         className={`mx-auto flex max-w-7xl items-center justify-between px-5 transition-all duration-500 sm:px-8 ${isScrolled ? "py-3" : "py-4"}`}
       >
         <Link to="/" className="flex min-w-0 items-center gap-3" aria-label="Luvin Home — beranda" onClick={closeMenu}>
-          <span className="grid h-10 w-10 place-items-center rounded-full bg-cocoa text-sm font-semibold text-cream">
-            LH
-          </span>
+          <img src="/luvin-logo-mark.svg" alt="" className="h-10 w-auto shrink-0" />
           <span className="min-w-0">
             <span className="block font-display text-xl text-cocoa">{siteSettings.brandName}</span>
             <span className="hidden text-xs uppercase tracking-[0.24em] text-umber/70 sm:block">
@@ -164,7 +162,7 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
           </a>
           <button
             type="button"
-            className="inline-grid h-11 w-11 place-items-center rounded-full border border-cocoa/20 text-cocoa transition duration-300 hover:border-cocoa/35 hover:bg-cocoa/5 lg:hidden"
+            className="inline-grid h-11 w-11 place-items-center rounded-full border border-cocoa/20 text-cocoa transition duration-300 hover:border-cocoa/[0.35] hover:bg-cocoa/5 lg:hidden"
             aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-navigation"

@@ -17,7 +17,7 @@ export default function AboutPage() {
                 {homepage.brandStoryTitle}
               </h1>
             </div>
-            <div className="max-w-2xl space-y-7 text-[1.05rem] leading-8 text-cocoa/72 sm:text-lg sm:leading-9">
+            <div className="max-w-2xl space-y-7 text-[1.05rem] leading-8 text-cocoa/[0.72] sm:text-lg sm:leading-9">
               {homepage.brandStoryParagraphs?.map((paragraph, index) => (
                 <p
                   key={`${index}-${paragraph}`}
@@ -43,7 +43,7 @@ export default function AboutPage() {
               {homepage.philosophyTitle}
             </h2>
             {homepage.philosophyDescription && (
-              <p className="mt-6 max-w-2xl text-[1.05rem] leading-8 text-cocoa/68 sm:text-lg">
+              <p className="mt-6 max-w-2xl text-[1.05rem] leading-8 text-cocoa/[0.68] sm:text-lg">
                 {homepage.philosophyDescription}
               </p>
             )}
@@ -55,7 +55,7 @@ export default function AboutPage() {
                   <HeartHandshake size={22} aria-hidden="true" />
                 </span>
                 <h3 className="mt-8 font-display text-[1.65rem] tracking-[-0.02em] text-cocoa">{item.title}</h3>
-                <p className="mt-4 leading-7 text-cocoa/68">{item.description}</p>
+                <p className="mt-4 leading-7 text-cocoa/[0.68]">{item.description}</p>
               </article>
             ))}
           </div>

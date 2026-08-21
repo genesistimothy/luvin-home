@@ -58,13 +58,13 @@ export default function ContactForm() {
       <div className="rounded-[1.5rem] border border-clay/30 bg-linen p-8 text-center">
         <CheckCircle2 className="mx-auto text-clay" size={40} />
         <h3 className="mt-4 font-display text-2xl text-cocoa">Pesan Terkirim</h3>
-        <p className="mt-2 text-cocoa/68">Terima kasih sudah menghubungi kami. Tim Luvin Home akan membalas secepatnya.</p>
+        <p className="mt-2 text-cocoa/[0.68]">Terima kasih sudah menghubungi kami. Tim Luvin Home akan membalas secepatnya.</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 rounded-[1.5rem] border border-oat/55 bg-cream p-6 sm:p-8" noValidate>
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-[1.5rem] border border-oat/[0.55] bg-cream p-6 sm:p-8" noValidate>
       <input
         type="text"
         name="company"

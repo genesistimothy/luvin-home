@@ -30,7 +30,7 @@ export default function BlogPage() {
               <Link
                 key={article._id}
                 to={`/blog/${article.slug}`}
-                className="group overflow-hidden rounded-[1.5rem] border border-oat/55 bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-500 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]"
+                className="group overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-500 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]"
               >
                 <div className="aspect-[16/10] overflow-hidden bg-oat">
                   {article.coverImage?.image?.asset?.url ? (
@@ -46,11 +46,11 @@ export default function BlogPage() {
                   )}
                 </div>
                 <div className="p-6">
-                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-cocoa/45">
+                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-cocoa/[0.45]">
                     {formatDate(article.publishedAt)}
                   </p>
                   <h2 className="mt-2 font-display text-xl tracking-[-0.02em] text-cocoa">{article.title}</h2>
-                  {article.excerpt && <p className="mt-2 text-sm leading-6 text-cocoa/65">{article.excerpt}</p>}
+                  {article.excerpt && <p className="mt-2 text-sm leading-6 text-cocoa/[0.65]">{article.excerpt}</p>}
                 </div>
               </Link>
             ))}

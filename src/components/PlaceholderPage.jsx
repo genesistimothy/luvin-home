@@ -10,7 +10,7 @@ export default function PlaceholderPage({ eyebrow = "Coming Soon", title, descri
           {title}
         </h1>
         {description && (
-          <p className="mt-6 max-w-2xl text-[1.05rem] leading-8 text-cocoa/68">{description}</p>
+          <p className="mt-6 max-w-2xl text-[1.05rem] leading-8 text-cocoa/[0.68]">{description}</p>
         )}
       </div>
     </section>
