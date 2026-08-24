@@ -72,7 +72,7 @@ export default function ProductsPage() {
         <Breadcrumb
           items={
             activeCategory
-              ? [{ label: "Home", to: "/" }, { label: "Products", to: "/produk" }, { label: activeCategory.name }]
+              ? [{ label: "Home", to: "/" }, { label: "Products", to: "/products" }, { label: activeCategory.name }]
               : [{ label: "Home", to: "/" }, { label: "Products" }]
           }
         />

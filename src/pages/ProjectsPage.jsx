@@ -53,7 +53,7 @@ export default function ProjectsPage() {
             {filtered.map((project) => (
               <Link
                 key={project._id}
-                to={`/proyek/${project.slug}`}
+                to={`/projects/${project.slug}`}
                 className="group overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-500 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]"
               >
                 <div className="aspect-[4/3] overflow-hidden bg-oat">

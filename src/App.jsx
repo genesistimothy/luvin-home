@@ -20,17 +20,17 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<HomePage />} />
-          <Route path="produk" element={<ProductsPage />} />
-          <Route path="produk/:slug" element={<ProductDetailPage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="products/:slug" element={<ProductDetailPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
           <Route path="compare" element={<ComparePage />} />
-          <Route path="layanan" element={<ServicesPage />} />
-          <Route path="layanan/:slug" element={<ServiceDetailPage />} />
-          <Route path="proyek" element={<ProjectsPage />} />
-          <Route path="proyek/:slug" element={<ProjectDetailPage />} />
+          <Route path="services" element={<ServicesPage />} />
+          <Route path="services/:slug" element={<ServiceDetailPage />} />
+          <Route path="projects" element={<ProjectsPage />} />
+          <Route path="projects/:slug" element={<ProjectDetailPage />} />
           <Route path="blog" element={<BlogPage />} />
           <Route path="blog/:slug" element={<BlogDetailPage />} />
-          <Route path="kontak" element={<ContactPage />} />
+          <Route path="contact" element={<ContactPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

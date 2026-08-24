@@ -36,7 +36,7 @@ export default function ProductDetailPage() {
           <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Product not found.</h1>
           <p className="mt-4 leading-7 text-cocoa/[0.68]">The product you&apos;re looking for may no longer be available.</p>
           <Link
-            to="/produk"
+            to="/products"
             className="premium-button mt-8 inline-flex items-center justify-center gap-2 bg-cocoa px-7 py-4 text-sm font-bold text-cream hover:bg-umber"
           >
             Back to Catalog <ArrowRight size={17} />
@@ -69,8 +69,8 @@ export default function ProductDetailPage() {
         <Breadcrumb
           items={[
             { label: "Home", to: "/" },
-            { label: "Products", to: "/produk" },
-            ...(product.collection ? [{ label: product.collection.name, to: `/produk?kategori=${product.collection.slug}` }] : []),
+            { label: "Products", to: "/products" },
+            ...(product.collection ? [{ label: product.collection.name, to: `/products?kategori=${product.collection.slug}` }] : []),
             { label: product.name },
           ]}
         />

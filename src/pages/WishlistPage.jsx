@@ -36,7 +36,7 @@ export default function WishlistPage() {
               pieces.
             </p>
             <Link
-              to="/produk"
+              to="/products"
               className="premium-button inline-flex items-center gap-2 bg-cocoa px-7 py-3.5 text-sm font-bold text-cream hover:bg-umber"
             >
               Browse Products

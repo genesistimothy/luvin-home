@@ -74,7 +74,7 @@ export default function ComparePage() {
                           )}
                         </div>
                         <Link
-                          to={`/produk/${productSlug(product)}`}
+                          to={`/products/${productSlug(product)}`}
                           className="mt-3 block font-display text-lg font-normal normal-case tracking-normal text-cocoa hover:text-clay"
                         >
                           {product.name}
@@ -109,7 +109,7 @@ export default function ComparePage() {
                 : "Choose 2–3 products from the catalog to compare their specifications side by side."}
             </p>
             <Link
-              to="/produk"
+              to="/products"
               className="premium-button inline-flex items-center gap-2 bg-cocoa px-7 py-3.5 text-sm font-bold text-cream hover:bg-umber"
             >
               Browse Products

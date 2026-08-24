@@ -76,7 +76,7 @@ function Hero({ homepage }) {
           </p>
           <div className="mt-9">
             <a
-              href={homepage.heroPrimaryCtaTarget || "/produk"}
+              href={homepage.heroPrimaryCtaTarget || "/products"}
               className="premium-button inline-flex items-center justify-center gap-2 bg-cream px-7 py-4 text-sm font-bold text-cocoa hover:bg-linen"
             >
               {homepage.heroPrimaryCtaLabel}

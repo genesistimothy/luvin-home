@@ -28,7 +28,7 @@ export default function ServicesPage() {
           {services.map((service) => (
             <Link
               key={service.slug}
-              to={`/layanan/${service.slug}`}
+              to={`/services/${service.slug}`}
               className="group flex flex-col justify-between rounded-[1.5rem] border border-oat/[0.55] bg-linen/60 p-8 transition duration-500 hover:-translate-y-1 hover:border-clay/40 hover:bg-white/[0.85] hover:shadow-[0_28px_70px_rgba(62,44,35,0.1)]"
             >
               <div>

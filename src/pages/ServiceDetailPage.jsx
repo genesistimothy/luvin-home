@@ -24,7 +24,7 @@ export default function ServiceDetailPage() {
           <p className="section-kicker">404</p>
           <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Service not found.</h1>
           <Link
-            to="/layanan"
+            to="/services"
             className="premium-button mt-8 inline-flex items-center justify-center gap-2 bg-cocoa px-7 py-4 text-sm font-bold text-cream hover:bg-umber"
           >
             Back to Services <ArrowRight size={17} />
@@ -37,7 +37,7 @@ export default function ServiceDetailPage() {
   return (
     <section className="section-shell bg-cream pt-32">
       <div className="mx-auto max-w-6xl">
-        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Services", to: "/layanan" }, { label: service.name }]} />
+        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Services", to: "/services" }, { label: service.name }]} />
 
         <div className="mt-6 max-w-2xl">
           <p className="section-kicker">Services</p>

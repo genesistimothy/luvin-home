@@ -12,7 +12,7 @@ export const fallbackContent = {
     heroDescription: 'We create timeless, comfortable pieces for the rooms where life unfolds—and the homes people love coming back to.',
     heroImage: {url: '/hero-living-room.jpg', altText: 'Warm modern living room with Luvin Home furniture'},
     heroPrimaryCtaLabel: 'Explore the Collection',
-    heroPrimaryCtaTarget: '/produk',
+    heroPrimaryCtaTarget: '/products',
     heroSecondaryCtaLabel: 'Discover Our Story',
     heroSecondaryCtaTarget: '#about',
     faqEyebrow: 'FAQ',

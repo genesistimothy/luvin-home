@@ -90,24 +90,24 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
   const closeMenu = () => setIsMenuOpen(false);
 
   const productItems = [
-    { to: "/produk", label: "All Products" },
+    { to: "/products", label: "All Products" },
     ...collections.map((collection) => ({
-      to: `/produk?kategori=${collection.slug || slugify(collection.name)}`,
+      to: `/products?kategori=${collection.slug || slugify(collection.name)}`,
       label: collection.name,
     })),
   ];
 
   const serviceItems = [
-    { to: "/layanan", label: "All Services" },
-    ...serviceLinks.map((service) => ({ to: `/layanan/${service.slug}`, label: service.name })),
+    { to: "/services", label: "All Services" },
+    ...serviceLinks.map((service) => ({ to: `/services/${service.slug}`, label: service.name })),
   ];
 
   const mobileLinks = [
-    ["Products", "/produk"],
-    ["Services", "/layanan"],
-    ["Projects", "/proyek"],
+    ["Products", "/products"],
+    ["Services", "/services"],
+    ["Projects", "/projects"],
     ["Blog", "/blog"],
-    ["Contact Us", "/kontak"],
+    ["Contact Us", "/contact"],
     [`Wishlist${wishlist.length ? ` (${wishlist.length})` : ""}`, "/wishlist"],
     [`Compare${compareIds.length ? ` (${compareIds.length})` : ""}`, "/compare"],
   ];
@@ -131,13 +131,13 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
         <div className="hidden items-center gap-8 text-[0.82rem] font-semibold tracking-[0.02em] lg:flex">
           <NavDropdown label="Products" items={productItems} />
           <NavDropdown label="Services" items={serviceItems} />
-          <NavLink to="/proyek" className={navLinkClass}>
+          <NavLink to="/projects" className={navLinkClass}>
             Projects
           </NavLink>
           <NavLink to="/blog" className={navLinkClass}>
             Blog
           </NavLink>
-          <NavLink to="/kontak" className={navLinkClass}>
+          <NavLink to="/contact" className={navLinkClass}>
             Contact Us
           </NavLink>
         </div>

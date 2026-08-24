@@ -52,7 +52,7 @@ export default function CatalogProductCard({ product }) {
         <div className="mt-auto flex items-center justify-between gap-4 pt-6">
           <p className="font-display text-xl tracking-[-0.02em] text-cocoa">{formatPrice(product.price, product.currency)}</p>
           <Link
-            to={`/produk/${slug}`}
+            to={`/products/${slug}`}
             className="premium-button inline-flex items-center gap-1.5 bg-cocoa px-4 py-2.5 text-xs font-semibold text-cream hover:bg-clay"
           >
             Detail <ArrowRight size={14} aria-hidden="true" />
