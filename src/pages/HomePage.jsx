@@ -1,13 +1,7 @@
 import { useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
-import { ArrowRight, HeartHandshake, Instagram, MessageCircle, Sparkles } from "lucide-react";
-import { createWhatsAppLink } from "../config/contact";
+import { ArrowRight, HeartHandshake, Sparkles } from "lucide-react";
 import { philosophy, vision, mission } from "../data/products";
-
-const externalLinkProps = {
-  target: "_blank",
-  rel: "noopener noreferrer",
-};
 
 function useScrollReveal(content) {
   useEffect(() => {
@@ -146,48 +140,9 @@ function ValuesSection() {
   );
 }
 
-function ContactCTA({ homepage, siteSettings, whatsAppLink }) {
-  return (
-    <section id="contact" className="section-shell relative overflow-hidden bg-cocoa text-cream">
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_80%_50%,rgba(184,111,77,0.2),transparent_65%)]" />
-      <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-        <div className="fade-up">
-          <p className="text-sm font-semibold uppercase tracking-[0.26em] text-oat">{homepage.contactEyebrow}</p>
-          <h2 className="mt-5 max-w-2xl font-display text-[2.6rem] leading-[1.04] tracking-[-0.03em] sm:text-5xl lg:text-[3.8rem]">
-            {homepage.contactTitle}
-          </h2>
-          <p className="mt-5 max-w-xl text-lg leading-8 text-cream/[0.78]">{homepage.contactDescription}</p>
-        </div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:justify-end">
-          <a
-            href={whatsAppLink}
-            {...externalLinkProps}
-            className="premium-button inline-flex items-center justify-center gap-2 bg-cream px-7 py-4 text-sm font-bold text-cocoa hover:bg-linen"
-          >
-            <MessageCircle size={18} />
-            {homepage.contactPrimaryCtaLabel}
-          </a>
-          <a
-            href={siteSettings.instagramUrl}
-            {...externalLinkProps}
-            className="premium-button inline-flex items-center justify-center gap-2 border border-cream/[0.35] px-7 py-4 text-sm font-bold text-cream hover:border-cream/60 hover:bg-cream/10"
-          >
-            <Instagram size={18} />
-            {homepage.contactSecondaryCtaLabel}
-          </a>
-          <span className="inline-flex items-center justify-center rounded-full border border-cream/[0.15] px-7 py-4 text-sm font-semibold text-cream/60">
-            Online Store Coming Soon
-          </span>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export default function HomePage() {
   const content = /** @type {any} */ (useOutletContext());
-  const { homepage, siteSettings } = content;
-  const whatsAppLink = createWhatsAppLink(siteSettings.defaultWhatsAppMessage, siteSettings.whatsAppNumber);
+  const { homepage } = content;
 
   useScrollReveal(content);
 
@@ -195,7 +150,6 @@ export default function HomePage() {
     <>
       <Hero homepage={homepage} />
       <ValuesSection />
-      <ContactCTA homepage={homepage} siteSettings={siteSettings} whatsAppLink={whatsAppLink} />
     </>
   );
 }

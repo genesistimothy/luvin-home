@@ -4,7 +4,7 @@ export default function Footer({ siteSettings, whatsAppLink }) {
   const socialLinks = getSocialLinks({ whatsAppLink, instagramUrl: siteSettings.instagramUrl });
 
   return (
-    <footer className="text-cream/[0.68] bg-[#2a1d18] px-5 py-16 sm:px-8 lg:py-20">
+    <footer className="text-cream/[0.68] bg-[#2a1d18] px-5 py-20 sm:px-8 lg:py-24">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col items-center gap-5 text-center">
           <img src="/luvin-logo-mark.svg" alt="" className="h-12 w-auto" />

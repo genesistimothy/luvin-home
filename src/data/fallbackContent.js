@@ -33,11 +33,6 @@ export const fallbackContent = {
     intelligenceTitle: 'A thoughtful eye for your space.',
     intelligenceDescription: 'Luvin Intelligence will help you find pieces that feel true to your room, your rituals, and the way you live—guided by proportion, palette, and what matters most to you.',
     intelligenceCtaLabel: 'Keep Me Informed',
-    contactEyebrow: 'A Personal Invitation',
-    contactTitle: 'Let the room become yours.',
-    contactDescription: 'Tell us how you live and what you hope your space might become. We’ll help you find pieces that feel naturally at home.',
-    contactPrimaryCtaLabel: 'Begin a Conversation',
-    contactSecondaryCtaLabel: 'Instagram',
   },
   siteSettings: {
     brandName: 'Luvin Home',

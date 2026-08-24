@@ -6,8 +6,7 @@ export const cmsContentQuery = `{
     brandStoryEyebrow, brandStoryTitle, brandStoryParagraphs,
     philosophyEyebrow, philosophyTitle, philosophyDescription,
     faqEyebrow, faqTitle,
-    intelligenceEyebrow, intelligenceTitle, intelligenceDescription, intelligenceCtaLabel,
-    contactEyebrow, contactTitle, contactDescription, contactPrimaryCtaLabel, contactSecondaryCtaLabel
+    intelligenceEyebrow, intelligenceTitle, intelligenceDescription, intelligenceCtaLabel
   },
   "siteSettings": *[_id == "siteSettings"][0]{
     brandName, brandPromise, whatsAppNumber, defaultWhatsAppMessage,
