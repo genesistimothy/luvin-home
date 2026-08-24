@@ -26,7 +26,7 @@ export default function Footer({ siteSettings, whatsAppLink }) {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-cream/10 pt-5 text-center text-xs text-cream/40">
+        <div className="mt-5 border-t border-cream/10 pt-2.5 text-center text-xs text-cream/40">
           © {new Date().getFullYear()} {siteSettings.brandName}. All rights reserved.
         </div>
       </div>
