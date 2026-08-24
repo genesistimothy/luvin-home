@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
-import { ArrowRight, HeartHandshake, Sparkles } from "lucide-react";
-import { philosophy, vision, mission } from "../data/products";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { vision, mission } from "../data/products";
 
 function useScrollReveal(content) {
   useEffect(() => {
@@ -113,18 +113,6 @@ function ValuesSection() {
               ))}
             </ul>
           </div>
-        </div>
-
-        <div className="mt-16 grid gap-5 md:grid-cols-3 lg:mt-20">
-          {philosophy.map((item) => (
-            <article key={item.title} className="premium-card fade-up p-7 sm:p-8">
-              <span className="inline-grid h-11 w-11 place-items-center rounded-full bg-clay/10 text-clay">
-                <HeartHandshake size={22} aria-hidden="true" />
-              </span>
-              <h3 className="mt-8 font-display text-[1.65rem] tracking-[-0.02em] text-cocoa">{item.title}</h3>
-              <p className="mt-4 leading-7 text-cocoa/[0.68]">{item.description}</p>
-            </article>
-          ))}
         </div>
       </div>
     </section>
