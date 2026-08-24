@@ -1,7 +1,6 @@
 import { useEffect } from "react";
-import { Link, useOutletContext } from "react-router-dom";
-import { ArrowRight, HeartHandshake, Sparkles } from "lucide-react";
-import { philosophy, vision, mission } from "../data/products";
+import { useOutletContext } from "react-router-dom";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 function useScrollReveal(content) {
   useEffect(() => {
@@ -27,20 +26,6 @@ function useScrollReveal(content) {
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, [content]);
-}
-
-function SectionHeader({ kicker, title, description = "", align = "left" }) {
-  return (
-    <div className={align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}>
-      {kicker && <p className="section-kicker">{kicker}</p>}
-      <h2 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl lg:text-[3.4rem]">
-        {title}
-      </h2>
-      {description && (
-        <p className="mt-6 max-w-2xl text-[1.05rem] leading-8 text-cocoa/[0.68] sm:text-lg">{description}</p>
-      )}
-    </div>
-  );
 }
 
 function Hero({ homepage }) {
@@ -89,67 +74,11 @@ function Hero({ homepage }) {
   );
 }
 
-function ValuesSection() {
-  return (
-    <section id="values" className="section-shell bg-linen">
-      <div className="mx-auto max-w-7xl">
-        <SectionHeader kicker="Who We Are" title="What we stand for." />
-
-        <div className="mt-14 grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="fade-up">
-            <p className="section-kicker">Our Vision</p>
-            <p className="mt-4 font-display text-2xl leading-snug tracking-[-0.01em] text-cocoa sm:text-[1.75rem]">
-              {vision}
-            </p>
-          </div>
-          <div className="fade-up">
-            <p className="section-kicker">Our Mission</p>
-            <ul className="mt-4 space-y-4">
-              {mission.map((item) => (
-                <li key={item} className="flex gap-3 leading-7 text-cocoa/[0.72]">
-                  <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-clay" aria-hidden="true" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-16 grid gap-5 md:grid-cols-3 lg:mt-20">
-          {philosophy.map((item) => (
-            <article key={item.title} className="premium-card fade-up p-7 sm:p-8">
-              <span className="inline-grid h-11 w-11 place-items-center rounded-full bg-clay/10 text-clay">
-                <HeartHandshake size={22} aria-hidden="true" />
-              </span>
-              <h3 className="mt-8 font-display text-[1.65rem] tracking-[-0.02em] text-cocoa">{item.title}</h3>
-              <p className="mt-4 leading-7 text-cocoa/[0.68]">{item.description}</p>
-            </article>
-          ))}
-        </div>
-
-        <div className="mt-12 text-center">
-          <Link
-            to="/tentang-kami"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-clay transition hover:text-umber"
-          >
-            Read our story <ArrowRight size={15} />
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export default function HomePage() {
   const content = /** @type {any} */ (useOutletContext());
   const { homepage } = content;
 
   useScrollReveal(content);
 
-  return (
-    <>
-      <Hero homepage={homepage} />
-      <ValuesSection />
-    </>
-  );
+  return <Hero homepage={homepage} />;
 }

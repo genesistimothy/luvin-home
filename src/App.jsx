@@ -9,7 +9,6 @@ import ServicesPage from "./pages/ServicesPage";
 import ServiceDetailPage from "./pages/ServiceDetailPage";
 import ProjectsPage from "./pages/ProjectsPage";
 import ProjectDetailPage from "./pages/ProjectDetailPage";
-import AboutPage from "./pages/AboutPage";
 import BlogPage from "./pages/BlogPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
 import ContactPage from "./pages/ContactPage";
@@ -29,7 +28,6 @@ export default function App() {
           <Route path="layanan/:slug" element={<ServiceDetailPage />} />
           <Route path="proyek" element={<ProjectsPage />} />
           <Route path="proyek/:slug" element={<ProjectDetailPage />} />
-          <Route path="tentang-kami" element={<AboutPage />} />
           <Route path="blog" element={<BlogPage />} />
           <Route path="blog/:slug" element={<BlogDetailPage />} />
           <Route path="kontak" element={<ContactPage />} />

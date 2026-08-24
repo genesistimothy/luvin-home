@@ -27,11 +27,11 @@ export default function ContactPage() {
   return (
     <section className="section-shell bg-cream pt-32">
       <div className="mx-auto max-w-6xl">
-        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Contact" }]} />
+        <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Contact Us" }]} />
         <div className="mt-6 max-w-2xl">
           <p className="section-kicker">Contact</p>
           <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">
-            Let&apos;s Talk About Your Space
+            Contact Us
           </h1>
         </div>
 

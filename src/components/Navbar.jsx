@@ -107,8 +107,7 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
     ["Services", "/layanan"],
     ["Projects", "/proyek"],
     ["Blog", "/blog"],
-    ["About Us", "/tentang-kami"],
-    ["Contact", "/kontak"],
+    ["Contact Us", "/kontak"],
     [`Wishlist${wishlist.length ? ` (${wishlist.length})` : ""}`, "/wishlist"],
     [`Compare${compareIds.length ? ` (${compareIds.length})` : ""}`, "/compare"],
   ];
@@ -138,11 +137,8 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
           <NavLink to="/blog" className={navLinkClass}>
             Blog
           </NavLink>
-          <NavLink to="/tentang-kami" className={navLinkClass}>
-            About Us
-          </NavLink>
           <NavLink to="/kontak" className={navLinkClass}>
-            Contact
+            Contact Us
           </NavLink>
         </div>
         <div className="flex items-center gap-2">

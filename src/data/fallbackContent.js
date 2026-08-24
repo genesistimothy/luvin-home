@@ -1,7 +1,6 @@
 import {
   collections,
   faqs,
-  philosophy,
   products,
 } from './products'
 import {INSTAGRAM_LINK, WHATSAPP_NUMBER} from '../config/contact'
@@ -16,17 +15,6 @@ export const fallbackContent = {
     heroPrimaryCtaTarget: '/produk',
     heroSecondaryCtaLabel: 'Discover Our Story',
     heroSecondaryCtaTarget: '#about',
-    brandStoryEyebrow: 'Our Story',
-    brandStoryTitle: 'The beauty of coming home.',
-    brandStoryParagraphs: [
-      'A home is shaped slowly—in morning light, familiar rituals, and conversations that linger.',
-      'We design furniture to belong to these moments. Each piece balances quiet beauty with genuine comfort, made to feel natural from the very first day.',
-      'Because a room should hold more than furniture.',
-      'It should hold the story of your life.',
-    ],
-    philosophyEyebrow: 'Our Philosophy',
-    philosophyTitle: 'A quieter way of living.',
-    philosophyDescription: 'We believe good design feels instinctive: beautiful without being precious, comfortable without compromise, and made to remain.',
     faqEyebrow: 'FAQ',
     faqTitle: 'A few things to know.',
     intelligenceEyebrow: 'Coming Soon',
@@ -48,5 +36,4 @@ export const fallbackContent = {
   collections,
   products,
   faqs,
-  philosophy,
 }

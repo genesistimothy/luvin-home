@@ -126,33 +126,6 @@ export const materialDescriptions = {
     "Textured fabric surface that adds warmth, softness, and a refined living room feel.",
 };
 
-export const philosophy = [
-  {
-    title: "Comfort",
-    description:
-      "Comfort is not an addition. It is where every Luvin piece begins—a softness you notice and an ease that stays.",
-  },
-  {
-    title: "Simplicity",
-    description:
-      "Nothing unnecessary. Just considered proportions, calm materials, and forms that feel relevant beyond the season.",
-  },
-  {
-    title: "Togetherness",
-    description:
-      "The best rooms make space for connection. We design for the conversations, pauses, and rituals that happen there.",
-  },
-];
-
-export const vision =
-  "To become the quiet, lasting presence in every home we help shape — furniture that feels less like a purchase, and more like it always belonged.";
-
-export const mission = [
-  "Choosing honest materials and considered proportions over passing trends.",
-  "Guiding every step, from first conversation to the moment a piece settles into your space.",
-  "Designing pieces meant to be lived with for years, not seasons.",
-];
-
 export const faqs = [
   {
     question: "When will my piece arrive?",

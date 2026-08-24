@@ -3,8 +3,6 @@ export const cmsContentQuery = `{
     heroEyebrow, heroTitle, heroDescription,
     heroImage{altText, caption, image{asset->{_id, url}, crop, hotspot}},
     heroPrimaryCtaLabel, heroPrimaryCtaTarget, heroSecondaryCtaLabel, heroSecondaryCtaTarget,
-    brandStoryEyebrow, brandStoryTitle, brandStoryParagraphs,
-    philosophyEyebrow, philosophyTitle, philosophyDescription,
     faqEyebrow, faqTitle,
     intelligenceEyebrow, intelligenceTitle, intelligenceDescription, intelligenceCtaLabel
   },
