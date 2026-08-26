@@ -1,12 +1,96 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useOutletContext, useParams } from "react-router-dom";
-import { ArrowRight, Check, Heart, MessageCircle, Scale } from "lucide-react";
+import { ArrowRight, Check, ChevronLeft, ChevronRight, Heart, Maximize2, MessageCircle, Scale, X } from "lucide-react";
 import Breadcrumb from "../components/Breadcrumb";
 import ProductVisualPlaceholder from "../components/ProductVisualPlaceholder";
 import { createWhatsAppLink } from "../config/contact";
 import { formatPrice } from "../lib/format";
 import { productSlug } from "../lib/slug";
 import { useSavedProducts } from "../context/SavedProductsContext";
+
+function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+      if (event.key === "ArrowRight") onNavigate((activeIndex + 1) % images.length);
+      if (event.key === "ArrowLeft") onNavigate((activeIndex - 1 + images.length) % images.length);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    const { overflow } = document.body.style;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = overflow;
+    };
+  }, [activeIndex, images.length, onClose, onNavigate]);
+
+  const image = images[activeIndex];
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={image?.altText || "Product image"}
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-cocoa/95 p-5 backdrop-blur-sm"
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        tabIndex={-1}
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full cursor-default"
+      />
+
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close image viewer"
+        className="absolute right-5 top-5 inline-grid h-11 w-11 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10"
+      >
+        <X size={20} />
+      </button>
+
+      {images.length > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onNavigate((activeIndex - 1 + images.length) % images.length);
+            }}
+            aria-label="Previous image"
+            className="absolute left-3 top-1/2 inline-grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10 sm:left-6"
+          >
+            <ChevronLeft size={22} />
+          </button>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onNavigate((activeIndex + 1) % images.length);
+            }}
+            aria-label="Next image"
+            className="absolute right-3 top-1/2 inline-grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10 sm:right-6"
+          >
+            <ChevronRight size={22} />
+          </button>
+        </>
+      )}
+
+      <img
+        src={image?.url}
+        alt={image?.altText || ""}
+        className="max-h-[85vh] max-w-[90vw] rounded-lg object-contain"
+      />
+
+      {images.length > 1 && (
+        <p className="absolute bottom-5 left-1/2 -translate-x-1/2 text-sm font-semibold text-cream/70">
+          {activeIndex + 1} / {images.length}
+        </p>
+      )}
+    </div>
+  );
+}
 
 function buildSpecs(product) {
   if (product.specifications?.length) return product.specifications;
@@ -24,6 +108,7 @@ export default function ProductDetailPage() {
   const { slug } = useParams();
   const { products, siteSettings } = /** @type {any} */ (useOutletContext());
   const [activeImage, setActiveImage] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const { isWishlisted, toggleWishlist, isCompared, toggleCompare, compareFull } = useSavedProducts();
 
   const product = useMemo(() => products.find((item) => productSlug(item) === slug), [products, slug]);
@@ -79,13 +164,22 @@ export default function ProductDetailPage() {
           <div>
             {images.length > 0 ? (
               <>
-                <div className="aspect-[16/10] overflow-hidden rounded-[1.5rem] bg-oat">
+                <button
+                  type="button"
+                  onClick={() => setIsLightboxOpen(true)}
+                  aria-label="View larger image"
+                  className="group relative block aspect-[16/10] w-full cursor-pointer overflow-hidden rounded-[1.5rem] bg-oat"
+                >
                   <img
                     src={images[activeImage]?.url}
                     alt={images[activeImage]?.altText || product.name}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                   />
-                </div>
+                  <span className="absolute inset-0 bg-cocoa/0 transition group-hover:bg-cocoa/10" />
+                  <span className="absolute right-4 top-4 inline-grid h-10 w-10 place-items-center rounded-full bg-cream/90 text-cocoa opacity-0 shadow-sm backdrop-blur-md transition group-hover:opacity-100">
+                    <Maximize2 size={16} />
+                  </span>
+                </button>
                 {images.length > 1 && (
                   <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
                     {images.map((image, index) => (
@@ -109,6 +203,15 @@ export default function ProductDetailPage() {
               </div>
             )}
           </div>
+
+          {isLightboxOpen && images.length > 0 && (
+            <ImageLightbox
+              images={images}
+              activeIndex={activeImage}
+              onClose={() => setIsLightboxOpen(false)}
+              onNavigate={setActiveImage}
+            />
+          )}
 
           <div>
             <p className="section-kicker">{product.category}</p>
