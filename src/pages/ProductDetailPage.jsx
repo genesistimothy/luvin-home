@@ -173,7 +173,7 @@ export default function ProductDetailPage() {
                   <img
                     src={images[activeImage]?.url}
                     alt={images[activeImage]?.altText || product.name}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                    className="media-zoom-sm h-full w-full object-cover"
                   />
                   <span className="absolute inset-0 bg-cocoa/0 transition group-hover:bg-cocoa/10" />
                   <span className="absolute right-4 top-4 inline-grid h-10 w-10 place-items-center rounded-full bg-cream/90 text-cocoa opacity-0 shadow-sm backdrop-blur-md transition group-hover:opacity-100">

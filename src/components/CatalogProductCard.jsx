@@ -24,7 +24,7 @@ export default function CatalogProductCard({ product }) {
               alt={product.mainImage?.altText || product.name}
               loading="lazy"
               decoding="async"
-              className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
+              className="media-zoom h-full w-full object-cover"
             />
             <div className="absolute left-5 top-5 rounded-full border border-white/40 bg-cream/[0.85] px-3.5 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.08em] text-cocoa backdrop-blur-md">
               {product.category}

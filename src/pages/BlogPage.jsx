@@ -37,7 +37,7 @@ export default function BlogPage() {
                     <img
                       src={article.coverImage.image.asset.url}
                       alt={article.coverImage.altText || article.title}
-                      className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
+                      className="media-zoom h-full w-full object-cover"
                     />
                   ) : (
                     <div className="grid h-full place-items-center text-cocoa/25">

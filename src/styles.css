@@ -92,6 +92,41 @@ section[id] {
   }
 }
 
+/* Card image zoom. Written as a class because Tailwind's
+   hoverOnlyWhenSupported does not gate `group-hover:` — a tap would leave the
+   image stuck at its zoomed scale. */
+.media-zoom,
+.media-zoom-sm {
+  transition: transform 300ms ease-out;
+}
+
+.placeholder-lift {
+  transition: transform 300ms ease-out;
+  transform: translate(-50%, -50%);
+}
+
+.placeholder-base {
+  transition: background-color 300ms ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .media-zoom {
+    transform: scale(1.04);
+  }
+
+  .group:hover .media-zoom-sm {
+    transform: scale(1.03);
+  }
+
+  .group:hover .placeholder-lift {
+    transform: translate(-50%, -54%) scale(1.04);
+  }
+
+  .group:hover .placeholder-base {
+    background-color: #dbc5aa;
+  }
+}
+
 @keyframes hero-settle {
   from {
     transform: scale(1.045);
