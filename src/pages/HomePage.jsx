@@ -63,7 +63,7 @@ function Hero({ homepage }) {
       <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-cocoa/90 via-cocoa/30 to-transparent" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_35%,transparent_0%,rgba(28,18,14,0.14)_76%)]" />
       <div className="relative mx-auto flex min-h-[100svh] max-w-7xl items-end px-5 pb-14 pt-32 sm:px-8 sm:pb-20 lg:min-h-[min(960px,100svh)] lg:pb-24">
-        <div className="fade-up max-w-3xl">
+        <div className="max-w-3xl">
           <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-cream/30 bg-cocoa/10 px-4 py-2 text-xs font-semibold tracking-[0.04em] backdrop-blur-md sm:text-sm">
             <Sparkles size={16} />
             {homepage.heroEyebrow}
@@ -102,7 +102,7 @@ function ValuesSection() {
               {vision}
             </p>
           </div>
-          <div className="fade-up">
+          <div className="fade-up fade-up-delay">
             <p className="section-kicker">Our Mission</p>
             <ul className="mt-4 space-y-4">
               {mission.map((item) => (

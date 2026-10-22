@@ -54,7 +54,7 @@ export default function ProjectsPage() {
               <Link
                 key={project._id}
                 to={`/projects/${project.slug}`}
-                className="group overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-200 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]"
+                className="group overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition-[transform,border-color] duration-200 ease-[var(--ease-premium)] motion-safe:hover:-translate-y-1.5 hover:border-clay/30"
               >
                 <div className="aspect-[4/3] overflow-hidden bg-oat">
                   {project.coverImage?.image?.asset?.url ? (

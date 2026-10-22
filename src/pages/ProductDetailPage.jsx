@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { ArrowRight, Check, ChevronLeft, ChevronRight, Heart, Maximize2, MessageCircle, Scale, X } from "lucide-react";
 import Breadcrumb from "../components/Breadcrumb";
@@ -9,9 +9,22 @@ import { productSlug } from "../lib/slug";
 import { useSavedProducts } from "../context/SavedProductsContext";
 
 function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
+  const [isClosing, setIsClosing] = useState(false);
+  const closingRef = useRef(false);
+  const closeTimer = useRef(null);
+
+  const requestClose = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    setIsClosing(true);
+    closeTimer.current = window.setTimeout(onClose, 200);
+  }, [onClose]);
+
+  useEffect(() => () => window.clearTimeout(closeTimer.current), []);
+
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") requestClose();
       if (event.key === "ArrowRight") onNavigate((activeIndex + 1) % images.length);
       if (event.key === "ArrowLeft") onNavigate((activeIndex - 1 + images.length) % images.length);
     };
@@ -22,7 +35,7 @@ function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = overflow;
     };
-  }, [activeIndex, images.length, onClose, onNavigate]);
+  }, [activeIndex, images.length, onNavigate, requestClose]);
 
   const image = images[activeIndex];
 
@@ -31,11 +44,11 @@ function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
       role="dialog"
       aria-modal="true"
       aria-label={image?.altText || "Product image"}
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-cocoa/95 p-5 backdrop-blur-sm"
+      className={`lightbox fixed inset-0 z-[70] flex items-center justify-center bg-cocoa/95 p-5 backdrop-blur-sm ${isClosing ? "is-closing" : ""}`}
     >
       <button
         type="button"
-        onClick={onClose}
+        onClick={requestClose}
         tabIndex={-1}
         aria-hidden="true"
         className="absolute inset-0 h-full w-full cursor-default"
@@ -43,9 +56,9 @@ function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
 
       <button
         type="button"
-        onClick={onClose}
+        onClick={requestClose}
         aria-label="Close image viewer"
-        className="absolute right-5 top-5 inline-grid h-11 w-11 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10"
+        className="absolute right-5 top-5 inline-grid h-11 w-11 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10 motion-safe:active:scale-95"
       >
         <X size={20} />
       </button>
@@ -59,7 +72,7 @@ function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
               onNavigate((activeIndex - 1 + images.length) % images.length);
             }}
             aria-label="Previous image"
-            className="absolute left-3 top-1/2 inline-grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10 sm:left-6"
+            className="absolute left-3 top-1/2 inline-grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10 motion-safe:active:scale-95 sm:left-6"
           >
             <ChevronLeft size={22} />
           </button>
@@ -70,7 +83,7 @@ function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
               onNavigate((activeIndex + 1) % images.length);
             }}
             aria-label="Next image"
-            className="absolute right-3 top-1/2 inline-grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10 sm:right-6"
+            className="absolute right-3 top-1/2 inline-grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10 motion-safe:active:scale-95 sm:right-6"
           >
             <ChevronRight size={22} />
           </button>
@@ -175,8 +188,8 @@ export default function ProductDetailPage() {
                     alt={images[activeImage]?.altText || product.name}
                     className="media-zoom-sm h-full w-full object-cover"
                   />
-                  <span className="absolute inset-0 bg-cocoa/0 transition group-hover:bg-cocoa/10" />
-                  <span className="absolute right-4 top-4 inline-grid h-10 w-10 place-items-center rounded-full bg-cream/90 text-cocoa opacity-0 shadow-sm backdrop-blur-md transition group-hover:opacity-100">
+                  <span className="absolute inset-0 bg-cocoa/0 transition-colors duration-200 group-hover:bg-cocoa/10" />
+                  <span className="absolute right-4 top-4 inline-grid h-10 w-10 place-items-center rounded-full bg-cream/90 text-cocoa opacity-0 shadow-sm backdrop-blur-md transition-opacity duration-200 group-hover:opacity-100">
                     <Maximize2 size={16} />
                   </span>
                 </button>

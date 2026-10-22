@@ -86,11 +86,6 @@ section[id] {
     transition-timing-function: var(--ease-premium);
   }
 
-  /* The only press feedback on a touch device, since :hover is gated. */
-  .premium-button:active {
-    transform: scale(0.97);
-  }
-
   /* Hover motion is gated: a touch tap fires a false :hover that sticks. */
   @media (hover: hover) and (pointer: fine) {
     .premium-button:hover {
@@ -98,46 +93,47 @@ section[id] {
     }
   }
 
-  .premium-card {
-    @apply rounded-[1.5rem] border border-oat/[0.55] bg-linen/[0.65] shadow-[0_20px_60px_rgba(62,44,35,0.06)] transition duration-200;
-    transition-timing-function: var(--ease-premium);
+  /* After :hover so pressing beats the hover lift. */
+  .premium-button:active {
+    transform: scale(0.97);
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    .premium-card:hover {
-      @apply -translate-y-1 border-clay/30 bg-white shadow-[0_28px_70px_rgba(62,44,35,0.1)];
-    }
+  .premium-card {
+    @apply rounded-[1.5rem] border border-oat/[0.55] bg-linen/[0.65] shadow-[0_20px_60px_rgba(62,44,35,0.06)];
   }
 
   .fade-up {
     opacity: 0;
-    transform: translateY(1.75rem);
+    transform: translateY(1rem);
     transition:
-      opacity 800ms var(--ease-premium),
-      transform 800ms var(--ease-premium);
+      opacity 500ms var(--ease-premium),
+      transform 500ms var(--ease-premium);
   }
 
   .fade-up.is-visible {
     opacity: 1;
     transform: translateY(0);
   }
+
+  .fade-up-delay {
+    transition-delay: 60ms;
+  }
 }
 
-/* Card image zoom. Written as a class because Tailwind's
-   hoverOnlyWhenSupported does not gate `group-hover:` — a tap would leave the
-   image stuck at its zoomed scale. */
+/* Card image zoom. Kept as classes so the pointer and reduced-motion
+   gates live in one place. */
 .media-zoom,
 .media-zoom-sm {
-  transition: transform 300ms ease-out;
+  transition: transform 300ms var(--ease-premium);
 }
 
 .placeholder-lift {
-  transition: transform 300ms ease-out;
+  transition: transform 300ms var(--ease-premium);
   transform: translate(-50%, -50%);
 }
 
 .placeholder-base {
-  transition: background-color 300ms ease-out;
+  transition: background-color 300ms var(--ease-premium);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -169,7 +165,25 @@ section[id] {
 }
 
 .hero-media {
-  animation: hero-settle 1800ms var(--ease-premium) both;
+  animation: hero-settle 1200ms var(--ease-premium) both;
+}
+
+.lightbox {
+  transition:
+    opacity 200ms var(--ease-premium),
+    transform 200ms var(--ease-premium);
+}
+
+@starting-style {
+  .lightbox {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+.lightbox.is-closing {
+  opacity: 0;
+  transform: scale(0.97);
 }
 
 @media (max-width: 639px) {
@@ -184,18 +198,61 @@ section[id] {
   }
 
   .fade-up,
-  .fade-up.is-visible {
+  .fade-up.is-visible,
+  .fade-up-delay {
     opacity: 1;
     transform: none;
     transition: none;
+    transition-delay: 0ms;
   }
 
   .hero-media {
     animation: none;
   }
 
+  /* Keep colour feedback; drop movement. */
   .premium-button,
   .premium-card {
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease;
+  }
+
+  .premium-button:hover,
+  .premium-button:active {
+    transform: none;
+  }
+
+  .media-zoom,
+  .media-zoom-sm {
+    transform: none;
     transition: none;
+  }
+
+  .group:hover .media-zoom,
+  .group:hover .media-zoom-sm {
+    transform: none;
+  }
+
+  .placeholder-lift {
+    transition: none;
+  }
+
+  .group:hover .placeholder-lift {
+    transform: translate(-50%, -50%);
+  }
+
+  .placeholder-base {
+    transition: none;
+  }
+
+  .lightbox {
+    transition-property: opacity;
+  }
+
+  .lightbox,
+  .lightbox.is-closing {
+    transform: none;
   }
 }
