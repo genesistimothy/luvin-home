@@ -30,14 +30,14 @@ export default function BlogPage() {
               <Link
                 key={article._id}
                 to={`/blog/${article.slug}`}
-                className="group overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-500 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]"
+                className="group overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-200 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]"
               >
                 <div className="aspect-[16/10] overflow-hidden bg-oat">
                   {article.coverImage?.image?.asset?.url ? (
                     <img
                       src={article.coverImage.image.asset.url}
                       alt={article.coverImage.altText || article.title}
-                      className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+                      className="media-zoom h-full w-full object-cover"
                     />
                   ) : (
                     <div className="grid h-full place-items-center text-cocoa/25">

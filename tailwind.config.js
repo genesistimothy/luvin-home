@@ -1,6 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx}"],
+  // Wrap every `hover:` / `group-hover:` utility in
+  // @media (hover: hover) and (pointer: fine). Without this a tap on a touch
+  // device fires a :hover that sticks until you tap elsewhere.
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     extend: {
       colors: {
