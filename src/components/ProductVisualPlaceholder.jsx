@@ -7,7 +7,10 @@ export default function ProductVisualPlaceholder({ category }) {
       <div className="absolute left-[23%] top-[47%] h-16 w-8 rounded-lg bg-umber/80" />
       <div className="absolute right-[23%] top-[47%] h-16 w-8 rounded-lg bg-umber/80" />
       {category && (
-        <div className="absolute left-5 top-5 rounded-full border border-white/40 bg-cream/80 px-3.5 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.08em] text-cocoa backdrop-blur-md">
+        <div
+          title={category}
+          className="absolute left-5 top-5 max-w-[calc(100%-4.5rem)] truncate rounded-full border border-white/40 bg-cream/80 px-3.5 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.08em] text-cocoa backdrop-blur-md"
+        >
           {category}
         </div>
       )}

@@ -24,8 +24,11 @@ export default function WishlistPage() {
 
         {savedProducts.length > 0 ? (
           <div className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {savedProducts.map((product) => (
-              <CatalogProductCard key={product._id || product.name} product={product} />
+            {savedProducts.map((product, index) => (
+              <CatalogProductCard
+                key={product._id || `${productSlug(product)}-${index}`}
+                product={product}
+              />
             ))}
           </div>
         ) : (
