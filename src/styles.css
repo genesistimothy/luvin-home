@@ -56,21 +56,26 @@ section[id] {
   }
 
   .premium-button {
-    @apply rounded-full transition duration-300;
+    @apply rounded-full transition duration-150;
     transition-timing-function: var(--ease-premium);
   }
 
-  .premium-button:hover {
-    transform: translateY(-2px);
+  /* Hover motion is gated: a touch tap fires a false :hover that sticks. */
+  @media (hover: hover) and (pointer: fine) {
+    .premium-button:hover {
+      transform: translateY(-2px);
+    }
   }
 
   .premium-card {
-    @apply rounded-[1.5rem] border border-oat/[0.55] bg-linen/[0.65] shadow-[0_20px_60px_rgba(62,44,35,0.06)] transition duration-500;
+    @apply rounded-[1.5rem] border border-oat/[0.55] bg-linen/[0.65] shadow-[0_20px_60px_rgba(62,44,35,0.06)] transition duration-200;
     transition-timing-function: var(--ease-premium);
   }
 
-  .premium-card:hover {
-    @apply -translate-y-1 border-clay/30 bg-white shadow-[0_28px_70px_rgba(62,44,35,0.1)];
+  @media (hover: hover) and (pointer: fine) {
+    .premium-card:hover {
+      @apply -translate-y-1 border-clay/30 bg-white shadow-[0_28px_70px_rgba(62,44,35,0.1)];
+    }
   }
 
   .fade-up {
@@ -101,22 +106,6 @@ section[id] {
   animation: hero-settle 1800ms var(--ease-premium) both;
 }
 
-.answer-reveal {
-  animation: answer-reveal 320ms var(--ease-premium) both;
-}
-
-@keyframes answer-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(-0.35rem);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @media (max-width: 639px) {
   .premium-button {
     min-height: 3.25rem;
@@ -135,8 +124,7 @@ section[id] {
     transition: none;
   }
 
-  .hero-media,
-  .answer-reveal {
+  .hero-media {
     animation: none;
   }
 

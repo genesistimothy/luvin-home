@@ -15,7 +15,7 @@ export default function CatalogProductCard({ product }) {
   const compareDisabled = !compared && compareFull;
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-500 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-200 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]">
       <div className="relative">
         {product.mainImageUrl ? (
           <div className="relative aspect-[16/10] overflow-hidden bg-oat">
@@ -24,7 +24,7 @@ export default function CatalogProductCard({ product }) {
               alt={product.mainImage?.altText || product.name}
               loading="lazy"
               decoding="async"
-              className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+              className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04]"
             />
             <div className="absolute left-5 top-5 rounded-full border border-white/40 bg-cream/[0.85] px-3.5 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.08em] text-cocoa backdrop-blur-md">
               {product.category}
