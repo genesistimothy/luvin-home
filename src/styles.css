@@ -25,7 +25,8 @@ html {
 /* Controls only. Body text and card copy stay selectable — people copy
    addresses and order numbers. */
 button,
-[role="button"] {
+[role="button"],
+a.premium-button {
   touch-action: manipulation;
   -webkit-user-select: none;
   user-select: none;
@@ -33,12 +34,14 @@ button,
 }
 
 /* iOS zooms the page when a focused field is under 16px, and never zooms back.
-   Fixing the size is the fix; disabling zoom is not. */
+   Fixing the size is the fix; disabling zoom is not.
+   !important is deliberate: Tailwind's text-sm (14px) outranks an element
+   selector, and this is a floor, not a style. */
 @media (pointer: coarse) {
   input,
   textarea,
   select {
-    font-size: 16px;
+    font-size: 16px !important;
   }
 }
 
