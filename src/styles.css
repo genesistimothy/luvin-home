@@ -17,6 +17,32 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  /* No grey flash on tap. Every control gets its own :active state instead. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Controls only. Body text and card copy stay selectable — people copy
+   addresses and order numbers. */
+button,
+[role="button"],
+a.premium-button {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* iOS zooms the page when a focused field is under 16px, and never zooms back.
+   Fixing the size is the fix; disabling zoom is not.
+   !important is deliberate: Tailwind's text-sm (14px) outranks an element
+   selector, and this is a floor, not a style. */
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
 }
 
 body {
@@ -58,6 +84,11 @@ section[id] {
   .premium-button {
     @apply rounded-full transition duration-150;
     transition-timing-function: var(--ease-premium);
+  }
+
+  /* The only press feedback on a touch device, since :hover is gated. */
+  .premium-button:active {
+    transform: scale(0.97);
   }
 
   /* Hover motion is gated: a touch tap fires a false :hover that sticks. */

@@ -114,7 +114,7 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b backdrop-blur-xl transition-colors duration-200 ${isScrolled ? "border-cocoa/10 bg-cream/[0.94] shadow-[0_12px_40px_rgba(62,44,35,0.07)]" : "border-white/[0.35] bg-cream/[0.88]"}`}
+      className={`fixed inset-x-0 top-0 z-50 border-b pt-[env(safe-area-inset-top)] backdrop-blur-xl transition-colors duration-200 ${isScrolled ? "border-cocoa/10 bg-cream/[0.94] shadow-[0_12px_40px_rgba(62,44,35,0.07)]" : "border-white/[0.35] bg-cream/[0.88]"}`}
     >
       <nav
         className={`mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-8 ${isScrolled ? "py-3" : "py-4"}`}
