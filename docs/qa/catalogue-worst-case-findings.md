@@ -1,329 +1,358 @@
-# Catalogue worst-case audit — Luvin Home products page
+# Catalogue worst-case audit — consolidated findings
 
-**Date:** 2026-10-22
-**Scope:** `src/pages/ProductsPage.jsx`, `src/components/CatalogProductCard.jsx`, `src/components/ProductVisualPlaceholder.jsx`
-**Method:** worst-case data fixtures behind a dev-only toggle, measured in a real browser
-**Status:** findings only. No component changes are in this branch.
+**Date:** 2026-10-23
+**Scope:** `src/pages/ProductsPage.jsx`, `src/components/CatalogProductCard.jsx`,
+`src/components/ProductVisualPlaceholder.jsx`, `src/lib/format.js`, `src/data/products.js`
+**Method:** dev-only worst-case fixtures, measured in Chromium at 320 / 390 / 768 / 1440 px,
+root font 32 px, and `prefers-reduced-motion: reduce`
+**Status:** findings only. No component fixes are in this branch.
+
+This consolidates the first catalogue audit with a second pass and corrects three claims that did
+not reproduce. IDs are stable and ordered by leverage.
 
 ---
 
 ## 1. Summary
 
-Ten findings. Five are **Broken** (content unreadable, an action is unreachable, or the wrong value is shown). Four are **Ugly** (readable but visibly wrong). One is **Fragile** (fine today, one realistic step from breaking).
-
-| # | Severity | Field | One line |
-|---|---|---|---|
-| F1 | **Broken** | empty list | Zero products shows a blank grid and no message |
-| F2 | **Broken** | `name` | Missing name leaves a card with no title |
-| F3 | **Broken** | count text | "1 products found" |
-| F4 | **Broken** | count text | "1000 products found" — no thousands separator |
-| F5 | **Broken** | price row | At 200% text the price row overflows and pushes "Detail" out of the card |
-| F6 | Ugly | `category` badge | The long category wraps and the badge grows from 31 px to 49 px over the image |
-| F7 | Ugly | filter chips | The same long category makes one filter chip 56 px tall against 36 px |
-| F8 | Ugly | `price: null` | No price renders, so "Detail" sits alone on its row |
-| F9 | Ugly | `price: 0` | "Rp 0" is printed as a real price |
-| F10 | Fragile | `name` | No length limit anywhere in the data path |
-
----
-
-## 2. How this was tested
-
-The point of the exercise is that **demo data is kind data**. Real names are longer, real categories are translated, and real prices sometimes do not exist.
-
-The test data is not random. Every value is either a realistic example or the longest value the data layer accepts.
-
-### 2.1 The fixture
-
-`src/data/devWorstCase.js` holds six products. Each row carries a different failure, so one screen shows them all:
-
-| Row | `name` | `category` | `price` | Other |
-|---|---|---|---|---|
-| 1 | `Aleksandra Wiśniewska-Kowalczyk Signature Modular Corner Sectional with Chaise` | `Sofa Bed Collection` | `1999000` | long, hyphenated, diacritics |
-| 2 | `Đặng Thị Ngọc Hân Woven Lounge Chair` | `Wohnzimmermöbelkollektion` | `1234567890` | stacked diacritics, German compound, widest price |
-| 3 | `王秀英 实木餐桌` | `Dining Collection` | `0` | CJK with no spaces, zero price |
-| 4 | `Jo` | `Sofa Collection` | `"Contact for price"` | two letters, string price |
-| 5 | `🦊 Fox Side Table` | `Custom Order — European Imported Solid Oak Collection` | `1284` | emoji first, `soldOut` |
-| 6 | `""` | `Sofa Collection` | `null` | missing name, missing price, 12 colours, `comingSoon` |
-
-Extra states: **Empty** (0 products), **One** (1 product), **1,000 rows** (a generated list).
-
-### 2.2 The toggle
-
-Dev-only, at the bottom centre of the viewport:
-
-```
-/products?data=worst     six products above
-/products?data=empty     0 products
-/products?data=one       1 product
-/products?data=many      1,000 products
-/products                the real CMS data
-```
-
-The choice lives in the URL, so a reload keeps it and a screenshot is reproducible.
-
-The fixture swaps at the **same boundary the CMS uses** — `Layout.jsx` passes `products` and `collections` down through the router context. No component was edited to produce a break.
-
-### 2.3 Widths and environments
-
-| Condition | Result |
-|---|---|
-| 1440 px | checked |
-| 768 px | checked |
-| 390 px (phone) | checked |
-| 320 px | checked |
-| Root font size 200% | checked — this is where F5 appears |
-| Dark mode | **not tested** — the product does not support it |
-| RTL | **not tested** — the product does not support it |
+| # | Severity | Field | Finding |
+| --- | --- | --- | --- |
+| C1 | **Broken** | pagination | Large catalogues blow the grid to 1,773 px columns and clip most of the pager |
+| C2 | **Broken** | `name` | An unbreakable name is clipped mid-glyph with no ellipsis |
+| C3 | **Broken** | 200% text | Price row overflows; "Detail" is pushed outside the card; header/nav collide |
+| C4 | **Broken** | price filter | `min`/`max` keep products with string or missing prices |
+| C5 | **Broken** | `name` | A missing name renders a card with no title |
+| C6 | **Broken** | `price` | Numeric-string prices render raw and bypass filter/sort |
+| C7 | Ugly | `category` badge | Long badge wraps to 49 px and overlaps the heart by 52 px |
+| C8 | Ugly | filter chip | Long category makes one chip 56 px against 36 px |
+| C9 | Ugly | `dimensions` | Missing value leaves an empty line |
+| C10 | Ugly | `price` | Missing value leaves "Detail" alone on the row |
+| C11 | Ugly | `price: 0` | Prints "Rp 0" |
+| C12 | Ugly | `mainImageUrl` | 404 image renders alt text over the image area |
+| C13 | Ugly | `category` | Empty category renders a 30 × 14 blank pill |
+| C14 | Ugly | count copy | "1 products found"; "1000" has no separator |
+| C15 | Ugly | empty copy | "No products match these filters" with no filters active |
+| C16 | Ugly | 320 px header | Brand wraps to two lines and grows the header |
+| C17 | Fragile | `dimensions`/`weight` | No schema limit; long values grow the card |
+| C18 | Fragile | keys | Duplicate names without `_id` collide as React keys |
+| C19 | Fragile | search | Diacritics are not normalised: "dang" does not find "Đặng" |
+| C20 | Fragile | `price` | A negative price renders "-Rp 1.000" if it bypasses the schema |
+| M1 | **Broken** | motion | Reduced motion still lifts cards, zooms images, and scales the press state |
+| M2 | Medium | motion | Card hover still animates `box-shadow` (paint) |
+| M3 | Medium | touch | Tap highlight removed, but only `.premium-button` has an `:active` state |
+| M4 | Low | motion | `.premium-card` lifts a non-interactive `<div>` |
 
 ---
 
-## 3. Findings
+## 2. Broken
 
-### F1 — Zero products shows a blank grid with no message
+### C1 — Large-catalogue pagination destroys the layout
 
-**Severity:** Broken
-**Where:** `src/pages/ProductsPage.jsx` (grid render, below the results row)
+**Where:** `src/pages/ProductsPage.jsx:192-205`; the results column at `:163`.
 
-**Reproduce:** open `/products?data=empty`.
+**Reproduce:** `/products?data=many`, 1440 px.
 
-**Evidence:** the page renders `0` `<article>` elements. The only sign that anything happened is the text "0 products found". Measured page text after the filter row:
+**Evidence:** 112 page buttons render in one non-wrapping flex row.
 
 ```
-– 0 products found Newest Price: Low to High Price: High to Low
+page buttons:        112
+pager row width:     5,368 px
+grid columns:        1,773.33 px × 3
+viewport:            1,440 px
+last page right:     5,740 px
+document scrollWidth: 1,440 px   (body { overflow-x: hidden } clips it)
 ```
 
-There is no empty-state block, no suggestion, and no way to clear the filters from the empty area.
+The grid's `1fr` column has `min-width: auto`, so the pager's intrinsic width expands the track,
+which expands all three card columns. Roughly the first 30 of 112 pages are visible; the rest of the
+pager and most of the catalogue are unreachable, and no horizontal scrollbar appears because the
+overflow is hidden.
 
-**Why it matters:** a shopper who filters into an empty result sees a broken-looking page and has to work out how to get back.
+**Fix:** window the pager (first/last/current ±1 with ellipses), allow the row to wrap, and put
+`min-w-0` on the results column. Never render `Array.from({length: totalPages})`.
 
-**Proposed fix:** when `filtered.length === 0`, render a block where the grid would be. It should say there are no matches and offer a "Clear filters" button that resets `kategori`, `q`, `min` and `max`.
+### C2 — Unbreakable names are clipped
 
-**Decision needed:** should the copy also suggest a related category? My recommendation: keep it short, and offer the clear-filters action only.
+**Where:** `src/components/CatalogProductCard.jsx:47`.
 
----
+**Reproduce:** `/products?data=worst` with a name such as
+`Aurelia131SinteredStoneDiningTableLimitedEditionCarrara`.
 
-### F2 — A missing name leaves a card with no title
+**Evidence:** the `<h3>` has `scrollWidth 520` inside `clientWidth 300` at 390 px; the card is
+`overflow-hidden`, so the text is cut mid-glyph with no ellipsis and no way to read it. The card
+reports `scrollWidth 544` against `clientWidth 348`.
 
-**Severity:** Broken
-**Where:** `src/components/CatalogProductCard.jsx:47`
+**Fix:** `[overflow-wrap:anywhere]` on the title, clamp to two lines, and expose the full value in
+`title`. A 120-character name can still take three lines at phone width.
 
-**Reproduce:** open `/products?data=worst` and look at the last card.
+### C3 — 200% text pushes the primary action out of the card
 
-**Evidence:** the card body starts directly with the dimensions (`116 x 186 x 28 cm`). The `<h3>` renders empty. There is no fallback.
+**Where:** `src/components/CatalogProductCard.jsx:54` (price row); header at
+`src/components/Navbar.jsx:117-125`.
 
-**Why it matters:** the card cannot be identified. Two products with no name look identical apart from the price.
+**Reproduce:** `/products?data=worst`, set root font size to 32 px.
 
-**Proposed fix:** render a fallback string when `product.name` is empty, for example "Untitled product", and keep the same row height so the grid does not shift.
+**Evidence:** per-card price-row overflow `72–268 px`; the "Detail" button's right edge lands up
+to 168 px beyond the card's right edge. The header brand, nav links, and action icons overlap at
+the same setting.
 
-**Decision needed:** should the card be hidden instead of labelled? My recommendation: label it, because a hidden product in a catalogue is usually a data problem someone needs to see.
+**Fix:** `flex-wrap` on the price row, `min-w-0` on the price, `shrink-0` on the button; let the
+header wrap or shrink deliberately (`text-lg` brand, tighter gaps at 320).
 
----
+### C4 — Numeric price filters keep unpriced products
 
-### F3 — "1 products found"
-
-**Severity:** Broken
-**Where:** `src/pages/ProductsPage.jsx:165`
+**Where:** `src/pages/ProductsPage.jsx:46-47`.
 
 ```jsx
-<p className="text-sm text-cocoa/60">{filtered.length} products found</p>
+if (min) list = list.filter((product) => typeof product.price !== "number" || product.price >= Number(min));
 ```
 
-**Reproduce:** open `/products?data=one`.
+**Reproduce:** `/products?data=worst&min=100000000`.
 
-**Evidence:** measured text is exactly `1 products found`.
+**Evidence:** three products are returned: `Rp 1.234.567.890`, `"Contact for price"`, and a
+missing price. The `typeof !== "number"` guard treats unknown prices as matching every range.
 
-**Why it matters:** it is the first line a reviewer reads, and it reads as unfinished.
+**Fix:** parse to a number and exclude products whose price is unknown:
 
-**Proposed fix:** use `Intl.PluralRules` with `en`, or write two strings and pick one. `Intl.PluralRules` also covers "0 products", which is correct in English.
-
-**Decision needed:** none.
-
----
-
-### F4 — "1000 products found" has no thousands separator
-
-**Severity:** Broken
-**Where:** `src/pages/ProductsPage.jsx:165` (same line as F3)
-
-**Reproduce:** open `/products?data=many`.
-
-**Evidence:** measured text is exactly `1000 products found`.
-
-**Why it matters:** the number is hard to read at a glance, and it looks inconsistent next to prices, which *are* formatted.
-
-**Proposed fix:** `new Intl.NumberFormat("id-ID").format(filtered.length)` — or `en` if the UI language is English. The prices already use `id-ID` through `formatPrice`.
-
-**Decision needed:** which locale should the count use? The page copy is English but the prices are `id-ID`. My recommendation: `en` for the count, so it matches the words around it.
-
----
-
-### F5 — At 200% text the price row overflows and pushes "Detail" out
-
-**Severity:** Broken
-**Where:** `src/components/CatalogProductCard.jsx` (price row, `.mt-auto flex items-center justify-between gap-4 pt-6`)
-
-**Reproduce:** open `/products?data=worst`, then raise the root font size to 32 px (browser text zoom 200%).
-
-**Evidence:** measured `scrollWidth - clientWidth` per element:
-
-| Card | Element | Overflow |
-|---|---|---|
-| 1 | content column `.flex flex-1 flex-col p-6` | 19 px |
-| 1 | price row `.mt-auto flex items-center justify-between` | **67 px** |
-| 2 | image container (`aspect-[16/10] overflow-hidden`) | 74 px |
-| 2 | price row | **119 px** |
-
-The row does not wrap. The price grows, the "Detail" button keeps its width, and the button is pushed past the card edge.
-
-At normal text there is no overflow. The smallest gap between price and button is 67 px (card 3, "Contact for price").
-
-**Why it matters:** text zoom is an accessibility setting on every phone and browser. A user who sets it loses the primary action.
-
-**Proposed fix:** let the row wrap — `flex-wrap` plus `min-width: 0` on the price — and give the button `flex-shrink: 0` so it keeps its size while the price takes the next line.
-
-**Decision needed:** if the price wraps to its own line, should the button stay right-aligned or move under it? My recommendation: keep it right-aligned on the price line while it fits, and let it drop to a full-width row when it does not.
-
----
-
-### F6 — The long category badge wraps and grows over the image
-
-**Severity:** Ugly
-**Where:** `src/components/CatalogProductCard.jsx:30`
-
-**Reproduce:** open `/products?data=worst`, card 5.
-
-**Evidence:** measured badge box:
-
-| Card | Badge text | Size | `white-space` |
-|---|---|---|---|
-| 1 | Sofa Bed Collection | 173 × 31 px | normal |
-| 2 | Wohnzimmermöbelkollektion | 240 × 31 px | normal |
-| 5 | Custom Order — European Imported Solid Oak Collection | **328 × 49 px** | normal |
-
-The badge has no `white-space: nowrap` and no width limit, so a long category becomes a two-line pill that covers more of the product image.
-
-**Why it matters:** the badge is a label, not content. It should never change the composition of the card.
-
-**Proposed fix:** one line, capped with `text-overflow: ellipsis`, plus a `title` attribute holding the full value.
-
-**Decision needed:** truncate, or move the category out of the image into the body? My recommendation: truncate on the image, and show the full category on the product page.
-
----
-
-### F7 — The long category makes one filter chip twice as tall
-
-**Severity:** Ugly
-**Where:** `src/pages/ProductsPage.jsx` (category chips)
-
-**Reproduce:** open `/products?data=worst` and look at the filter row.
-
-**Evidence:** measured chip heights:
-
-```
-Wohnzimmermöbelkollektion                                 36 px
-Custom Order — European Imported Solid O...               56 px
+```js
+const value = parsePrice(product.price);
+return value !== null && value >= Number(min);
 ```
 
-**Why it matters:** the row loses its baseline. Every chip after the tall one is offset.
+If a product's price is unknown, it cannot be proven inside a numeric range.
 
-**Proposed fix:** the same as F6 — one line with ellipsis, and the full value in `title`.
+### C5 — Missing name leaves an untitled card
 
-**Decision needed:** none.
+**Where:** `src/components/CatalogProductCard.jsx:47`.
 
----
+**Evidence:** `<h3>` height `0`; the body starts with dimensions, then price. Two nameless
+products are indistinguishable.
 
-### F8 — A missing price leaves "Detail" alone on its row
+**Fix:** render `"Untitled product"` and keep the `<h3>` present for screen readers.
 
-**Severity:** Ugly
-**Where:** `src/components/CatalogProductCard.jsx` (price row)
+### C6 — Numeric-string prices render raw and bypass filter/sort
 
-**Reproduce:** open `/products?data=worst`, card 6.
+**Where:** `src/lib/format.js:1-4`; `src/data/products.js:28,43,58,77,91,105`.
 
-**Evidence:** measured price element width `0 px`, and the gap to the button `215 px`. Nothing is drawn where the price should be.
+**Evidence:** `formatPrice("1999000")` returns the string `1999000` with no currency. All six
+fallback products use string prices (`"Rp 1.999.000"`), so:
 
-**Why it matters:** it looks like a rendering failure, not a product without a price.
+- `?min=100000000` returns every fallback product;
+- price sort pushes all of them to the end;
+- a bulk-imported `"1999000"` is displayed without `Rp`.
 
-**Proposed fix:** render a fallback such as "Price on request" when `price` is `null`, `undefined` or an empty string.
-
-**Decision needed:** "Price on request" or "Contact us"? My recommendation: "Price on request" — it is shorter and fits the existing layout.
-
----
-
-### F9 — A zero price prints "Rp 0"
-
-**Severity:** Ugly
-**Where:** `src/lib/format.js:1` (`formatPrice`) and the card
-
-**Reproduce:** open `/products?data=worst`, card 3.
-
-**Evidence:** measured price text `Rp 0` at 41 px wide. It is formatted by `Intl.NumberFormat`, so it is a correct rendering of a value that should probably not exist.
-
-**Why it matters:** "Rp 0" is either a data bug or a free product. A shopper reads it as a mistake.
-
-**Proposed fix:** treat `0` the same as `null` and show the on-request label. If a real free product is possible, add an explicit `priceOnRequest` flag to the data instead of overloading zero.
-
-**Decision needed:** is a free product possible in this catalogue? If yes, this fix is wrong and the data needs a flag.
+**Fix:** a single `parsePrice` used by `formatPrice`, the filters, and the sort; normalise the
+fallback data to numbers.
 
 ---
 
-### F10 — `name` has no length limit anywhere in the data path
+## 3. Ugly
 
-**Severity:** Fragile
-**Where:** data layer (Sanity schema) and the card
+### C7 — Long category badge wraps and overlaps the heart
 
-**Evidence:** no `maxLength` and no validation was found for the product name in the frontend. The longest title in the fixture wraps to three lines at 390 px and makes that card taller than its neighbours:
+**Where:** `CatalogProductCard.jsx:29`; `ProductVisualPlaceholder.jsx:9-12`.
 
-```
-card heights at 390 px:  491, 486, 441, 441, 465, 440
-card heights at 1440 px: 467, 467, 467, 426, 426, 426
-```
+**Evidence:** badge `291 × 49 px` (vs `31 px` high for short categories) and its right edge is
+`52 px` past the wishlist button's left edge. The category text is clipped behind the button.
 
-No title clips, and no word breaks mid-word. This is a data discipline issue, not a rendering bug.
+**Fix:** one line, `max-w-[calc(100%-4.5rem)]`, `truncate`, `title` with the full value.
 
-**Why it matters:** card heights already vary by 51 px. A longer title or a longer dimension string widens that gap, and a grid row takes the height of its tallest card.
+### C8 — Long category makes one filter chip twice as tall
 
-**Proposed fix:** two steps. Add a sensible limit where products are entered, and clamp the title to two lines on the card with the full name on the detail page.
+**Evidence:** `Custom Order — European Imported Solid Oak Collection` chip is `56 px`; the others
+are `36 px`. The row loses its baseline.
 
-**Decision needed:** limit, or clamp, or both? My recommendation: both — the limit stops bad data, the clamp protects the layout when the data still arrives.
+**Fix:** one line with ellipsis and a `title`, same as C7.
+
+### C9 — Missing dimensions leave an empty line
+
+**Evidence:** `<p class="mt-1.5 text-sm">` renders with no text, reserving a line of height.
+
+**Fix:** conditional render.
+
+### C10 — Missing price leaves "Detail" alone
+
+**Evidence:** the price row's children are `["", "Detail"]`; the price element is `0 px` wide.
+
+**Fix:** `"Price on request"` fallback.
+
+### C11 — Zero price prints "Rp 0"
+
+**Evidence:** `formatPrice(0)` → `Rp 0`. The Sanity schema allows `0` (`sanity/schemas/product.js:43`,
+`Rule.min(0)`), so this is reachable.
+
+**Decision:** if a free product is possible, render `"Free"`. If `0` only ever means "not set",
+tighten the schema to `min(1)` and render `"Price on request"`. Recommendation: `min(1)` for a
+furniture catalogue, because a free product is almost certainly a data-entry error.
+
+### C12 — Broken image URL renders alt text over the image area
+
+**Where:** `CatalogProductCard.jsx:21-28`.
+
+**Evidence:** a 404 `mainImageUrl` leaves the `<img>` box empty with the alt text painted at its
+top-left, colliding with the category badge. There is no `onError`.
+
+**Fix:** on error, swap to `ProductVisualPlaceholder` (state flag), not `display: none`.
+
+### C13 — Empty category renders a blank pill
+
+**Evidence:** a `30 × 14 px` empty capsule at the image's top-left when `category` is `""`.
+
+**Fix:** render the badge only when the category is non-empty.
+
+### C14 — Count copy
+
+**Evidence:** exactly `1 products found` for one product, and `1000 products found` for 1,000.
+Prices are formatted; the count is not.
+
+**Fix:** `Intl.NumberFormat("en-US")` for the count (the page copy is English) and a plural branch.
+`1,000 products found` / `1 product found`.
+
+### C15 — Empty-state copy is wrong when no filters are active
+
+**Evidence:** `/products?data=empty` renders "No products match these filters." with zero active
+filters. The message exists — the first draft's claim that the area is blank did not reproduce.
+When filters *are* active, the sidebar already offers **Reset Filters**.
+
+**Fix:** branch the copy: `No products available yet.` when no filters are active; keep the
+filter copy and the reset action when they are.
+
+### C16 — 320 px header brand wraps
+
+**Evidence:** at 320 px "Luvin Home" wraps to two lines, growing the header; the logo and three
+44 px icon buttons leave ~147 px for the brand.
+
+**Fix:** `text-lg` below `sm`, `whitespace-nowrap`, and a smaller gap between the logo and the
+brand. If it still does not fit, hide the compare icon below 360 px rather than wrapping.
 
 ---
 
-## 4. What held up
+## 4. Fragile
 
-These are the cases the component already handles. Do not "fix" them.
+### C17 — Dimensions and weight have no length limit
 
-- **No horizontal page overflow** at 320, 390, 768 or 1440 px. `document.scrollWidth - clientWidth` was `0` in every state.
-- **Long prices fit at normal text size.** The smallest gap between a price and the "Detail" button was 67 px, on the widest price in the set (`Rp 1.234.567.890`).
-- **Titles wrap cleanly.** The `<h3>` overflow was `0` on every card at every width. No clipping, no mid-word breaks.
-- **1,000 rows paginate.** The listing is paged at 9 per screen, so a large catalogue does not stall the browser.
-- **Numeric prices format correctly.** `formatPrice` uses `Intl.NumberFormat("id-ID")`, and a numeric input always produced a correct string.
-- **The grid stays stable.** Cards share a row height and do not overlap at any width tested.
-- **Status labels render.** `soldOut` and `comingSoon` both showed, and neither broke the layout.
+`dimensions` (`sanity/schemas/product.js:38`) and `weight` (`:39`) are unbounded strings. A long
+dimension string can wrap to four lines and grow a card; at 200% text it also overflows.
+
+**Fix:** `Rule.max(120)` on both, plus `break-words` on the card.
+
+### C18 — Duplicate names collide as keys
+
+`ProductsPage.jsx:185` and `WishlistPage.jsx:31` use `product._id || product.name`. Fallback
+products have no `_id`, so two products with the same name share a key.
+
+**Fix:** `product._id || productSlug(product)` and, when those collide, append the index.
+
+### C19 — Diacritics are not normalised in search
+
+`ProductsPage.jsx:43` uses `toLowerCase().includes()`. `"Đặng Thị Ngọc Hân"` does not match
+`"dang"`. Prices and names can arrive translated.
+
+**Fix:** `value.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase()`.
+
+### C20 — Negative prices render as "-Rp 1.000"
+
+`formatPrice(-1000)` → `-Rp 1.000`. The schema rejects negatives, but fallback/import data can
+bypass it. Treat non-finite or negative values as unknown and show the on-request label.
 
 ---
 
-## 5. Test environment notes, not findings
+## 5. Motion and accessibility on the same surfaces
 
-- **The CJK title (card 3) rendered as empty boxes in the audit screenshots.** The audit machine has zero CJK-capable fonts installed (`fc-list` count: 0). This is a property of the test machine, not of the app. On a phone the text renders.
-- **Dark mode was not tested.** The product has no dark theme and no `dark:` classes.
-- **RTL was not tested.** The product has no RTL support and no `dir` handling.
+These come from the animation audit; they are visible on the catalogue and should ship with it.
+
+- **M1 (Broken):** reduced motion still lifts cards (`translateY(-6px)`), zooms
+  `.media-zoom`/`.media-zoom-sm`, and applies `:active scale(0.97)`. `hoverOnlyWhenSupported` is
+  pointer-only. Plans 002 and 003 cover the fix.
+- **M2 (Medium):** card hover interpolates `box-shadow` at 200 ms — a paint every frame. Remove
+  the shadow transition; keep the static shadow.
+- **M3 (Medium):** `-webkit-tap-highlight-color: transparent` with only `.premium-button:active`
+  means most catalogue controls have no press feedback. Add `:active` to buttons/links or restore
+  the highlight.
+- **M4 (Low):** `.premium-card:hover` lifts a static `<div>` at `ServiceDetailPage.jsx:65`.
+
+Not a finding: 16 px inputs on coarse pointers, safe-area insets, `100dvh`, and
+`touch-action: manipulation` all verified correctly.
 
 ---
 
-## 6. How to reproduce this audit
+## 6. Corrections to the first draft
+
+1. **F1 is false.** `/products?data=empty` renders "No products match these filters." The real
+   issue is the copy when no filters are active (C15), and **Reset Filters** already exists when
+   filters are set.
+2. **F3 and F4 are Ugly, not Broken.** Both are readable; neither blocks an action.
+3. **F10 is partly false.** The Sanity schema already enforces `max(120)` on `name`
+   (`sanity/schemas/product.js:28`). The frontend and fallback data do not enforce it, and 120
+   characters still overflows the card — hence C2 and C17.
+4. **F9 is informed by the schema.** `price` uses `Rule.min(0)`, so `0` is allowed, not
+   necessarily a bug. The decision is C11.
+5. **Missing:** C1 (pagination), C2 (unbreakable names), C4 (filter semantics), C6
+   (string prices), C7 overlap, C12 (image 404), C13 (blank badge), C16 (320 header), C18
+   (keys), C19 (diacritics), C20 (negative price).
+6. **"No horizontal overflow" is misleading.** The document is 1,440 px wide because
+   `body { overflow-x: hidden }` clips 5,368 px of pager. Clipping is not a fix.
+
+---
+
+## 7. What held up
+
+- Generated placeholder for a missing `mainImageUrl` (only the *broken URL* case fails).
+- CJK, emoji, and diacritics render.
+- Names that contain spaces wrap cleanly; no mid-word breaks.
+- Cards share a row height and stay aligned.
+- Empty, one, and 1,000-row states render without crashing.
+- Numeric prices format correctly; status labels render; HTML in names is escaped.
+- No document-level horizontal scroll at 320/390/768/1440 — but see C1 for clipped content.
+- Modal zoom, keyboard navigation, and focus outlines on the product page still work.
+
+---
+
+## 8. Fix plan
+
+Ordered; each step is independently shippable.
+
+1. **Price helpers** (`src/lib/format.js`, `src/data/products.js`)
+   - Add `parsePrice(value): number | null`; handle numbers, `"Rp 1.999.000"`, `"1999000"`;
+     reject non-finite and negative.
+   - `formatPrice` uses `parsePrice`; unknown → `"Price on request"`.
+   - Convert the six fallback prices to numbers.
+   - Unit tests for `"Rp 1.999.000"`, `"1999000"`, `null`, `0`, `-1`, `"Contact for price"`.
+2. **Card** (`CatalogProductCard.jsx`, `ProductVisualPlaceholder.jsx`)
+   - Title: fallback + `[overflow-wrap:anywhere]` + `line-clamp-2` + `title`.
+   - Dimensions: conditional; `break-words`.
+   - Price: new fallback; row `flex-wrap`, price `min-w-0`, button `shrink-0`.
+   - Badge: conditional + `max-w-[calc(100%-4.5rem)] truncate` + `title`.
+   - Image: `onError` → placeholder.
+   - Key: `_id || slug || name` (pages).
+3. **Products page** (`ProductsPage.jsx`)
+   - Count: `en-US` separators + plural.
+   - Empty: copy branches on `hasActiveFilters`.
+   - Filters: `parsePrice`; unknown excluded from numeric ranges.
+   - Search: NFD normalisation.
+   - Pagination: window (max 7 visible), `flex-wrap`, `min-w-0` on the results column.
+4. **Header** (`Navbar.jsx`)
+   - 320 px brand: `text-lg`, `whitespace-nowrap`, tighter gap.
+5. **Schema** (`sanity/schemas/product.js`)
+   - `dimensions`/`weight`: `Rule.max(120)`.
+   - Price: decision C11 (`min(1)` recommended).
+6. **Motion** — apply plans 002 and 003 (shadow paint, reduced motion, press feedback).
+
+**Acceptance:** every `?data=` state at 320/390/768/1440, root 32 px, reduced motion, and touch
+emulation; no clipped content, no unpriced product matching a numeric range, and every card
+identifiable and actionable.
+
+---
+
+## 9. Reproduce
 
 ```bash
-git checkout qa/break-ui-harness
+git checkout qa/break-ui-harness    # PR #3
 npm install
 npx vite --port 4200
 ```
 
-Then open `http://localhost:4200/products?data=worst` and use the toggle at the bottom of the screen.
+Open `http://localhost:4200/products?data=worst|empty|one|many` and use the bottom-centre toggle.
 
-The fixture is excluded from production builds — `import.meta.env.DEV` gates both the toggle and the data, and a production build was checked: the fixture strings are absent from `dist/assets/*.js`.
-
----
-
-## 7. Next step
-
-Nothing in this branch changes the app. When the fixes are approved, apply them on a separate branch, then re-run every toggle state — Demo included, because a fix for the worst case must not regress the demo.
+Checked at 320, 390, 768, 1440 px; root font 32 px; `prefers-reduced-motion: reduce`; touch
+emulation (`pointer: coarse`). Dark mode and RTL are unsupported by the product and were not
+tested.
