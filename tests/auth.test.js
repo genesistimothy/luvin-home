@@ -33,7 +33,7 @@ test('protected API rejects unauthenticated access', () => {
 test('protected API allows approved signed session', () => {
   const token = signValue({email: 'owner@example.com', name: 'Owner', exp: Date.now() + 60_000})
   const res = response()
-  const session = requireAdmin({method: 'GET', headers: {cookie: `luvin_admin_session=${encodeURIComponent(token)}`}}, res)
+  const session = requireAdmin({method: 'GET', headers: {cookie: `__Host-luvin_admin_session=${encodeURIComponent(token)}`}}, res)
   assert.equal(session.email, 'owner@example.com')
   assert.equal(res.statusCode, 200)
 })

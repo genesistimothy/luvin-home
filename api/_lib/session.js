@@ -1,7 +1,9 @@
 import {createHmac, randomBytes, timingSafeEqual} from 'node:crypto'
 import {parseCookies, requestOrigin} from './http.js'
 
-export const SESSION_COOKIE = 'luvin_admin_session'
+// `__Host-` makes the browser enforce three things this cookie needs anyway:
+// Secure, Path=/, and no Domain attribute — so a subdomain cannot set it.
+export const SESSION_COOKIE = '__Host-luvin_admin_session'
 export const OAUTH_COOKIE = 'luvin_admin_oauth'
 
 const secret = () => {
@@ -51,7 +53,6 @@ export function sessionFromRequest(req) {
 export function createOAuthState() {
   return {
     state: randomBytes(24).toString('base64url'),
-    nonce: randomBytes(24).toString('base64url'),
     exp: Date.now() + 10 * 60 * 1000,
   }
 }
@@ -76,14 +77,21 @@ export function oauthStateFromRequest(req) {
 
 export function setSessionCookie(req, res, user) {
   const value = signValue({...user, exp: Date.now() + 8 * 60 * 60 * 1000})
-  appendCookie(res, `${SESSION_COOKIE}=${encodeURIComponent(value)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=28800${secureCookie(req)}`)
+  // `__Host-` requires Secure unconditionally; browsers treat localhost as a
+  // secure context, so this still sets in local development.
+  appendCookie(res, `${SESSION_COOKIE}=${encodeURIComponent(value)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=28800; Secure`)
 }
 
 export function clearSessionCookie(req, res) {
-  appendCookie(res, `${SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secureCookie(req)}`)
+  appendCookie(res, `${SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0; Secure`)
 }
 
+/**
+ * A state-changing request must prove where it came from. A missing Origin is
+ * not "probably fine" — non-browser clients omit it, and that is exactly the
+ * traffic this check exists to stop.
+ */
 export function sameOrigin(req) {
   const origin = req.headers.origin
-  return !origin || origin === requestOrigin(req)
+  return Boolean(origin) && origin === requestOrigin(req)
 }

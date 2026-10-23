@@ -12,17 +12,31 @@ export function redirect(res, location, status = 302) {
   res.end()
 }
 
+/**
+ * Decode a percent-encoded value without letting malformed input throw.
+ * A cookie of `x=%` used to raise URIError inside the handler and turn the
+ * request into a 500.
+ * @param {string} value
+ */
+const decode = (value) => {
+  try {
+    return decodeURIComponent(value)
+  } catch {
+    return value
+  }
+}
+
 export function parseCookies(header = '') {
-  return Object.fromEntries(
-    header
-      .split(';')
-      .map((part) => part.trim())
-      .filter(Boolean)
-      .map((part) => {
-        const index = part.indexOf('=')
-        return [decodeURIComponent(part.slice(0, index)), decodeURIComponent(part.slice(index + 1))]
-      }),
-  )
+  /** @type {Record<string, string>} */
+  const cookies = {}
+  for (const part of String(header || '').split(';')) {
+    const trimmed = part.trim()
+    if (!trimmed) continue
+    const index = trimmed.indexOf('=')
+    if (index < 1) continue
+    cookies[decode(trimmed.slice(0, index))] = decode(trimmed.slice(index + 1))
+  }
+  return cookies
 }
 
 export async function readJson(req, maxBytes = 128_000) {

@@ -15,7 +15,6 @@ export default function handler(req, res) {
     response_type: 'code',
     scope: 'openid email profile',
     state: oauth.state,
-    nonce: oauth.nonce,
     prompt: 'select_account',
   })
   return redirect(res, `https://accounts.google.com/o/oauth2/v2/auth?${params}`)
