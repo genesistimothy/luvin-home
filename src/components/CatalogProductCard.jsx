@@ -19,7 +19,7 @@ export default function CatalogProductCard({ product }) {
   const compareDisabled = !compared && compareFull;
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-200 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition-[transform,border-color] duration-200 ease-[var(--ease-premium)] motion-safe:hover:-translate-y-1.5 hover:border-clay/30">
       <div className="relative">
         {hasImage ? (
           <div className="relative aspect-[16/10] overflow-hidden bg-oat">
@@ -48,7 +48,7 @@ export default function CatalogProductCard({ product }) {
           onClick={() => toggleWishlist(slug)}
           aria-label={wishlisted ? "Remove from wishlist" : "Save to wishlist"}
           aria-pressed={wishlisted}
-          className={`absolute right-4 top-4 inline-grid h-9 w-9 place-items-center rounded-full backdrop-blur-md transition ${wishlisted ? "bg-clay text-cream" : "bg-cream/[0.85] text-cocoa hover:bg-cream"}`}
+          className={`absolute right-4 top-4 inline-grid h-9 w-9 place-items-center rounded-full backdrop-blur-md transition motion-safe:active:scale-90 ${wishlisted ? "bg-clay text-cream" : "bg-cream/[0.85] text-cocoa hover:bg-cream"}`}
         >
           <Heart size={16} fill={wishlisted ? "currentColor" : "none"} />
         </button>
@@ -81,7 +81,7 @@ export default function CatalogProductCard({ product }) {
           type="button"
           onClick={() => toggleCompare(slug)}
           disabled={compareDisabled}
-          className={`mt-3 inline-flex items-center justify-center gap-1.5 rounded-full border px-4 py-2 text-xs font-semibold transition ${
+          className={`mt-3 inline-flex items-center justify-center gap-1.5 rounded-full border px-4 py-2 text-xs font-semibold transition motion-safe:active:scale-[0.98] ${
             compared
               ? "border-clay bg-clay/10 text-clay"
               : compareDisabled

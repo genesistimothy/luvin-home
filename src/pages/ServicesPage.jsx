@@ -29,7 +29,7 @@ export default function ServicesPage() {
             <Link
               key={service.slug}
               to={`/services/${service.slug}`}
-              className="group flex flex-col justify-between rounded-[1.5rem] border border-oat/[0.55] bg-linen/60 p-8 transition duration-200 hover:-translate-y-1 hover:border-clay/40 hover:bg-white/[0.85] hover:shadow-[0_28px_70px_rgba(62,44,35,0.1)]"
+              className="group flex flex-col justify-between rounded-[1.5rem] border border-oat/[0.55] bg-linen/60 p-8 transition-[transform,border-color,background-color] duration-200 ease-[var(--ease-premium)] motion-safe:hover:-translate-y-1 hover:border-clay/40 hover:bg-white/[0.85]"
             >
               <div>
                 <h2 className="font-display text-2xl tracking-[-0.02em] text-cocoa">{service.name}</h2>

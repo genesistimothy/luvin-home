@@ -123,7 +123,7 @@ export default function ProductsPage() {
                 <button
                   type="button"
                   onClick={() => updateParam("kategori", "")}
-                  className={`rounded-full px-4 py-2 text-left text-sm transition lg:rounded-xl ${!kategori ? "bg-cocoa text-cream" : "bg-linen text-cocoa/70 hover:bg-oat/50"}`}
+                  className={`rounded-full px-4 py-2 text-left text-sm transition motion-safe:active:scale-[0.98] lg:rounded-xl ${!kategori ? "bg-cocoa text-cream" : "bg-linen text-cocoa/70 hover:bg-oat/50"}`}
                 >
                   All Categories
                 </button>
@@ -135,7 +135,7 @@ export default function ProductsPage() {
                       type="button"
                       title={collection.name}
                       onClick={() => updateParam("kategori", slug)}
-                      className={`min-w-0 max-w-full truncate rounded-full px-4 py-2 text-left text-sm transition lg:w-full lg:rounded-xl ${kategori === slug ? "bg-cocoa text-cream" : "bg-linen text-cocoa/70 hover:bg-oat/50"}`}
+                      className={`min-w-0 max-w-full truncate rounded-full px-4 py-2 text-left text-sm transition motion-safe:active:scale-[0.98] lg:w-full lg:rounded-xl ${kategori === slug ? "bg-cocoa text-cream" : "bg-linen text-cocoa/70 hover:bg-oat/50"}`}
                     >
                       {collection.name}
                     </button>
@@ -231,7 +231,7 @@ export default function ProductsPage() {
                         type="button"
                         onClick={() => updateParam("page", String(pageNumber))}
                         aria-current={pageNumber === currentPage ? "page" : undefined}
-                        className={`h-10 w-10 shrink-0 rounded-full text-sm font-semibold transition ${pageNumber === currentPage ? "bg-cocoa text-cream" : "bg-linen text-cocoa/70 hover:bg-oat/50"}`}
+                        className={`h-10 w-10 shrink-0 rounded-full text-sm font-semibold transition motion-safe:active:scale-95 ${pageNumber === currentPage ? "bg-cocoa text-cream" : "bg-linen text-cocoa/70 hover:bg-oat/50"}`}
                       >
                         {pageNumber}
                       </button>

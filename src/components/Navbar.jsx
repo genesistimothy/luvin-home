@@ -54,7 +54,7 @@ function NavIconLink({ to, label, count, children }) {
     <Link
       to={to}
       aria-label={count > 0 ? `${label} (${count})` : label}
-      className="relative inline-grid h-11 w-11 place-items-center rounded-full border border-cocoa/20 text-cocoa transition duration-300 hover:border-cocoa/[0.35] hover:bg-cocoa/5"
+      className="relative inline-grid h-11 w-11 place-items-center rounded-full border border-cocoa/20 text-cocoa transition duration-300 hover:border-cocoa/[0.35] hover:bg-cocoa/5 motion-safe:active:scale-95"
     >
       {children}
       {count > 0 && (
@@ -160,7 +160,7 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
           </a>
           <button
             type="button"
-            className="inline-grid h-11 w-11 place-items-center rounded-full border border-cocoa/20 text-cocoa transition duration-300 hover:border-cocoa/[0.35] hover:bg-cocoa/5 lg:hidden"
+            className="inline-grid h-11 w-11 place-items-center rounded-full border border-cocoa/20 text-cocoa transition duration-300 hover:border-cocoa/[0.35] hover:bg-cocoa/5 motion-safe:active:scale-95 lg:hidden"
             aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-navigation"
