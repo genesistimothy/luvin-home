@@ -1,6 +1,8 @@
 # C2 — inquiry PII is readable from the public dataset
 
-**Status:** deferred by the owner on 2026-10-23. Not fixed. Do not fix without reading this first.
+**Status:** deferred by the owner on 2026-10-23. The project stays on the Sanity
+Free plan, so no private dataset and no paid upgrade. Not fixed. Do not fix
+without reading this first.
 
 ## The exposure
 
