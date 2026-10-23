@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, Heart, Scale } from "lucide-react";
 import ProductVisualPlaceholder from "./ProductVisualPlaceholder";
@@ -9,6 +10,9 @@ export default function CatalogProductCard({ product }) {
   const isUnavailable = product.status === "soldOut" || product.stockStatus === "soldOut";
   const isComingSoon = product.status === "comingSoon";
   const slug = productSlug(product);
+  const name = product.name?.trim() || "Untitled product";
+  const [imageFailed, setImageFailed] = useState(false);
+  const hasImage = Boolean(product.mainImageUrl) && !imageFailed;
   const { isWishlisted, toggleWishlist, isCompared, toggleCompare, compareFull } = useSavedProducts();
   const wishlisted = isWishlisted(slug);
   const compared = isCompared(slug);
@@ -17,18 +21,24 @@ export default function CatalogProductCard({ product }) {
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-200 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]">
       <div className="relative">
-        {product.mainImageUrl ? (
+        {hasImage ? (
           <div className="relative aspect-[16/10] overflow-hidden bg-oat">
             <img
               src={product.mainImageUrl}
-              alt={product.mainImage?.altText || product.name}
+              alt={product.mainImage?.altText || name}
               loading="lazy"
               decoding="async"
+              onError={() => setImageFailed(true)}
               className="media-zoom h-full w-full object-cover"
             />
-            <div className="absolute left-5 top-5 rounded-full border border-white/40 bg-cream/[0.85] px-3.5 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.08em] text-cocoa backdrop-blur-md">
-              {product.category}
-            </div>
+            {product.category && (
+              <div
+                title={product.category}
+                className="absolute left-5 top-5 max-w-[calc(100%-4.5rem)] truncate rounded-full border border-white/40 bg-cream/[0.85] px-3.5 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.08em] text-cocoa backdrop-blur-md"
+              >
+                {product.category}
+              </div>
+            )}
           </div>
         ) : (
           <ProductVisualPlaceholder category={product.category} />
@@ -44,16 +54,25 @@ export default function CatalogProductCard({ product }) {
         </button>
       </div>
       <div className="flex flex-1 flex-col p-6">
-        <h3 className="font-display text-xl leading-tight tracking-[-0.02em] text-cocoa">{product.name}</h3>
-        <p className="mt-1.5 text-sm text-cocoa/[0.58]">{product.dimensions}</p>
+        <h3
+          title={name}
+          className="line-clamp-2 overflow-hidden font-display text-xl leading-tight tracking-[-0.02em] text-cocoa [overflow-wrap:anywhere]"
+        >
+          {name}
+        </h3>
+        {product.dimensions && (
+          <p className="mt-1.5 break-words text-sm text-cocoa/[0.58]">{product.dimensions}</p>
+        )}
         {(isUnavailable || isComingSoon) && (
           <p className="mt-2 text-xs font-semibold text-clay">{isComingSoon ? "Coming soon" : "Sold out"}</p>
         )}
-        <div className="mt-auto flex items-center justify-between gap-4 pt-6">
-          <p className="font-display text-xl tracking-[-0.02em] text-cocoa">{formatPrice(product.price, product.currency)}</p>
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-3 pt-6">
+          <p className="min-w-0 break-words font-display text-xl tracking-[-0.02em] text-cocoa">
+            {formatPrice(product.price, product.currency)}
+          </p>
           <Link
             to={`/products/${slug}`}
-            className="premium-button inline-flex items-center gap-1.5 bg-cocoa px-4 py-2.5 text-xs font-semibold text-cream hover:bg-clay"
+            className="premium-button inline-flex shrink-0 items-center gap-1.5 bg-cocoa px-4 py-2.5 text-xs font-semibold text-cream hover:bg-clay"
           >
             Detail <ArrowRight size={14} aria-hidden="true" />
           </Link>

@@ -117,12 +117,12 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
       className={`fixed inset-x-0 top-0 z-50 border-b pt-[env(safe-area-inset-top)] backdrop-blur-xl transition-colors duration-200 ${isScrolled ? "border-cocoa/10 bg-cream/[0.94] shadow-[0_12px_40px_rgba(62,44,35,0.07)]" : "border-white/[0.35] bg-cream/[0.88]"}`}
     >
       <nav
-        className={`mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-8 ${isScrolled ? "py-3" : "py-4"}`}
+        className={`mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-y-2 px-4 sm:px-8 ${isScrolled ? "py-3" : "py-4"}`}
       >
-        <Link to="/" className="flex min-w-0 items-center gap-3" aria-label="Luvin Home — home" onClick={closeMenu}>
+        <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3" aria-label="Luvin Home — home" onClick={closeMenu}>
           <img src="/luvin-logo-mark.svg" alt="" className="h-10 w-auto shrink-0" />
           <span className="min-w-0">
-            <span className="block font-display text-xl text-cocoa">{siteSettings.brandName}</span>
+            <span className="block whitespace-nowrap font-display text-lg text-cocoa sm:text-xl">{siteSettings.brandName}</span>
             <span className="hidden text-xs uppercase tracking-[0.24em] text-umber/70 sm:block">
               {siteSettings.brandPromise}
             </span>
@@ -145,9 +145,11 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
           <NavIconLink to="/wishlist" label="Wishlist" count={wishlist.length}>
             <Heart size={19} aria-hidden="true" />
           </NavIconLink>
-          <NavIconLink to="/compare" label="Compare products" count={compareIds.length}>
-            <Scale size={19} aria-hidden="true" />
-          </NavIconLink>
+          <span className="hidden min-[360px]:inline-flex">
+            <NavIconLink to="/compare" label="Compare products" count={compareIds.length}>
+              <Scale size={19} aria-hidden="true" />
+            </NavIconLink>
+          </span>
           <a
             href={whatsAppLink}
             {...externalLinkProps}
