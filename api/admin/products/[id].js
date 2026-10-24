@@ -18,7 +18,7 @@ function withoutSystemFields(document = {}) {
 }
 
 export default async function handler(req, res) {
-  if (!requireAdmin(req, res)) return
+  if (!(await requireAdmin(req, res))) return
   try {
     const id = baseDocumentId(req.query?.id)
     const client = sanityWriteClient()

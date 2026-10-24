@@ -6,7 +6,7 @@ import {readImageRequest, safeFilename, UploadError} from '../_lib/upload.js'
 export const config = {api: {bodyParser: false}}
 
 export default async function handler(req, res) {
-  if (!requireAdmin(req, res)) return
+  if (!(await requireAdmin(req, res))) return
   if (req.method !== 'POST') return json(res, 405, {error: 'Method not allowed.'})
 
   try {
