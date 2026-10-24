@@ -104,7 +104,7 @@ npm run cms:migrate
 - Never commit `.env*`, `dist/`, `node_modules/`, `.vercel/`, `sanity/.sanity/`.
 - Do not add dependencies for what CSS or the existing helpers can do.
 - Do not “fix” the static `.premium-card`: it is a non-interactive surface.
-- `pnpm-lock.yaml` / `pnpm-workspace.yaml` are not the install path despite existing; use npm and
-  keep `package-lock.json` in sync.
+- `package-lock.json` is the only lockfile. `npm ci` is the install path; do not add a second
+  package manager's lockfile to this repo.
 - Sanity schema limits already exist (product name 120, price ≥ 0, active-product required
   fields). Change the schema and `validateProductInput` in `api/_lib/sanity.js` together.
