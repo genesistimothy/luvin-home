@@ -58,3 +58,24 @@ export function requestOrigin(req) {
   const host = req.headers['x-forwarded-host'] || req.headers.host
   return `${protocol}://${host}`
 }
+
+/**
+ * Origins this deployment trusts for state-changing browser requests.
+ *
+ * Built from Vercel's server-set environment (never from request headers): a
+ * caller can forge Origin, Host and X-Forwarded-* but cannot set VERCEL_URL.
+ * Local development has no such metadata, so the caller falls back to the
+ * request's own origin.
+ */
+export function trustedOrigins() {
+  return [process.env.VERCEL_PROJECT_PRODUCTION_URL, process.env.VERCEL_URL]
+    .filter(Boolean)
+    .map((value) => `https://${String(value).replace(/^https?:\/\//, '').replace(/\/.*$/, '')}`)
+}
+
+export function isTrustedOrigin(req) {
+  const origin = req.headers.origin
+  if (!origin) return false
+  const allowed = trustedOrigins()
+  return allowed.length ? allowed.includes(origin) : origin === requestOrigin(req)
+}
