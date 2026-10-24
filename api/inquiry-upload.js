@@ -1,19 +1,29 @@
-import { json } from './_lib/http.js'
-import { sanityWriteClient } from './_lib/sanity.js'
+import {isTrustedOrigin, json} from './_lib/http.js'
+import {sanityWriteClient} from './_lib/sanity.js'
+import {readImageRequest, safeFilename, UploadError} from './_lib/upload.js'
 
-export const config = { api: { bodyParser: false } }
+export const config = {api: {bodyParser: false}}
 
+/**
+ * This endpoint is deliberately anonymous — customers attach a reference image
+ * before they have any session. That makes the guards below the only barrier:
+ * a request from an origin the deployment trusts (read from Vercel's own
+ * environment, not from request headers), a file that really is an image, and
+ * a body that is really capped (the declared Content-Length is not trusted).
+ */
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed.' })
-  const type = String(req.headers['content-type'] || '').split(';')[0]
-  const size = Number(req.headers['content-length'] || 0)
-  if (!['image/jpeg', 'image/png', 'image/webp'].includes(type)) return json(res, 415, { error: 'Please use a JPG, PNG, or WebP image.' })
-  if (!size || size > 4 * 1024 * 1024) return json(res, 413, { error: 'Image size must be 4 MB or less.' })
-  const filename = decodeURIComponent(String(req.headers['x-file-name'] || 'reference-image')).replace(/[^a-zA-Z0-9._-]/g, '-')
+  if (req.method !== 'POST') return json(res, 405, {error: 'Method not allowed.'})
+
+  if (!isTrustedOrigin(req)) return json(res, 403, {error: 'Invalid request origin.'})
+
   try {
-    const asset = await sanityWriteClient().assets.upload('image', req, { filename, contentType: type })
-    return json(res, 201, { assetId: asset._id, url: asset.url })
-  } catch {
-    return json(res, 500, { error: 'Image upload failed.' })
+    const {buffer, contentType} = await readImageRequest(req)
+    const filename = safeFilename(req.headers['x-file-name'], 'reference-image')
+    const asset = await sanityWriteClient().assets.upload('image', buffer, {filename, contentType})
+    // the browser only needs the id; the image URL is built at render time
+    return json(res, 201, {assetId: asset._id})
+  } catch (error) {
+    if (error instanceof UploadError) return json(res, error.status, {error: error.message})
+    return json(res, 500, {error: 'Image upload failed.'})
   }
 }
