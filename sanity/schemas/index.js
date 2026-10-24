@@ -10,6 +10,7 @@ import {service} from './service.js'
 import {project} from './project.js'
 import {article} from './article.js'
 import {inquiry} from './inquiry.js'
+import {sessionRevocation} from './sessionRevocation.js'
 
 export const schemaTypes = [
   cmsImage,
@@ -23,5 +24,6 @@ export const schemaTypes = [
   testimonial,
   faq,
   inquiry,
+  sessionRevocation,
   siteSettings,
 ]

@@ -5,7 +5,7 @@ import {sanityWriteClient} from '../_lib/sanity.js'
 export const config = {api: {bodyParser: false}}
 
 export default async function handler(req, res) {
-  if (!requireAdmin(req, res)) return
+  if (!(await requireAdmin(req, res))) return
   if (req.method !== 'POST') return json(res, 405, {error: 'Method not allowed.'})
   const type = String(req.headers['content-type'] || '').split(';')[0]
   const size = Number(req.headers['content-length'] || 0)

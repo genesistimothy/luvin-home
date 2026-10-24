@@ -15,7 +15,7 @@ function mergeProducts(documents) {
 }
 
 export default async function handler(req, res) {
-  if (!requireAdmin(req, res)) return
+  if (!(await requireAdmin(req, res))) return
   try {
     if (req.method === 'GET') {
       const documents = await sanityReadClient().fetch(`*[_type == "product"] | order(_updatedAt desc){

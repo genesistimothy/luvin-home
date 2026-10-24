@@ -3,7 +3,7 @@ import {json} from '../_lib/http.js'
 import {sanityReadClient} from '../_lib/sanity.js'
 
 export default async function handler(req, res) {
-  if (!requireAdmin(req, res)) return
+  if (!(await requireAdmin(req, res))) return
   if (req.method !== 'GET') return json(res, 405, {error: 'Method not allowed.'})
   try {
     const data = await sanityReadClient().fetch(`{

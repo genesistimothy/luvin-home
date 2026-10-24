@@ -76,7 +76,8 @@ export function oauthStateFromRequest(req) {
 }
 
 export function setSessionCookie(req, res, user) {
-  const value = signValue({...user, exp: Date.now() + 8 * 60 * 60 * 1000})
+  // jti gives the token an identity that can be revoked server-side at logout.
+  const value = signValue({...user, jti: randomBytes(12).toString('base64url'), exp: Date.now() + 8 * 60 * 60 * 1000})
   // `__Host-` requires Secure unconditionally; browsers treat localhost as a
   // secure context, so this still sets in local development.
   appendCookie(res, `${SESSION_COOKIE}=${encodeURIComponent(value)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=28800; Secure`)
