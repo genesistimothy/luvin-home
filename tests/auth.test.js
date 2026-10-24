@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {requireAdmin} from '../api/_lib/auth.js'
-import {isAllowedEmail, signValue, verifyValue} from '../api/_lib/session.js'
+import {parseCookies} from '../api/_lib/http.js'
+import {SESSION_COOKIE, isAllowedEmail, setSessionCookie, signValue, verifyValue} from '../api/_lib/session.js'
 
 Object.assign(process.env, {
   ADMIN_SESSION_SECRET: 'test-secret-that-is-longer-than-thirty-two-characters',
@@ -33,7 +34,47 @@ test('protected API rejects unauthenticated access', () => {
 test('protected API allows approved signed session', () => {
   const token = signValue({email: 'owner@example.com', name: 'Owner', exp: Date.now() + 60_000})
   const res = response()
-  const session = requireAdmin({method: 'GET', headers: {cookie: `luvin_admin_session=${encodeURIComponent(token)}`}}, res)
+  const session = requireAdmin({method: 'GET', headers: {cookie: `__Host-luvin_admin_session=${encodeURIComponent(token)}`}}, res)
   assert.equal(session.email, 'owner@example.com')
   assert.equal(res.statusCode, 200)
+})
+
+test('signed session can expire', () => {
+  const token = signValue({email: 'owner@example.com', exp: Date.now() - 1_000})
+  assert.equal(verifyValue(token), null)
+})
+
+test('state-changing request without an Origin header is rejected', () => {
+  const token = signValue({email: 'owner@example.com', exp: Date.now() + 60_000})
+  const res = response()
+  const session = requireAdmin({method: 'POST', headers: {cookie: `${SESSION_COOKIE}=${encodeURIComponent(token)}`}}, res)
+  assert.equal(session, null)
+  assert.equal(res.statusCode, 403)
+})
+
+test('state-changing request with a foreign Origin is rejected', () => {
+  const token = signValue({email: 'owner@example.com', exp: Date.now() + 60_000})
+  const res = response()
+  const session = requireAdmin({
+    method: 'POST',
+    headers: {host: 'luvin-home.vercel.app', 'x-forwarded-proto': 'https', origin: 'https://evil.example', cookie: `${SESSION_COOKIE}=${encodeURIComponent(token)}`},
+  }, res)
+  assert.equal(session, null)
+  assert.equal(res.statusCode, 403)
+})
+
+test('session cookie is host-locked, secure, and http-only', () => {
+  const res = response()
+  setSessionCookie({headers: {host: 'luvin-home.vercel.app', 'x-forwarded-proto': 'https'}}, res, {email: 'owner@example.com'})
+  const header = res.headers['Set-Cookie']
+  assert.match(header, /^__Host-luvin_admin_session=/)
+  assert.match(header, /; Secure/)
+  assert.match(header, /; HttpOnly/)
+  assert.match(header, /Path=\//)
+  assert.doesNotMatch(header, /Domain=/)
+})
+
+test('malformed cookie encoding does not throw', () => {
+  assert.deepEqual(parseCookies('broken=%'), {broken: '%'})
+  assert.deepEqual(parseCookies('noequals'), {})
 })
