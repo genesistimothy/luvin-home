@@ -1,6 +1,6 @@
 import {requireAdmin} from '../../_lib/auth.js'
 import {json, readJson} from '../../_lib/http.js'
-import {baseDocumentId, sanityReadClient, sanityWriteClient, validateProductInput} from '../../_lib/sanity.js'
+import {baseDocumentId, isProductDocument, sanityReadClient, sanityWriteClient, validateProductInput} from '../../_lib/sanity.js'
 
 const projection = `{
   _id,_updatedAt,name,slug,sku,status,featured,displayOrder,collection,shortDescription,productStory,
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     const client = sanityWriteClient()
     if (req.method === 'GET') {
       const product = await sanityReadClient().fetch(
-        `coalesce(*[_id == $draft][0]${projection}, *[_id == $id][0]${projection})`,
+        `coalesce(*[_id == $draft && _type == "product"][0]${projection}, *[_id == $id && _type == "product"][0]${projection})`,
         {id, draft: `drafts.${id}`},
       )
       if (!product) return json(res, 404, {error: 'Product not found.'})
@@ -36,6 +36,7 @@ export default async function handler(req, res) {
       const {product, errors} = validateProductInput(body.product || {})
       if (errors) return json(res, 400, {error: errors.join(' '), fields: errors})
       const existing = await client.getDocument(`drafts.${id}`) || await client.getDocument(id) || {}
+      if (!isProductDocument(existing)) return json(res, 409, {error: 'Document is not a product.'})
       const preserved = withoutSystemFields(existing)
       if (body.action === 'publish') {
         await client.transaction().createOrReplace({...preserved, ...product, _id: id, _type: 'product'}).delete(`drafts.${id}`).commit()
@@ -47,6 +48,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'DELETE') {
       const published = await client.getDocument(id)
+      if (!isProductDocument(published)) return json(res, 409, {error: 'Document is not a product.'})
       const transaction = client.transaction().delete(`drafts.${id}`)
       if (published) transaction.patch(id, (patch) => patch.set({status: 'archived'}))
       await transaction.commit()

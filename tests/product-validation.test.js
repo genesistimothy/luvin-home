@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import {validateProductInput} from '../api/_lib/sanity.js'
+import {isProductDocument, validateProductInput} from '../api/_lib/sanity.js'
 
 const activeProduct = {
   name: 'QA Chair', slug: 'qa-chair', sku: 'QA-001', status: 'active', price: 1200000,
@@ -24,4 +24,11 @@ test('draft product can be saved before active-only fields are complete', () => 
   const result = validateProductInput({name: 'Early Draft', slug: 'early-draft', status: 'draft', price: 0})
   assert.equal(result.errors, undefined)
   assert.equal(result.product.status, 'draft')
+})
+
+test('admin product routes only accept product documents', () => {
+  assert.equal(isProductDocument({_type: 'product'}), true)
+  assert.equal(isProductDocument({_type: 'collection'}), false)
+  assert.equal(isProductDocument({_type: 'inquiry'}), false)
+  assert.equal(isProductDocument(null), true) // a missing document keeps the 404 path
 })

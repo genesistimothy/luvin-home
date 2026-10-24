@@ -18,6 +18,16 @@ export function sanityWriteClient() {
   return createClient({...config(), token, perspective: 'raw'})
 }
 
+/**
+ * Admin product routes must only touch product documents. Without this, an id
+ * belonging to a collection, an inquiry or a singleton can be fetched and then
+ * silently rewritten as a product.
+ * @param {Record<string, any>|null|undefined} document
+ */
+export function isProductDocument(document) {
+  return !document || document._type === 'product'
+}
+
 export function baseDocumentId(id = '') {
   const normalized = String(id).replace(/^drafts\./, '')
   if (!/^[a-zA-Z0-9._-]{1,128}$/.test(normalized)) throw new Error('Invalid document id.')
