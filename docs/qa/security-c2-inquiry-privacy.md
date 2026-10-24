@@ -45,6 +45,18 @@ Zero cost, exposure continues. This is the current state.
 - Copy documents first, verify the copy, then delete from the public dataset.
 - Deleting customer data needs explicit approval. Never in the same step as the copy.
 
+## Alternatives considered and rejected (2026-10-24)
+
+Both were evaluated for a $0 fix and rejected:
+
+- **Supabase Free** — Postgres + RLS would work (anon insert-only, no select), but the
+  project pauses after 7 days of inactivity, and the form is the only thing that touches it.
+  Keeping it awake needs a daily cron whose own failure is silent. That is a second backend,
+  a new SDK, a new secret set and a migration — to avoid $15/month.
+- **Appwrite Free** — same shape, plus its own auth and permissions model to adopt.
+
+Decision: stay on Sanity Free; C2 stays deferred rather than buying a second system.
+
 ## When to revisit
 
 - Before any paid campaign that pushes traffic to the contact form.
