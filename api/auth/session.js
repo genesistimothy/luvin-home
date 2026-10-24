@@ -7,6 +7,11 @@ export default async function handler(req, res) {
   const session = sessionFromRequest(req)
   if (!session) return json(res, 200, {authenticated: false})
   if (!isAllowedEmail(session.email)) return json(res, 200, {authenticated: false, denied: true})
-  if (session.jti && await isSessionRevoked(session.jti)) return json(res, 200, {authenticated: false})
+  try {
+    if (session.jti && await isSessionRevoked(session.jti)) return json(res, 200, {authenticated: false})
+  } catch {
+    // Fail closed: a status check that cannot verify revocation must not claim a live session.
+    return json(res, 200, {authenticated: false})
+  }
   return json(res, 200, {authenticated: true, user: {email: session.email, name: session.name, picture: session.picture}})
 }
