@@ -52,7 +52,9 @@ export default function ProjectsPage() {
           </div>
         )}
 
-        {error ? null : filtered.length > 0 ? (
+        {loading ? (
+          <p className="mt-16 text-center text-cocoa/70">Loading projects…</p>
+        ) : error ? null : filtered.length > 0 ? (
           <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {filtered.map((project) => (
               <Link

@@ -26,7 +26,9 @@ export default function BlogPage() {
           </h1>
         </div>
 
-        {error ? (
+        {loading ? (
+          <p className="mt-16 text-center text-cocoa/70">Loading articles…</p>
+        ) : error ? (
           <ContentError label="articles" onRetry={refetch} />
         ) : articles.length > 0 ? (
           <div className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
