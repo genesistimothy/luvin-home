@@ -4,6 +4,7 @@ import { ArrowRight, Check, Heart, Scale } from "lucide-react";
 import ProductVisualPlaceholder from "./ProductVisualPlaceholder";
 import { formatPrice } from "../lib/format";
 import { productSlug } from "../lib/slug";
+import { sanityImageUrl, sanityImageSrcSet } from "../lib/sanityImage";
 import { useSavedProducts } from "../context/SavedProductsContext";
 
 export default function CatalogProductCard({ product }) {
@@ -11,8 +12,8 @@ export default function CatalogProductCard({ product }) {
   const isComingSoon = product.status === "comingSoon";
   const slug = productSlug(product);
   const name = product.name?.trim() || "Untitled product";
-  const [imageFailed, setImageFailed] = useState(false);
-  const hasImage = Boolean(product.mainImageUrl) && !imageFailed;
+  const [failedImageUrl, setFailedImageUrl] = useState(null);
+  const hasImage = Boolean(product.mainImageUrl) && failedImageUrl !== product.mainImageUrl;
   const { isWishlisted, toggleWishlist, isCompared, toggleCompare, compareFull } = useSavedProducts();
   const wishlisted = isWishlisted(slug);
   const compared = isCompared(slug);
@@ -24,11 +25,13 @@ export default function CatalogProductCard({ product }) {
         {hasImage ? (
           <div className="relative aspect-[16/10] overflow-hidden bg-oat">
             <img
-              src={product.mainImageUrl}
+              src={sanityImageUrl(product.mainImage, { width: 900 }) || product.mainImageUrl}
+              srcSet={sanityImageSrcSet(product.mainImage, [450, 900, 1350])}
+              sizes="(min-width: 1280px) 30vw, (min-width: 640px) 45vw, 100vw"
               alt={product.mainImage?.altText || name}
               loading="lazy"
               decoding="async"
-              onError={() => setImageFailed(true)}
+              onError={() => setFailedImageUrl(product.mainImageUrl)}
               className="media-zoom h-full w-full object-cover"
             />
             {product.category && (
@@ -61,10 +64,10 @@ export default function CatalogProductCard({ product }) {
           {name}
         </h3>
         {product.dimensions && (
-          <p className="mt-1.5 break-words text-sm text-cocoa/[0.58]">{product.dimensions}</p>
+          <p className="mt-1.5 break-words text-sm text-cocoa/70">{product.dimensions}</p>
         )}
         {(isUnavailable || isComingSoon) && (
-          <p className="mt-2 text-xs font-semibold text-clay">{isComingSoon ? "Coming soon" : "Sold out"}</p>
+          <p className="mt-2 text-xs font-semibold text-clay-strong">{isComingSoon ? "Coming soon" : "Sold out"}</p>
         )}
         <div className="mt-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-3 pt-6">
           <p className="min-w-0 break-words font-display text-xl tracking-[-0.02em] text-cocoa">
@@ -83,10 +86,10 @@ export default function CatalogProductCard({ product }) {
           disabled={compareDisabled}
           className={`mt-3 inline-flex items-center justify-center gap-1.5 rounded-full border px-4 py-2 text-xs font-semibold transition motion-safe:active:scale-[0.98] ${
             compared
-              ? "border-clay bg-clay/10 text-clay"
+              ? "border-clay bg-clay/10 text-clay-strong"
               : compareDisabled
                 ? "cursor-not-allowed border-oat/50 text-cocoa/30"
-                : "border-oat/60 text-cocoa/[0.65] hover:border-clay/40 hover:text-clay"
+                : "border-oat/60 text-cocoa/70 hover:border-clay/40 hover:text-clay-strong"
           }`}
         >
           {compared ? <Check size={14} /> : <Scale size={14} />}

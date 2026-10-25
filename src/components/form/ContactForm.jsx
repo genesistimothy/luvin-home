@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CheckCircle2, XCircle } from "lucide-react";
 import FormField, { fieldInputClass } from "./FormField";
+import TurnstileWidget from "./TurnstileWidget";
 import { isValidEmail } from "../../lib/validate";
 import { parseJsonSafe } from "../../lib/api";
 
@@ -12,6 +13,8 @@ export default function ContactForm() {
   const [errors, setErrors] = useState(/** @type {Record<string, string>} */ ({}));
   const [status, setStatus] = useState("idle");
   const [serverError, setServerError] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileKey, setTurnstileKey] = useState(0);
 
   const updateField = (field) => (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
 
@@ -40,6 +43,7 @@ export default function ContactForm() {
           contact: form.email,
           message: `${form.message}${form.phone.trim() ? `\n\nPhone: ${form.phone.trim()}` : ""}`,
           company,
+          turnstileToken,
         }),
       });
       const data = await parseJsonSafe(response);
@@ -47,8 +51,12 @@ export default function ContactForm() {
 
       setStatus("success");
       setForm(initialForm);
+      setTurnstileToken("");
+      setTurnstileKey((key) => key + 1);
     } catch (error) {
       setStatus("error");
+      setTurnstileToken("");
+      setTurnstileKey((key) => key + 1);
       setServerError(error.message || "Failed to send your message. Please try again.");
     }
   };
@@ -56,7 +64,7 @@ export default function ContactForm() {
   if (status === "success") {
     return (
       <div className="rounded-[1.5rem] border border-clay/30 bg-linen p-8 text-center">
-        <CheckCircle2 className="mx-auto text-clay" size={40} />
+        <CheckCircle2 className="mx-auto text-clay-strong" size={40} />
         <h3 className="mt-4 font-display text-2xl text-cocoa">Message Sent</h3>
         <p className="mt-2 text-cocoa/[0.68]">Thank you for reaching out. The Luvin Home team will get back to you soon.</p>
       </div>
@@ -126,6 +134,8 @@ export default function ContactForm() {
           <XCircle size={16} /> {serverError}
         </p>
       )}
+
+      <TurnstileWidget key={turnstileKey} onToken={setTurnstileToken} />
 
       <button
         type="submit"

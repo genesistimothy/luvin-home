@@ -8,11 +8,11 @@ function InfoRow({ icon: Icon, label, value }) {
   if (!value) return null;
   return (
     <div className="flex gap-3.5">
-      <span className="mt-0.5 inline-grid h-9 w-9 shrink-0 place-items-center rounded-full bg-clay/10 text-clay">
+      <span className="mt-0.5 inline-grid h-9 w-9 shrink-0 place-items-center rounded-full bg-clay/10 text-clay-strong">
         <Icon size={17} />
       </span>
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.15em] text-clay">{label}</p>
+        <p className="text-xs font-bold uppercase tracking-[0.15em] text-clay-strong">{label}</p>
         <p className="mt-1 leading-6 text-cocoa/75">{value}</p>
       </div>
     </div>
@@ -25,7 +25,7 @@ export default function ContactPage() {
   const mapQuery = encodeURIComponent(siteSettings.businessAddress || siteSettings.brandName || "Luvin Home");
 
   return (
-    <section className="section-shell bg-cream pt-32">
+    <section className="section-shell bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-6xl">
         <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Contact Us" }]} />
         <div className="mt-6 max-w-2xl">
@@ -78,7 +78,7 @@ export default function ContactPage() {
               {faqs.map((faq) => (
                 <div key={faq.question}>
                   <p className="font-semibold text-cocoa">{faq.question}</p>
-                  <p className="mt-1.5 text-sm leading-6 text-cocoa/[0.62]">{faq.answer}</p>
+                  <p className="mt-1.5 text-sm leading-6 text-cocoa/70">{faq.answer}</p>
                 </div>
               ))}
             </div>

@@ -10,7 +10,7 @@ export default function ServicesPage() {
   const services = mergeServiceContent(data);
 
   return (
-    <section className="section-shell bg-cream pt-32">
+    <section className="section-shell bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-7xl">
         <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Services" }]} />
         <div className="mt-6 max-w-2xl">
@@ -35,7 +35,7 @@ export default function ServicesPage() {
                 <h2 className="font-display text-2xl tracking-[-0.02em] text-cocoa">{service.name}</h2>
                 <p className="mt-3 leading-7 text-cocoa/[0.68]">{service.summary}</p>
               </div>
-              <span className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-clay">
+              <span className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-clay-strong">
                 Learn More
                 <ArrowRight size={16} className="transition group-hover:translate-x-1" />
               </span>

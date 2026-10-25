@@ -4,7 +4,7 @@ import {parseCookies, requestOrigin} from './http.js'
 // `__Host-` makes the browser enforce three things this cookie needs anyway:
 // Secure, Path=/, and no Domain attribute — so a subdomain cannot set it.
 export const SESSION_COOKIE = '__Host-luvin_admin_session'
-export const OAUTH_COOKIE = 'luvin_admin_oauth'
+export const OAUTH_COOKIE = '__Secure-luvin_admin_oauth'
 
 const secret = () => {
   const value = process.env.ADMIN_SESSION_SECRET
@@ -57,18 +57,20 @@ export function createOAuthState() {
   }
 }
 
-const secureCookie = (req) => requestOrigin(req).startsWith('https://') ? '; Secure' : ''
+// Both cookies are always Secure. `__Host-`/`__Secure-` require it, and
+// localhost is treated as a secure context by browsers.
+const secureCookie = () => '; Secure'
 const appendCookie = (res, value) => {
   const existing = res.getHeader?.('Set-Cookie')
   res.setHeader('Set-Cookie', existing ? [...(Array.isArray(existing) ? existing : [existing]), value] : value)
 }
 
 export function setOAuthCookie(req, res, value) {
-  appendCookie(res, `${OAUTH_COOKIE}=${encodeURIComponent(signValue(value))}; Path=/api/auth; HttpOnly; SameSite=Lax; Max-Age=600${secureCookie(req)}`)
+  appendCookie(res, `${OAUTH_COOKIE}=${encodeURIComponent(signValue(value))}; Path=/api/auth; HttpOnly; SameSite=Lax; Max-Age=600${secureCookie()}`)
 }
 
 export function clearOAuthCookie(req, res) {
-  appendCookie(res, `${OAUTH_COOKIE}=; Path=/api/auth; HttpOnly; SameSite=Lax; Max-Age=0${secureCookie(req)}`)
+  appendCookie(res, `${OAUTH_COOKIE}=; Path=/api/auth; HttpOnly; SameSite=Lax; Max-Age=0${secureCookie()}`)
 }
 
 export function oauthStateFromRequest(req) {

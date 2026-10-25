@@ -96,8 +96,8 @@ export function ProductFormPage({id = null}) {
         <section className="admin-panel admin-form-section"><div><p className="admin-eyebrow">STORY & DETAILS</p><h2>How the piece lives</h2></div><div className="admin-form-grid">
           <Field label="Short description" wide><textarea rows={3} maxLength={280} value={product.shortDescription || ''} onChange={(event) => update('shortDescription', event.target.value)}/></Field>
           <Field label="Product story" wide><textarea rows={5} maxLength={1000} value={product.productStory || ''} onChange={(event) => update('productStory', event.target.value)}/></Field>
-          <Field label="Dimensions"><input value={product.dimensions || ''} onChange={(event) => update('dimensions', event.target.value)}/></Field>
-          <Field label="Weight"><input value={product.weight || ''} onChange={(event) => update('weight', event.target.value)}/></Field>
+          <Field label="Dimensions"><input maxLength={120} value={product.dimensions || ''} onChange={(event) => update('dimensions', event.target.value)}/></Field>
+          <Field label="Weight"><input maxLength={40} value={product.weight || ''} onChange={(event) => update('weight', event.target.value)}/></Field>
           <Field label="Materials" hint="One per line." wide><textarea rows={4} value={toLines(product.materials)} onChange={(event) => update('materials', fromLines(event.target.value))}/></Field>
           <Field label="Colors / variants" hint="One per line." wide><textarea rows={4} value={toLines(product.colors)} onChange={(event) => update('colors', fromLines(event.target.value))}/></Field>
           <Field label="Benefits" hint="One per line." wide><textarea rows={4} value={toLines(product.benefits)} onChange={(event) => update('benefits', fromLines(event.target.value))}/></Field>

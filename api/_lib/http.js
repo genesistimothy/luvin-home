@@ -40,8 +40,14 @@ export function parseCookies(header = '') {
 }
 
 export async function readJson(req, maxBytes = 128_000) {
-  if (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body)) return req.body
-  if (typeof req.body === 'string') return JSON.parse(req.body)
+  if (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body)) {
+    if (Buffer.byteLength(JSON.stringify(req.body)) > maxBytes) throw new Error('Request body is too large.')
+    return req.body
+  }
+  if (typeof req.body === 'string') {
+    if (Buffer.byteLength(req.body) > maxBytes) throw new Error('Request body is too large.')
+    return JSON.parse(req.body)
+  }
   const chunks = []
   let size = 0
   for await (const chunk of req) {

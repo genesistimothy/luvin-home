@@ -1,13 +1,15 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { Images } from "lucide-react";
 import Breadcrumb from "../components/Breadcrumb";
+import ContentError from "../components/ContentError";
+import { sanityImageUrl, sanityImageSrcSet } from "../lib/sanityImage";
 import { useSanityQuery } from "../hooks/useSanityQuery";
 import { projectsQuery } from "../lib/queries";
 
 const ROOM_TYPES = ["Living Room", "Dining Room", "Bedroom", "Kitchen", "Workspace", "Entryway", "Other"];
 
 export default function ProjectsPage() {
-  const { data, loading } = useSanityQuery(projectsQuery);
+  const { data, loading, error, refetch } = useSanityQuery(projectsQuery);
   const [searchParams, setSearchParams] = useSearchParams();
   const roomType = searchParams.get("tipe") || "";
 
@@ -15,7 +17,7 @@ export default function ProjectsPage() {
   const filtered = roomType ? projects.filter((project) => project.roomType === roomType) : projects;
 
   return (
-    <section className="section-shell bg-cream pt-32">
+    <section className="section-shell bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-7xl">
         <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Projects" }]} />
         <div className="mt-6 max-w-2xl">
@@ -26,7 +28,9 @@ export default function ProjectsPage() {
           <p className="mt-6 leading-8 text-cocoa/[0.68]">Case studies of spaces we&apos;ve designed and brought to life with our clients.</p>
         </div>
 
-        {projects.length > 0 && (
+        {error ? (
+          <ContentError label="projects" onRetry={refetch} />
+        ) : projects.length > 0 && (
           <div className="mt-8 flex flex-wrap gap-2">
             <button
               type="button"
@@ -48,7 +52,7 @@ export default function ProjectsPage() {
           </div>
         )}
 
-        {filtered.length > 0 ? (
+        {error ? null : filtered.length > 0 ? (
           <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {filtered.map((project) => (
               <Link
@@ -59,8 +63,12 @@ export default function ProjectsPage() {
                 <div className="aspect-[4/3] overflow-hidden bg-oat">
                   {project.coverImage?.image?.asset?.url ? (
                     <img
-                      src={project.coverImage.image.asset.url}
+                      src={sanityImageUrl(project.coverImage, { width: 720 })}
+                      srcSet={sanityImageSrcSet(project.coverImage, [480, 720, 1080])}
+                      sizes="(min-width: 1280px) 30vw, (min-width: 640px) 45vw, 100vw"
                       alt={project.coverImage.altText || project.title}
+                      loading="lazy"
+                      decoding="async"
                       className="media-zoom h-full w-full object-cover"
                     />
                   ) : (
@@ -70,16 +78,16 @@ export default function ProjectsPage() {
                   )}
                 </div>
                 <div className="p-6">
-                  <p className="text-xs font-bold uppercase tracking-[0.15em] text-clay">{project.roomType}</p>
+                  <p className="text-xs font-bold uppercase tracking-[0.15em] text-clay-strong">{project.roomType}</p>
                   <h2 className="mt-2 font-display text-xl tracking-[-0.02em] text-cocoa">{project.title}</h2>
-                  {project.summary && <p className="mt-2 text-sm leading-6 text-cocoa/[0.65]">{project.summary}</p>}
+                  {project.summary && <p className="mt-2 text-sm leading-6 text-cocoa/70">{project.summary}</p>}
                 </div>
               </Link>
             ))}
           </div>
         ) : (
           !loading && (
-            <p className="mt-16 text-center text-cocoa/60">
+            <p className="mt-16 text-center text-cocoa/70">
               {projects.length === 0 ? "No projects published yet. Stay tuned for our latest case studies." : "No projects for this room type."}
             </p>
           )

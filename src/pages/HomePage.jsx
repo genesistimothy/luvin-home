@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { vision, mission } from "../data/products";
+import { sanityImageSrcSet } from "../lib/sanityImage";
 
 function useScrollReveal(content) {
   useEffect(() => {
@@ -48,6 +49,11 @@ function Hero({ homepage }) {
     <section id="home" className="relative min-h-[100svh] overflow-hidden bg-cocoa text-cream lg:min-h-[min(960px,100svh)]">
       <img
         src={homepage.heroImage?.url || "/hero-living-room.jpg"}
+        srcSet={
+          sanityImageSrcSet(homepage.heroImage, [800, 1200, 1600, 1920])
+          || "/hero/hero-800.jpg 800w, /hero/hero-1200.jpg 1200w, /hero-living-room.jpg 1694w"
+        }
+        sizes="100vw"
         alt={homepage.heroImage?.altText || "Warm modern living room with Luvin Home furniture"}
         width="1694"
         height="928"
@@ -62,7 +68,7 @@ function Hero({ homepage }) {
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(34,23,18,0.9)_0%,rgba(47,33,27,0.64)_42%,rgba(62,44,35,0.12)_78%)]" />
       <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-cocoa/90 via-cocoa/30 to-transparent" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_35%,transparent_0%,rgba(28,18,14,0.14)_76%)]" />
-      <div className="relative mx-auto flex min-h-[100svh] max-w-7xl items-end px-5 pb-14 pt-32 sm:px-8 sm:pb-20 lg:min-h-[min(960px,100svh)] lg:pb-24">
+      <div className="safe-x relative mx-auto flex min-h-[100svh] max-w-7xl items-end px-5 pb-14 pt-32 sm:px-8 sm:pb-20 lg:min-h-[min(960px,100svh)] lg:pb-24">
         <div className="max-w-3xl">
           <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-cream/30 bg-cocoa/10 px-4 py-2 text-xs font-semibold tracking-[0.04em] backdrop-blur-md sm:text-sm">
             <Sparkles size={16} />

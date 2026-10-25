@@ -3,6 +3,7 @@ import { sanityClient } from "../lib/sanityClient";
 
 export function useSanityQuery(query, params = {}) {
   const paramsKey = JSON.stringify(params);
+  const [reloadKey, setReloadKey] = useState(0);
   const [state, setState] = useState({ data: null, loading: true, error: null });
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export function useSanityQuery(query, params = {}) {
     };
     // paramsKey is the intentional dependency proxy for the params object.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, paramsKey]);
+  }, [query, paramsKey, reloadKey]);
 
-  return state;
+  return { ...state, refetch: () => setReloadKey((key) => key + 1) };
 }

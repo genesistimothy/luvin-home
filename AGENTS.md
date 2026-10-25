@@ -15,12 +15,14 @@ no SSR and no Next.js.
 
 ```bash
 npm ci                 # package-lock.json is authoritative — do not use pnpm
-npm run dev            # Vite
+npm run dev            # Vite (public site)
+npx vercel dev         # API/auth/forms; Vite alone does not serve /api
 npm run lint           # eslint, --max-warnings=0
 npm run typecheck      # tsc --noEmit with checkJs
 npm test               # node --test tests/*.test.js
 npm run build          # vite build
 npm run preview
+npm run studio:install # once, installs sanity/ dependencies
 npm run studio         # Sanity Studio dev
 npm run studio:build / studio:deploy
 npm run cms:migrate
@@ -33,8 +35,9 @@ npm run cms:migrate
 - **Default exports** for components and pages; **named exports** for `src/lib`, hooks, and
   schema helpers. PropTypes are intentionally off.
 - Relative imports (`../lib/format`); no path aliases.
-- Tailwind utilities inline. Shared component classes live in `@layer components` in
-  `src/styles.css` (`.premium-button`, `.premium-card`, `.fade-up`, `.media-zoom`, `.lightbox`).
+- Tailwind utilities inline. `.premium-button`, `.premium-card`, and `.fade-up` live in
+  `@layer components`; `.media-zoom`, `.placeholder-*`, and `.lightbox` are intentionally
+  unlayered so they can override utilities.
 - Use the palette tokens only: `linen`, `cream`, `oat`, `clay`, `umber`, `cocoa`, `moss`,
   `stone`; `font-display` is Playfair, body is Inter. No dark mode, no RTL.
 - Admin is **not** Tailwind — keep its styles in `src/admin/admin.css` and its components in
@@ -88,6 +91,16 @@ npm run cms:migrate
   `GOOGLE_CLIENT_SECRET`, or the allowlist. Admin access is checked against
   `ADMIN_ALLOWED_EMAILS` with a signed session cookie.
 - New public routes go in `src/App.jsx`; Vercel’s catch-all rewrite handles deep links.
+
+## Public endpoints
+
+- Vercel Hobby allows one WAF rate-limit rule; apply it in the dashboard to
+  `/api/` (60 requests / 10 min / IP). This is deployment config, not repo code.
+- Turnstile is verified server-side in `api/_lib/turnstile.js`; set
+  `VITE_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`. Production fails closed
+  when the secret is missing.
+- Inquiry PII is still in the public Sanity dataset (C2 open). Do not send paid
+  traffic to the contact forms until it is moved to a private store.
 
 ## Tests and verification
 

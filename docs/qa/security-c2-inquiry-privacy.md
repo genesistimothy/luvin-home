@@ -4,6 +4,10 @@
 Free plan, so no private dataset and no paid upgrade. Not fixed. Do not fix
 without reading this first.
 
+**Update 2026-10-25:** Supabase Free was re-evaluated as viable with a daily
+keepalive; the move is planned but **not implemented**. This note remains the
+current exposure.
+
 ## The exposure
 
 Sanity project `p3ihfsxq`, dataset `production`, is public-read. Verified: an

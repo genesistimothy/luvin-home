@@ -25,7 +25,7 @@ export default function ProductsPage() {
   const min = searchParams.get("min") || "";
   const max = searchParams.get("max") || "";
   const sort = searchParams.get("sort") || "terbaru";
-  const page = Math.max(1, Number(searchParams.get("page")) || 1);
+  const page = Math.max(1, Math.trunc(Number(searchParams.get("page")) || 1));
 
   const updateParam = (key, value) => {
     const next = new URLSearchParams(searchParams);
@@ -103,14 +103,14 @@ export default function ProductsPage() {
             </h1>
           </div>
           <div className="relative w-full max-w-sm">
-            <Search size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-cocoa/40" />
+            <Search size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-cocoa/70" />
             <input
               type="search"
               value={q}
               onChange={(event) => updateParam("q", event.target.value)}
               placeholder="Search products..."
               aria-label="Search products"
-              className="w-full rounded-full border border-oat/60 bg-white/70 py-3 pl-11 pr-4 text-sm text-cocoa placeholder:text-cocoa/40 focus:border-clay/50 focus:outline-none"
+              className="w-full rounded-full border border-oat/60 bg-white/70 py-3 pl-11 pr-4 text-sm text-cocoa placeholder:text-cocoa/70 focus:border-clay/50 focus:outline-none"
             />
           </div>
         </div>
@@ -118,7 +118,7 @@ export default function ProductsPage() {
         <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
           <aside className="min-w-0 space-y-8 self-start">
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Category</h3>
+              <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay-strong">Category</h2>
               <div className="mt-3 flex flex-wrap gap-2 lg:flex-col lg:gap-1.5">
                 <button
                   type="button"
@@ -145,7 +145,7 @@ export default function ProductsPage() {
             </div>
 
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Price Range</h3>
+              <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay-strong">Price Range</h2>
               <div className="mt-3 flex items-center gap-2">
                 <input
                   type="number"
@@ -156,7 +156,7 @@ export default function ProductsPage() {
                   aria-label="Minimum price"
                   className="w-full rounded-xl border border-oat/60 bg-white/70 px-3 py-2.5 text-sm text-cocoa focus:border-clay/50 focus:outline-none"
                 />
-                <span className="text-cocoa/40">–</span>
+                <span className="text-cocoa/70">–</span>
                 <input
                   type="number"
                   min="0"
@@ -173,7 +173,7 @@ export default function ProductsPage() {
               <button
                 type="button"
                 onClick={() => setSearchParams({})}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-clay hover:text-cocoa"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-clay-strong hover:text-cocoa"
               >
                 <X size={14} /> Reset Filters
               </button>
@@ -182,7 +182,7 @@ export default function ProductsPage() {
 
           <div className="min-w-0">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-oat/50 pb-5">
-              <p className="text-sm text-cocoa/60">{formatProductCount(filtered.length)}</p>
+              <p className="text-sm text-cocoa/70">{formatProductCount(filtered.length)}</p>
               <label className="flex items-center gap-2 text-sm text-cocoa/70">
                 <SlidersHorizontal size={15} aria-hidden="true" />
                 <select
@@ -199,6 +199,7 @@ export default function ProductsPage() {
               </label>
             </div>
 
+            <h2 className="sr-only">Product catalogue</h2>
             {paged.length > 0 ? (
               <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {paged.map((product, index) => (
@@ -209,7 +210,7 @@ export default function ProductsPage() {
                 ))}
               </div>
             ) : (
-              <p className="mt-14 text-center text-cocoa/60">
+              <p className="mt-14 text-center text-cocoa/70">
                 {hasActiveFilters
                   ? "No products match these filters."
                   : "No products are available yet."}
@@ -223,7 +224,7 @@ export default function ProductsPage() {
                   return (
                     <Fragment key={pageNumber}>
                       {previous && pageNumber - previous > 1 && (
-                        <span className="px-1 text-sm text-cocoa/40" aria-hidden="true">
+                        <span className="px-1 text-sm text-cocoa/70" aria-hidden="true">
                           …
                         </span>
                       )}

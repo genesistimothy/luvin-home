@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CheckCircle2, MessageCircle, Paperclip, XCircle } from "lucide-react";
 import FormField, { fieldInputClass } from "./FormField";
+import TurnstileWidget from "./TurnstileWidget";
 import { isValidContact } from "../../lib/validate";
 import { parseJsonSafe } from "../../lib/api";
 import { createWhatsAppLink } from "../../config/contact";
@@ -19,6 +20,8 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
   const [errors, setErrors] = useState(/** @type {Record<string, string>} */ ({}));
   const [status, setStatus] = useState("idle");
   const [serverError, setServerError] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileKey, setTurnstileKey] = useState(0);
 
   const updateField = (field) => (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
 
@@ -80,6 +83,7 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
           serviceSlug,
           referenceImageAssetId,
           company: "",
+          turnstileToken,
           ...form,
         }),
       });
@@ -89,8 +93,12 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
       setStatus("success");
       setForm(initialForm);
       setFile(null);
+      setTurnstileToken("");
+      setTurnstileKey((key) => key + 1);
     } catch (error) {
       setStatus("error");
+      setTurnstileToken("");
+      setTurnstileKey((key) => key + 1);
       setServerError(error.message || "Failed to send your request. Please try again.");
     }
   };
@@ -99,7 +107,7 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
     const followUpMessage = `Hello Luvin Home, I just submitted a consultation request for the ${serviceName} service. My name is ${form.name || ""}.`;
     return (
       <div className="rounded-[1.5rem] border border-clay/30 bg-linen p-8 text-center">
-        <CheckCircle2 className="mx-auto text-clay" size={40} />
+        <CheckCircle2 className="mx-auto text-clay-strong" size={40} />
         <h3 className="mt-4 font-display text-2xl text-cocoa">Request Sent</h3>
         <p className="mt-2 text-cocoa/[0.68]">Our team will reach out to you shortly. You can also chat with us directly on WhatsApp.</p>
         <a
@@ -183,7 +191,7 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
       <FormField label="Reference Photo (Optional)" htmlFor="consult-file" error={fileError} hint="JPG, PNG, or WebP. Max 4 MB.">
         <label
           htmlFor="consult-file"
-          className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-oat/70 bg-white/50 px-4 py-3 text-sm text-cocoa/[0.65] hover:border-clay/40"
+          className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-oat/70 bg-white/50 px-4 py-3 text-sm text-cocoa/70 hover:border-clay/40"
         >
           <Paperclip size={16} />
           {file ? file.name : "Choose a reference image"}
@@ -196,6 +204,8 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
           <XCircle size={16} /> {serverError}
         </p>
       )}
+
+      <TurnstileWidget key={turnstileKey} onToken={setTurnstileToken} />
 
       <button
         type="submit"

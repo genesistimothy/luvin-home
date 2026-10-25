@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { json, readJson } from './_lib/http.js'
 import { sanityWriteClient } from './_lib/sanity.js'
+import { verifyTurnstile } from './_lib/turnstile.js'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PHONE_RE = /^\+?\d{8,15}$/
@@ -52,6 +53,12 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed.' })
   try {
     const body = await readJson(req)
+    const turnstile = await verifyTurnstile(req, body.turnstileToken)
+    if (!turnstile.ok) {
+      return json(res, turnstile.status, {
+        error: turnstile.status === 503 ? 'Verification is temporarily unavailable.' : 'Please complete the verification.',
+      })
+    }
     const { inquiry, errors } = validateInquiry(body)
     if (errors) return json(res, 400, { error: errors.join(' ') })
 

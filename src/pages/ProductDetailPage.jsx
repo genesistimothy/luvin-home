@@ -12,6 +12,16 @@ function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
   const [isClosing, setIsClosing] = useState(false);
   const closingRef = useRef(false);
   const closeTimer = useRef(null);
+  const dialogRef = useRef(null);
+  const closeRef = useRef(null);
+  const previousFocus = useRef(null);
+
+  // Move focus into the dialog and restore it to the trigger on close.
+  useEffect(() => {
+    previousFocus.current = document.activeElement;
+    closeRef.current?.focus();
+    return () => previousFocus.current?.focus?.();
+  }, []);
 
   const requestClose = useCallback(() => {
     if (closingRef.current) return;
@@ -27,6 +37,20 @@ function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
       if (event.key === "Escape") requestClose();
       if (event.key === "ArrowRight") onNavigate((activeIndex + 1) % images.length);
       if (event.key === "ArrowLeft") onNavigate((activeIndex - 1 + images.length) % images.length);
+      if (event.key === "Tab" && dialogRef.current) {
+        const focusable = [...dialogRef.current.querySelectorAll("button:not([tabindex=\"-1\"])")]
+          .filter((element) => element.offsetParent !== null);
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
     };
     document.addEventListener("keydown", handleKeyDown);
     const { overflow } = document.body.style;
@@ -41,6 +65,7 @@ function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-label={image?.altText || "Product image"}
@@ -55,6 +80,7 @@ function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
       />
 
       <button
+        ref={closeRef}
         type="button"
         onClick={requestClose}
         aria-label="Close image viewer"
@@ -128,7 +154,7 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32">
+      <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32 lg:pt-40">
         <div className="mx-auto max-w-xl text-center">
           <p className="section-kicker">404</p>
           <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Product not found.</h1>
@@ -162,7 +188,7 @@ export default function ProductDetailPage() {
   const compareDisabled = !compared && compareFull;
 
   return (
-    <section className="section-shell bg-cream pt-32">
+    <section className="section-shell bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-6xl">
         <Breadcrumb
           items={[
@@ -233,7 +259,7 @@ export default function ProductDetailPage() {
             </h1>
 
             {(isUnavailable || isComingSoon) && (
-              <p className="mt-3 inline-block rounded-full bg-clay/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-clay">
+              <p className="mt-3 inline-block rounded-full bg-clay/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-clay-strong">
                 {isComingSoon ? "Coming soon" : "Sold out — enquire for availability"}
               </p>
             )}
@@ -244,7 +270,7 @@ export default function ProductDetailPage() {
 
             <div className="mt-8 flex items-baseline gap-3">
               {product.compareAtPrice && (
-                <p className="text-lg text-cocoa/40 line-through">{formatPrice(product.compareAtPrice, product.currency)}</p>
+                <p className="text-lg text-cocoa/70 line-through">{formatPrice(product.compareAtPrice, product.currency)}</p>
               )}
               <p className="font-display text-3xl tracking-[-0.02em] text-cocoa">{formatPrice(product.price, product.currency)}</p>
             </div>
@@ -263,7 +289,7 @@ export default function ProductDetailPage() {
                 type="button"
                 onClick={() => toggleWishlist(slug)}
                 aria-pressed={wishlisted}
-                className={`premium-button inline-flex items-center justify-center gap-2 border px-6 py-4 text-sm font-bold transition ${wishlisted ? "border-clay bg-clay/10 text-clay" : "border-cocoa/25 text-cocoa hover:border-clay/40 hover:text-clay"}`}
+                className={`premium-button inline-flex items-center justify-center gap-2 border px-6 py-4 text-sm font-bold transition ${wishlisted ? "border-clay bg-clay/10 text-clay-strong" : "border-cocoa/25 text-cocoa hover:border-clay/40 hover:text-clay-strong"}`}
               >
                 <Heart size={18} fill={wishlisted ? "currentColor" : "none"} />
                 {wishlisted ? "Saved" : "Wishlist"}
@@ -274,10 +300,10 @@ export default function ProductDetailPage() {
                 disabled={compareDisabled}
                 className={`premium-button inline-flex items-center justify-center gap-2 border px-6 py-4 text-sm font-bold transition ${
                   compared
-                    ? "border-clay bg-clay/10 text-clay"
+                    ? "border-clay bg-clay/10 text-clay-strong"
                     : compareDisabled
                       ? "cursor-not-allowed border-cocoa/10 text-cocoa/30"
-                      : "border-cocoa/25 text-cocoa hover:border-clay/40 hover:text-clay"
+                      : "border-cocoa/25 text-cocoa hover:border-clay/40 hover:text-clay-strong"
                 }`}
               >
                 {compared ? <Check size={18} /> : <Scale size={18} />}
@@ -287,11 +313,11 @@ export default function ProductDetailPage() {
 
             {specs.length > 0 && (
               <div className="mt-10 border-t border-oat/50 pt-8">
-                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Specifications</h2>
+                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay-strong">Specifications</h2>
                 <dl className="mt-4 divide-y divide-oat/40">
                   {specs.map((spec) => (
                     <div key={spec.label} className="flex justify-between gap-6 py-3 text-sm">
-                      <dt className="text-cocoa/[0.55]">{spec.label}</dt>
+                      <dt className="text-cocoa/70">{spec.label}</dt>
                       <dd className="text-right font-medium text-cocoa">{spec.value}</dd>
                     </div>
                   ))}
@@ -301,7 +327,7 @@ export default function ProductDetailPage() {
 
             {product.benefits?.length > 0 && (
               <div className="mt-8 border-t border-oat/50 pt-8">
-                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Made for Living</h2>
+                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay-strong">Made for Living</h2>
                 <ul className="mt-4 space-y-2.5 text-sm leading-6 text-cocoa/[0.68]">
                   {product.benefits.map((benefit) => (
                     <li key={benefit} className="flex gap-2">

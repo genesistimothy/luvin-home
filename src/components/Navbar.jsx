@@ -11,15 +11,26 @@ const externalLinkProps = {
 };
 
 const navLinkClass = ({ isActive }) =>
-  `transition hover:text-clay ${isActive ? "text-clay" : "text-cocoa/70"}`;
+  `transition hover:text-clay-strong ${isActive ? "text-clay-strong" : "text-cocoa/70"}`;
 
 function NavDropdown({ label, items }) {
+  const [open, setOpen] = useState(false);
+  const closeIfOutside = (event) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+  };
   return (
-    <div className="group relative">
+    <div
+      className="group relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={(event) => { if (!event.currentTarget.contains(document.activeElement)) setOpen(false); }}
+      onFocus={() => setOpen(true)}
+      onBlur={closeIfOutside}
+    >
       <button
         type="button"
         aria-haspopup="true"
-        className="peer flex items-center gap-1 text-cocoa/70 transition hover:text-clay focus-visible:text-clay"
+        aria-expanded={open}
+        className="peer flex items-center gap-1 text-cocoa/70 transition hover:text-clay-strong focus-visible:text-clay-strong"
       >
         {label}
         <ChevronDown size={14} className="transition duration-300 group-hover:rotate-180" />
@@ -38,7 +49,7 @@ function NavDropdown({ label, items }) {
             <Link
               key={item.to}
               to={item.to}
-              className="block rounded-xl px-3.5 py-2.5 text-sm text-cocoa/75 transition hover:bg-linen hover:text-clay focus-visible:bg-linen focus-visible:text-clay focus-visible:outline-none"
+              className="block rounded-xl px-3.5 py-2.5 text-sm text-cocoa/75 transition hover:bg-linen hover:text-clay-strong focus-visible:bg-linen focus-visible:text-clay-strong focus-visible:outline-none"
             >
               {item.label}
             </Link>
@@ -117,13 +128,13 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
       className={`fixed inset-x-0 top-0 z-50 border-b pt-[env(safe-area-inset-top)] backdrop-blur-xl transition-colors duration-200 ${isScrolled ? "border-cocoa/10 bg-cream/[0.94] shadow-[0_12px_40px_rgba(62,44,35,0.07)]" : "border-white/[0.35] bg-cream/[0.88]"}`}
     >
       <nav
-        className={`mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-y-2 px-4 sm:px-8 ${isScrolled ? "py-3" : "py-4"}`}
+        className={`safe-x mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-y-2 px-4 sm:px-8 ${isScrolled ? "py-3" : "py-4"}`}
       >
         <Link to="/" className="flex min-w-0 items-center gap-2 sm:gap-3" aria-label="Luvin Home — home" onClick={closeMenu}>
           <img src="/luvin-logo-mark.svg" alt="" className="h-10 w-auto shrink-0" />
           <span className="min-w-0">
             <span className="block whitespace-nowrap font-display text-lg text-cocoa sm:text-xl">{siteSettings.brandName}</span>
-            <span className="hidden text-xs uppercase tracking-[0.24em] text-umber/70 sm:block">
+            <span className="hidden text-xs uppercase tracking-[0.24em] text-umber/85 sm:block">
               {siteSettings.brandPromise}
             </span>
           </span>
@@ -180,7 +191,7 @@ export default function Navbar({ siteSettings, collections, whatsAppLink }) {
             to={to}
             onClick={closeMenu}
             className={({ isActive }) =>
-              `rounded-xl px-3 py-3.5 text-base font-medium transition duration-300 hover:bg-linen hover:text-clay ${isActive ? "text-clay" : "text-cocoa/80"}`
+              `rounded-xl px-3 py-3.5 text-base font-medium transition duration-300 hover:bg-linen hover:text-clay-strong ${isActive ? "text-clay-strong" : "text-cocoa/80"}`
             }
           >
             {label}

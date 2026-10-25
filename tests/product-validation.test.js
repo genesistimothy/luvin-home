@@ -32,3 +32,14 @@ test('admin product routes only accept product documents', () => {
   assert.equal(isProductDocument({_type: 'inquiry'}), false)
   assert.equal(isProductDocument(null), true) // a missing document keeps the 404 path
 })
+
+test('admin validation enforces the Studio dimension and weight limits', () => {
+  const result = validateProductInput({
+    ...activeProduct,
+    dimensions: 'x'.repeat(200),
+    weight: 'y'.repeat(100),
+  })
+  assert.equal(result.errors, undefined)
+  assert.equal(result.product.dimensions.length, 120)
+  assert.equal(result.product.weight.length, 40)
+})

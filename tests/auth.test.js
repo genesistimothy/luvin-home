@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {requireAdmin} from '../api/_lib/auth.js'
-import {SESSION_COOKIE, isAllowedEmail, setSessionCookie, signValue, verifyValue} from '../api/_lib/session.js'
+import {OAUTH_COOKIE, SESSION_COOKIE, isAllowedEmail, setOAuthCookie, setSessionCookie, signValue, verifyValue} from '../api/_lib/session.js'
 
 Object.assign(process.env, {
   ADMIN_SESSION_SECRET: 'test-secret-that-is-longer-than-thirty-two-characters',
@@ -107,3 +107,11 @@ function setSessionCookieValue() {
   setSessionCookie({headers: {host: 'luvin-home.vercel.app', 'x-forwarded-proto': 'https'}}, res, {email: 'owner@example.com'})
   return decodeURIComponent(res.headers['Set-Cookie'].split(';')[0].split('=').slice(1).join('='))
 }
+
+test('OAuth state cookie is Secure and uses the __Secure- prefix', () => {
+  const res = response()
+  setOAuthCookie({headers: {}}, res, {state: 'abc', exp: Date.now() + 60_000})
+  const header = res.headers['Set-Cookie']
+  assert.match(header, new RegExp(`^${OAUTH_COOKIE}=`))
+  assert.match(header, /; Secure/)
+})

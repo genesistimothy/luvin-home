@@ -11,6 +11,7 @@ test("parsePrice accepts numbers, formatted strings, and plain numeric strings",
   assert.equal(parsePrice("Rp 400.000"), 400000);
   assert.equal(parsePrice("1,999,000.00"), 1999000);
   assert.equal(parsePrice("1.234.567,89"), 1234568);
+  assert.equal(parsePrice("Rp 1.999.000,-"), 1999000);
 });
 
 test("parsePrice rejects unknown, zero, negative, and non-finite values", () => {

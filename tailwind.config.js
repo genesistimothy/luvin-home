@@ -14,6 +14,7 @@ export default {
         cream: "#FFF9F0",
         oat: "#E7D6C0",
         clay: "#B86F4D",
+        "clay-strong": "#9A5638",
         umber: "#6F4E37",
         cocoa: "#3E2C23",
         moss: "#7A8060",

@@ -11,9 +11,10 @@ export function parsePrice(value) {
   }
 
   if (typeof value !== "string") return null;
-  if (/[-−]/.test(value) || !/\d/.test(value)) return null;
+  const normalizedValue = value.replace(/,\s*-$/, "");
+  if (/[-−]/.test(normalizedValue) || !/\d/.test(normalizedValue)) return null;
 
-  const cleaned = value.replace(/[^\d.,]/g, "");
+  const cleaned = normalizedValue.replace(/[^\d.,]/g, "");
   if (!cleaned) return null;
 
   const lastDot = cleaned.lastIndexOf(".");

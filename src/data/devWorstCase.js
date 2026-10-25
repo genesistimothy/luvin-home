@@ -66,9 +66,11 @@ export const worstCaseProducts = [
 ];
 
 export const worstCaseCollections = [
-  { name: "Wohnzimmermöbelkollektion", slug: "wohnzimmermoebelkollektion" },
-  { name: "Custom Order — European Imported Solid Oak Collection", slug: "custom-order" },
+  { name: "Wohnzimmermöbelkollektion", slug: "wohnzimmerm-belkollektion" },
+  { name: "Custom Order — European Imported Solid Oak Collection", slug: "custom-order-european-imported-solid-oak-collection" },
   { name: "Sofa Bed Collection", slug: "sofa-bed-collection" },
+  { name: "Sofa Collection", slug: "sofa-collection" },
+  { name: "Dining Collection", slug: "dining-collection" },
 ];
 
 /** 1,000 rows. The list paginates at 9, so this tests the count and the pager. */
