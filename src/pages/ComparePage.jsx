@@ -45,7 +45,7 @@ export default function ComparePage() {
 
         {compared.length >= 2 ? (
           <div className="mt-10 overflow-x-auto">
-            <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+            <table className="w-full min-w-[640px] table-fixed break-words border-collapse text-left text-sm">
               <thead>
                 <tr>
                   <th className="w-40 border-b border-oat/50 pb-4 align-bottom text-xs font-bold uppercase tracking-[0.15em] text-clay-strong">
