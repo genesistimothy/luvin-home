@@ -3,9 +3,8 @@
 Status: implemented and verified against local Supabase. Production still reads
 Sanity until the cutover checklist below runs.
 
-**Cutover prompt:** `docs/qa/supabase-production-cutover-prompt.md`. Give that
-file to the agent or person doing the production setup. `npm run preflight:cloud`
-is the gate before any deploy.
+**Cutover:** the combined setup and cleanup prompt is held with the operator
+outside the repo. `npm run preflight:cloud` is the gate before any deploy.
 
 ## What moved
 
@@ -53,7 +52,7 @@ Inquiry data is separate. It lives in the `inquiries` table and the private
 4. Run `npm run cms:seed` with the cloud environment.
 5. Deploy.
 6. Verify the catalogue, one admin edit, and one inquiry.
-7. Run `docs/qa/c2-inquiry-export-runbook.md` for the old inquiry documents.
+7. Run the owner-approved inquiry export and delete procedure for the old documents.
 
 The admin routes write Supabase unconditionally. Do not deploy them while the
 public read is still on Sanity. Flip `VITE_CONTENT_SOURCE` in the same deploy.

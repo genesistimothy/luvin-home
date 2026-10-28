@@ -113,8 +113,8 @@ npm run build:cloud    # production build using .env.cloud
 - Supabase images store `{url, variants}`; read them through `sanityImageUrl` and
   `sanityImageSrcSet` so the browser gets the WebP set. Do not hardcode `.url`.
 - Existing inquiry documents are still in the public Sanity dataset (C2 open)
-  until `docs/qa/c2-inquiry-export-runbook.md` runs. Do not send paid traffic to
-  the forms before the production Supabase env exists.
+  until the owner-approved inquiry export and delete procedure runs. Do not send
+  paid traffic to the forms before the production Supabase env exists.
 
 ## Tests and verification
 

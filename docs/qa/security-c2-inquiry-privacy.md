@@ -8,9 +8,9 @@ without reading this first.
 keepalive; the move is planned but **not implemented**. This note remains the
 current exposure.
 
-**Removal runbook:** `docs/qa/c2-inquiry-export-runbook.md` covers the export,
-verification, document deletion, and image deletion. Run it only after the
-Supabase write path is live.
+**Removal procedure:** the owner-approved export, verification, document
+deletion, and image deletion procedure is held with the operator outside the
+repo. Run it only after the Supabase write path is live.
 
 **Update 2026-10-28:** The Supabase write path is implemented and verified against
 local Supabase. Production still writes inquiries to Sanity until the two env
