@@ -9,7 +9,7 @@ import { projectsQuery } from "../lib/queries";
 const ROOM_TYPES = ["Living Room", "Dining Room", "Bedroom", "Kitchen", "Workspace", "Entryway", "Other"];
 
 export default function ProjectsPage() {
-  const { data, loading, error, refetch } = useSanityQuery(projectsQuery);
+  const { data, loading, error, refetch } = useSanityQuery(projectsQuery, {}, { type: "project" });
   const [searchParams, setSearchParams] = useSearchParams();
   const roomType = searchParams.get("tipe") || "";
 

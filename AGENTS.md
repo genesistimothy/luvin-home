@@ -15,8 +15,8 @@ no SSR and no Next.js.
 
 ```bash
 npm ci                 # package-lock.json is authoritative — do not use pnpm
-npm run dev            # Vite (public site)
-npx vercel dev         # API/auth/forms; Vite alone does not serve /api
+npm run dev            # Vite + the api/ functions (dev-only middleware in vite.config.js)
+npx vercel dev         # optional: real Vercel runtime, needs `vercel login`
 npm run lint           # eslint, --max-warnings=0
 npm run typecheck      # tsc --noEmit with checkJs
 npm test               # node --test tests/*.test.js
@@ -26,6 +26,10 @@ npm run studio:install # once, installs sanity/ dependencies
 npm run studio         # Sanity Studio dev
 npm run studio:build / studio:deploy
 npm run cms:migrate
+npm run cms:seed       # copy Sanity content and WebP image variants into Supabase
+npm run cms:seed:cloud # same seed against .env.cloud
+npm run preflight:cloud # production cutover guard; reads .env.cloud
+npm run build:cloud    # production build using .env.cloud
 ```
 
 ## Code conventions
@@ -99,8 +103,18 @@ npm run cms:migrate
 - Turnstile is verified server-side in `api/_lib/turnstile.js`; set
   `VITE_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`. Production fails closed
   when the secret is missing.
-- Inquiry PII is still in the public Sanity dataset (C2 open). Do not send paid
-  traffic to the contact forms until it is moved to a private store.
+- New inquiries go to Supabase through `/api/inquiries` and `/api/inquiry-upload`,
+  with `SUPABASE_SERVICE_ROLE_KEY` server-side only and RLS denying anon. Run
+  `npx supabase start` for local Postgres, Storage, and Studio.
+- The public catalogue reads Supabase `content` rows when `VITE_CONTENT_SOURCE=supabase`
+  (seed with `npm run cms:seed`). Admin product CRUD always writes `content` and
+  uploads to the public `content` bucket, so never deploy the admin writes while
+  production still reads Sanity; flip the flag in the same deploy.
+- Supabase images store `{url, variants}`; read them through `sanityImageUrl` and
+  `sanityImageSrcSet` so the browser gets the WebP set. Do not hardcode `.url`.
+- Existing inquiry documents are still in the public Sanity dataset (C2 open)
+  until `docs/qa/c2-inquiry-export-runbook.md` runs. Do not send paid traffic to
+  the forms before the production Supabase env exists.
 
 ## Tests and verification
 

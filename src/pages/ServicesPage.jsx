@@ -6,7 +6,7 @@ import { servicesQuery } from "../lib/queries";
 import { mergeServiceContent } from "../data/services";
 
 export default function ServicesPage() {
-  const { data } = useSanityQuery(servicesQuery);
+  const { data } = useSanityQuery(servicesQuery, {}, { type: "service" });
   const services = mergeServiceContent(data);
 
   return (

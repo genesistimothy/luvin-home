@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle2, MessageCircle, Paperclip, XCircle } from "lucide-react";
+import { CheckCircle2, LoaderCircle, MessageCircle, Paperclip, XCircle } from "lucide-react";
 import FormField, { fieldInputClass } from "./FormField";
 import TurnstileWidget from "./TurnstileWidget";
 import { isValidContact } from "../../lib/validate";
@@ -62,7 +62,7 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
 
     setStatus("submitting");
     try {
-      let referenceImageAssetId = "";
+      let referenceImagePath = "";
       if (file) {
         const uploadResponse = await fetch("/api/inquiry-upload", {
           method: "POST",
@@ -71,7 +71,7 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
         });
         const uploadData = await parseJsonSafe(uploadResponse);
         if (!uploadResponse.ok) throw new Error(uploadData.error || "Image upload failed.");
-        referenceImageAssetId = uploadData.assetId;
+        referenceImagePath = uploadData.path;
       }
 
       const response = await fetch("/api/inquiries", {
@@ -81,7 +81,7 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
           type: "service",
           serviceName,
           serviceSlug,
-          referenceImageAssetId,
+          referenceImagePath,
           company: "",
           turnstileToken,
           ...form,
@@ -210,9 +210,16 @@ export default function ConsultationForm({ serviceName, serviceSlug, whatsAppNum
       <button
         type="submit"
         disabled={status === "submitting"}
+        aria-busy={status === "submitting"}
         className="premium-button inline-flex w-full items-center justify-center gap-2 bg-cocoa px-7 py-4 text-sm font-bold text-cream hover:bg-clay disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
-        {status === "submitting" ? "Sending..." : "Send Consultation Request"}
+        {status === "submitting" ? (
+          <>
+            <LoaderCircle className="motion-safe:animate-spin" size={16} aria-hidden="true" /> Sending...
+          </>
+        ) : (
+          "Send Consultation Request"
+        )}
       </button>
     </form>
   );

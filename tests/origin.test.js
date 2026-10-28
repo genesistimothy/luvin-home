@@ -50,6 +50,13 @@ test('without deployment metadata the request origin is the fallback (local dev)
   })
 })
 
+test('without a forwarded proto, a local socket is http', () => {
+  withEnv({VERCEL_PROJECT_PRODUCTION_URL: undefined, VERCEL_URL: undefined}, () => {
+    const request = {headers: {origin: 'http://localhost:5173', host: 'localhost:5173'}, socket: {}}
+    assert.equal(isTrustedOrigin(request), true)
+  })
+})
+
 test('a missing Origin is always rejected', () => {
   withEnv({VERCEL_PROJECT_PRODUCTION_URL: 'luvin-home.vercel.app'}, () => {
     assert.equal(isTrustedOrigin({headers: {host: 'luvin-home.vercel.app'}}), false)

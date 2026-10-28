@@ -40,7 +40,11 @@ export function parseCookies(header = '') {
 }
 
 export async function readJson(req, maxBytes = 128_000) {
-  if (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body)) {
+  if (Buffer.isBuffer(req.body)) {
+    if (req.body.length > maxBytes) throw new Error('Request body is too large.')
+    return JSON.parse(req.body.toString('utf8'))
+  }
+  if (req.body && typeof req.body === 'object') {
     if (Buffer.byteLength(JSON.stringify(req.body)) > maxBytes) throw new Error('Request body is too large.')
     return req.body
   }
@@ -60,7 +64,7 @@ export async function readJson(req, maxBytes = 128_000) {
 }
 
 export function requestOrigin(req) {
-  const protocol = req.headers['x-forwarded-proto'] || 'https'
+  const protocol = req.headers['x-forwarded-proto'] || (req.socket?.encrypted ? 'https' : 'http')
   const host = req.headers['x-forwarded-host'] || req.headers.host
   return `${protocol}://${host}`
 }

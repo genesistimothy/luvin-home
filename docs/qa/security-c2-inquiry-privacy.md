@@ -8,6 +8,17 @@ without reading this first.
 keepalive; the move is planned but **not implemented**. This note remains the
 current exposure.
 
+**Removal runbook:** `docs/qa/c2-inquiry-export-runbook.md` covers the export,
+verification, document deletion, and image deletion. Run it only after the
+Supabase write path is live.
+
+**Update 2026-10-28:** The Supabase write path is implemented and verified against
+local Supabase. Production still writes inquiries to Sanity until the two env
+vars are set in Vercel and the change is deployed.
+
+**Decision 2026-10-28:** Keep the split. Inquiries live in Supabase. The public
+catalogue stays in Sanity. The two-system cost is accepted for the security gain.
+
 ## The exposure
 
 Sanity project `p3ihfsxq`, dataset `production`, is public-read. Verified: an

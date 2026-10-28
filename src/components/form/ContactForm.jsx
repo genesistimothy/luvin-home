@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, LoaderCircle, XCircle } from "lucide-react";
 import FormField, { fieldInputClass } from "./FormField";
 import TurnstileWidget from "./TurnstileWidget";
-import { isValidEmail } from "../../lib/validate";
+import { isValidEmail, isValidPhone } from "../../lib/validate";
 import { parseJsonSafe } from "../../lib/api";
 
 const initialForm = { name: "", email: "", phone: "", message: "" };
@@ -22,6 +22,7 @@ export default function ContactForm() {
     const nextErrors = /** @type {Record<string, string>} */ ({});
     if (!form.name.trim()) nextErrors.name = "Name is required.";
     if (!isValidEmail(form.email)) nextErrors.email = "Enter a valid email address.";
+    if (form.phone.trim() && !isValidPhone(form.phone)) nextErrors.phone = "Enter a valid phone number.";
     if (!form.message.trim()) nextErrors.message = "Message is required.";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -106,7 +107,7 @@ export default function ContactForm() {
             placeholder="name@email.com"
           />
         </FormField>
-        <FormField label="Phone Number (Optional)" htmlFor="contact-phone">
+        <FormField label="Phone Number (Optional)" htmlFor="contact-phone" error={errors.phone}>
           <input
             id="contact-phone"
             type="tel"
@@ -140,9 +141,16 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={status === "submitting"}
+        aria-busy={status === "submitting"}
         className="premium-button inline-flex w-full items-center justify-center gap-2 bg-cocoa px-7 py-4 text-sm font-bold text-cream hover:bg-clay disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
-        {status === "submitting" ? "Sending..." : "Send Message"}
+        {status === "submitting" ? (
+          <>
+            <LoaderCircle className="motion-safe:animate-spin" size={16} aria-hidden="true" /> Sending...
+          </>
+        ) : (
+          "Send Message"
+        )}
       </button>
     </form>
   );

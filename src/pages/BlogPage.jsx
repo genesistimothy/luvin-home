@@ -12,7 +12,7 @@ function formatDate(value) {
 }
 
 export default function BlogPage() {
-  const { data, loading, error, refetch } = useSanityQuery(articlesQuery);
+  const { data, loading, error, refetch } = useSanityQuery(articlesQuery, {}, { type: "article" });
   const articles = data || [];
 
   return (

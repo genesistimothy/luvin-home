@@ -1,5 +1,5 @@
 import {isTrustedOrigin, json} from './_lib/http.js'
-import {sanityWriteClient} from './_lib/sanity.js'
+import {uploadReferenceImage} from './_lib/supabase.js'
 import {readImageRequest, safeFilename, UploadError} from './_lib/upload.js'
 
 export const config = {api: {bodyParser: false}}
@@ -19,9 +19,8 @@ export default async function handler(req, res) {
   try {
     const {buffer, contentType} = await readImageRequest(req)
     const filename = safeFilename(req.headers['x-file-name'], 'reference-image')
-    const asset = await sanityWriteClient().assets.upload('image', buffer, {filename, contentType})
-    // the browser only needs the id; the image URL is built at render time
-    return json(res, 201, {assetId: asset._id})
+    const path = await uploadReferenceImage(buffer, contentType, filename)
+    return json(res, 201, {path})
   } catch (error) {
     if (error instanceof UploadError) return json(res, error.status, {error: error.message})
     return json(res, 500, {error: 'Image upload failed.'})

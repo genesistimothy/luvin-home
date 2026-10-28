@@ -19,7 +19,7 @@ export const cmsContentQuery = `{
   "products": *[_type == "product" && status in ["active", "soldOut", "comingSoon"]] | order(displayOrder asc){
     _id, _createdAt, name, "slug": slug.current, sku, status, featured, displayOrder,
     "category": collection->name,
-    "collection": collection->{name, "slug": slug.current},
+    "collection": collection->{_id, name, "slug": slug.current},
     shortDescription, productStory, price, compareAtPrice, currency,
     mainImage{altText, caption, image{asset->{_id, url}, crop, hotspot}},
     galleryImages[]{altText, caption, image{asset->{_id, url}, crop, hotspot}},

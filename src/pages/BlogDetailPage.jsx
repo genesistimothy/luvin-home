@@ -13,7 +13,7 @@ function formatDate(value) {
 
 export default function BlogDetailPage() {
   const { slug } = useParams();
-  const { data: article, loading } = useSanityQuery(articleBySlugQuery, { slug });
+  const { data: article, loading } = useSanityQuery(articleBySlugQuery, { slug }, { type: "article", slug });
 
   if (loading) return null;
 

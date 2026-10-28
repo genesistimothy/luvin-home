@@ -1,61 +1,55 @@
 import {requireAdmin} from '../../_lib/auth.js'
 import {json, readJson} from '../../_lib/http.js'
-import {baseDocumentId, isProductDocument, sanityReadClient, sanityWriteClient, validateProductInput} from '../../_lib/sanity.js'
+import {validateProductInput} from '../../_lib/product.js'
+import {productFromRow, resolveCollection} from '../../_lib/productStore.js'
+import {contentRow, patchContentRow} from '../../_lib/supabase.js'
 
-const projection = `{
-  _id,_updatedAt,name,slug,sku,status,featured,displayOrder,collection,shortDescription,productStory,
-  price,currency,colors,dimensions,weight,materials,benefits,stockStatus,madeToOrder,leadTime,
-  whatsAppMessage,mainImage{altText,caption,image{asset->{_id,url}}}
-}`
+const ID_RE = /^[a-zA-Z0-9._-]{1,128}$/
 
-/** @param {Record<string, any>} document */
-function withoutSystemFields(document = {}) {
-  const content = {...document}
-  delete content._rev
-  delete content._createdAt
-  delete content._updatedAt
-  return content
+function productId(req) {
+  const id = String(req.query?.id || '')
+  if (!ID_RE.test(id)) throw new Error('Invalid product id.')
+  return id
 }
 
 export default async function handler(req, res) {
   if (!(await requireAdmin(req, res))) return
   try {
-    const id = baseDocumentId(req.query?.id)
-    const client = sanityWriteClient()
+    const id = productId(req)
+    const row = await contentRow(id)
+    if (!row || row.type !== 'product') return json(res, 404, {error: 'Product not found.'})
+
     if (req.method === 'GET') {
-      const product = await sanityReadClient().fetch(
-        `coalesce(*[_id == $draft && _type == "product"][0]${projection}, *[_id == $id && _type == "product"][0]${projection})`,
-        {id, draft: `drafts.${id}`},
-      )
-      if (!product) return json(res, 404, {error: 'Product not found.'})
-      return json(res, 200, {product: {...product, _id: id, hasDraft: product._id.startsWith('drafts.')}})
+      return json(res, 200, {product: productFromRow(row)})
     }
 
     if (req.method === 'PATCH') {
       const body = await readJson(req)
-      const {product, errors} = validateProductInput(body.product || {})
+      const {product, collectionId, errors} = validateProductInput(body.product || {})
       if (errors) return json(res, 400, {error: errors.join(' '), fields: errors})
-      const existing = await client.getDocument(`drafts.${id}`) || await client.getDocument(id) || {}
-      if (!isProductDocument(existing)) return json(res, 409, {error: 'Document is not a product.'})
-      const preserved = withoutSystemFields(existing)
-      if (body.action === 'publish') {
-        await client.transaction().createOrReplace({...preserved, ...product, _id: id, _type: 'product'}).delete(`drafts.${id}`).commit()
-      } else {
-        await client.createOrReplace({...preserved, ...product, _id: `drafts.${id}`, _type: 'product'})
+
+      const collection = await resolveCollection(collectionId)
+      const data = {
+        ...row.data,
+        ...product,
+        category: collection?.name || null,
+        collection,
+        galleryImages: row.data.galleryImages || [],
       }
-      return json(res, 200, {id, status: body.action === 'publish' ? 'published' : 'draft'})
+      const status = body.action === 'publish' ? 'published' : 'draft'
+      await patchContentRow(id, {data, slug: data.slug, status, display_order: data.displayOrder})
+      return json(res, 200, {id, status})
     }
 
     if (req.method === 'DELETE') {
-      const published = await client.getDocument(id)
-      if (!isProductDocument(published)) return json(res, 409, {error: 'Document is not a product.'})
-      const transaction = client.transaction().delete(`drafts.${id}`)
-      if (published) transaction.patch(id, (patch) => patch.set({status: 'archived'}))
-      await transaction.commit()
+      await patchContentRow(id, {data: {...row.data, status: 'archived'}, status: 'archived'})
       return json(res, 200, {id, status: 'archived'})
     }
     return json(res, 405, {error: 'Method not allowed.'})
   } catch (error) {
-    return json(res, 500, {error: error.message === 'Invalid document id.' ? error.message : 'Product operation failed.'})
+    if (error.message === 'Invalid product id.') return json(res, 400, {error: error.message})
+    if (error.message === 'Category not found.') return json(res, 400, {error: error.message})
+    if (error.status === 409) return json(res, 409, {error: 'Slug is already used by another product.'})
+    return json(res, 500, {error: error.message === 'Request body is too large.' ? error.message : 'Product operation failed.'})
   }
 }

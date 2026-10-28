@@ -10,7 +10,7 @@ import { mergeServiceContent } from "../data/services";
 export default function ServiceDetailPage() {
   const { slug } = useParams();
   const { siteSettings } = /** @type {any} */ (useOutletContext());
-  const { data } = useSanityQuery(serviceBySlugQuery, { slug });
+  const { data } = useSanityQuery(serviceBySlugQuery, { slug }, { type: "service", slug });
 
   const service = useMemo(() => {
     const merged = mergeServiceContent(data ? [data] : []);

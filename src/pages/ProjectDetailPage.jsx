@@ -14,7 +14,7 @@ function ProjectImage({ image, className }) {
 
 export default function ProjectDetailPage() {
   const { slug } = useParams();
-  const { data: project, loading } = useSanityQuery(projectBySlugQuery, { slug });
+  const { data: project, loading } = useSanityQuery(projectBySlugQuery, { slug }, { type: "project", slug });
 
   const relatedProducts = useMemo(
     () =>
