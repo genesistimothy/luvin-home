@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { Newspaper } from "lucide-react";
 import Breadcrumb from "../components/Breadcrumb";
+import ContentError from "../components/ContentError";
+import { sanityImageUrl, sanityImageSrcSet } from "../lib/sanityImage";
 import { useSanityQuery } from "../hooks/useSanityQuery";
 import { articlesQuery } from "../lib/queries";
 
@@ -10,11 +12,11 @@ function formatDate(value) {
 }
 
 export default function BlogPage() {
-  const { data, loading } = useSanityQuery(articlesQuery);
+  const { data, loading, error, refetch } = useSanityQuery(articlesQuery, {}, { type: "article" });
   const articles = data || [];
 
   return (
-    <section className="section-shell bg-cream pt-32">
+    <section className="section-shell bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-7xl">
         <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Blog" }]} />
         <div className="mt-6 max-w-2xl">
@@ -24,20 +26,28 @@ export default function BlogPage() {
           </h1>
         </div>
 
-        {articles.length > 0 ? (
+        {loading ? (
+          <p className="mt-16 text-center text-cocoa/70">Loading articles…</p>
+        ) : error ? (
+          <ContentError label="articles" onRetry={refetch} />
+        ) : articles.length > 0 ? (
           <div className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {articles.map((article) => (
               <Link
                 key={article._id}
                 to={`/blog/${article.slug}`}
-                className="group overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition duration-500 hover:-translate-y-1.5 hover:border-clay/30 hover:shadow-[0_30px_80px_rgba(62,44,35,0.12)]"
+                className="group overflow-hidden rounded-[1.5rem] border border-oat/[0.55] bg-cream shadow-[0_20px_60px_rgba(62,44,35,0.07)] transition-[transform,border-color] duration-200 ease-[var(--ease-premium)] motion-safe:hover:-translate-y-1.5 hover:border-clay/30"
               >
                 <div className="aspect-[16/10] overflow-hidden bg-oat">
                   {article.coverImage?.image?.asset?.url ? (
                     <img
-                      src={article.coverImage.image.asset.url}
+                      src={sanityImageUrl(article.coverImage, { width: 720 })}
+                      srcSet={sanityImageSrcSet(article.coverImage, [480, 720, 1080])}
+                      sizes="(min-width: 1280px) 30vw, (min-width: 640px) 45vw, 100vw"
                       alt={article.coverImage.altText || article.title}
-                      className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+                      loading="lazy"
+                      decoding="async"
+                      className="media-zoom h-full w-full object-cover"
                     />
                   ) : (
                     <div className="grid h-full place-items-center text-cocoa/25">
@@ -46,17 +56,17 @@ export default function BlogPage() {
                   )}
                 </div>
                 <div className="p-6">
-                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-cocoa/[0.45]">
+                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-cocoa/70">
                     {formatDate(article.publishedAt)}
                   </p>
                   <h2 className="mt-2 font-display text-xl tracking-[-0.02em] text-cocoa">{article.title}</h2>
-                  {article.excerpt && <p className="mt-2 text-sm leading-6 text-cocoa/[0.65]">{article.excerpt}</p>}
+                  {article.excerpt && <p className="mt-2 text-sm leading-6 text-cocoa/70">{article.excerpt}</p>}
                 </div>
               </Link>
             ))}
           </div>
         ) : (
-          !loading && <p className="mt-16 text-center text-cocoa/60">No articles published yet. Stay tuned for our latest stories.</p>
+          !loading && <p className="mt-16 text-center text-cocoa/70">No articles published yet. Stay tuned for our latest stories.</p>
         )}
       </div>
     </section>

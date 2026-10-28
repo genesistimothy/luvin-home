@@ -45,7 +45,7 @@ export default [
     },
   },
   {
-    files: ['sanity/**/*.js', 'sanity/**/*.mjs', 'api/**/*.js', 'tests/**/*.js'],
+    files: ['sanity/**/*.js', 'sanity/**/*.mjs', 'api/**/*.js', 'tests/**/*.js', 'scripts/**/*.mjs'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

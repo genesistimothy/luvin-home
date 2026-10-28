@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,6 +15,32 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  /* No grey flash on tap. Every control gets its own :active state instead. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Controls only. Body text and card copy stay selectable — people copy
+   addresses and order numbers. */
+button,
+[role="button"],
+a.premium-button {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* iOS zooms the page when a focused field is under 16px, and never zooms back.
+   Fixing the size is the fix; disabling zoom is not.
+   !important is deliberate: Tailwind's text-sm (14px) outranks an element
+   selector, and this is a floor, not a style. */
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
 }
 
 body {
@@ -25,6 +49,22 @@ body {
   overflow-x: hidden;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   line-height: 1.6;
+}
+
+/* Edge-to-edge sections (hero, footer, fixed header) need the horizontal
+   insets explicitly because viewport-fit=cover disables the browser's
+   automatic inset. Unlayered so it beats Tailwind's px-* utilities. */
+.safe-x {
+  padding-left: max(1.25rem, env(safe-area-inset-left));
+  padding-right: max(1.25rem, env(safe-area-inset-right));
+}
+
+@media (min-width: 640px) {
+  .section-shell,
+  .safe-x {
+    padding-left: max(2rem, env(safe-area-inset-left));
+    padding-right: max(2rem, env(safe-area-inset-right));
+  }
 }
 
 img {
@@ -49,41 +89,84 @@ section[id] {
 @layer components {
   .section-shell {
     @apply px-5 py-24 sm:px-8 sm:py-28 lg:py-32;
+    padding-left: max(1.25rem, env(safe-area-inset-left));
+    padding-right: max(1.25rem, env(safe-area-inset-right));
   }
 
   .section-kicker {
-    @apply text-xs font-bold uppercase tracking-[0.28em] text-clay sm:text-sm;
+    @apply text-xs font-bold uppercase tracking-[0.28em] text-clay-strong sm:text-sm;
   }
 
   .premium-button {
-    @apply rounded-full transition duration-300;
+    @apply rounded-full transition duration-150;
     transition-timing-function: var(--ease-premium);
   }
 
-  .premium-button:hover {
-    transform: translateY(-2px);
+  /* Hover motion is gated: a touch tap fires a false :hover that sticks. */
+  @media (hover: hover) and (pointer: fine) {
+    .premium-button:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  /* After :hover so pressing beats the hover lift. */
+  .premium-button:active {
+    transform: scale(0.97);
   }
 
   .premium-card {
-    @apply rounded-[1.5rem] border border-oat/[0.55] bg-linen/[0.65] shadow-[0_20px_60px_rgba(62,44,35,0.06)] transition duration-500;
-    transition-timing-function: var(--ease-premium);
-  }
-
-  .premium-card:hover {
-    @apply -translate-y-1 border-clay/30 bg-white shadow-[0_28px_70px_rgba(62,44,35,0.1)];
+    @apply rounded-[1.5rem] border border-oat/[0.55] bg-linen/[0.65] shadow-[0_20px_60px_rgba(62,44,35,0.06)];
   }
 
   .fade-up {
     opacity: 0;
-    transform: translateY(1.75rem);
+    transform: translateY(1rem);
     transition:
-      opacity 800ms var(--ease-premium),
-      transform 800ms var(--ease-premium);
+      opacity 500ms var(--ease-premium),
+      transform 500ms var(--ease-premium);
   }
 
   .fade-up.is-visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  .fade-up-delay {
+    transition-delay: 60ms;
+  }
+}
+
+/* Card image zoom. Kept as classes so the pointer and reduced-motion
+   gates live in one place. */
+.media-zoom,
+.media-zoom-sm {
+  transition: transform 300ms var(--ease-premium);
+}
+
+.placeholder-lift {
+  transition: transform 300ms var(--ease-premium);
+  transform: translate(-50%, -50%);
+}
+
+.placeholder-base {
+  transition: background-color 300ms var(--ease-premium);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .media-zoom {
+    transform: scale(1.04);
+  }
+
+  .group:hover .media-zoom-sm {
+    transform: scale(1.03);
+  }
+
+  .group:hover .placeholder-lift {
+    transform: translate(-50%, -54%) scale(1.04);
+  }
+
+  .group:hover .placeholder-base {
+    background-color: #dbc5aa;
   }
 }
 
@@ -98,23 +181,25 @@ section[id] {
 }
 
 .hero-media {
-  animation: hero-settle 1800ms var(--ease-premium) both;
+  animation: hero-settle 1200ms var(--ease-premium) both;
 }
 
-.answer-reveal {
-  animation: answer-reveal 320ms var(--ease-premium) both;
+.lightbox {
+  transition:
+    opacity 200ms var(--ease-premium),
+    transform 200ms var(--ease-premium);
 }
 
-@keyframes answer-reveal {
-  from {
+@starting-style {
+  .lightbox {
     opacity: 0;
-    transform: translateY(-0.35rem);
+    transform: scale(0.97);
   }
+}
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.lightbox.is-closing {
+  opacity: 0;
+  transform: scale(0.97);
 }
 
 @media (max-width: 639px) {
@@ -129,19 +214,60 @@ section[id] {
   }
 
   .fade-up,
-  .fade-up.is-visible {
+  .fade-up.is-visible,
+  .fade-up-delay {
     opacity: 1;
+    transform: none;
+    transition: none;
+    transition-delay: 0ms;
+  }
+
+  .hero-media {
+    animation: none;
+  }
+
+  /* Keep colour feedback; drop movement. */
+  .premium-button {
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease;
+  }
+
+  .premium-button:hover,
+  .premium-button:active {
+    transform: none;
+  }
+
+  .media-zoom,
+  .media-zoom-sm {
     transform: none;
     transition: none;
   }
 
-  .hero-media,
-  .answer-reveal {
-    animation: none;
+  .group:hover .media-zoom,
+  .group:hover .media-zoom-sm {
+    transform: none;
   }
 
-  .premium-button,
-  .premium-card {
+  .placeholder-lift {
     transition: none;
+  }
+
+  .group:hover .placeholder-lift {
+    transform: translate(-50%, -50%);
+  }
+
+  .placeholder-base {
+    transition: none;
+  }
+
+  .lightbox {
+    transition-property: opacity;
+  }
+
+  .lightbox,
+  .lightbox.is-closing {
+    transform: none;
   }
 }

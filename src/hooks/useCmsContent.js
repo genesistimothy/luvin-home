@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react'
 import {fallbackContent} from '../data/fallbackContent'
 import {sanityClient} from '../lib/sanityClient'
 import {sanityImageUrl} from '../lib/sanityImage'
+import {fetchSupabaseContent, supabaseContentEnabled} from '../lib/supabaseContent'
 import {cmsContentQuery} from '../lib/queries'
 
 const populated = (value) => Array.isArray(value) && value.length > 0
@@ -34,7 +35,7 @@ function normalizeCms(data) {
   }
 
   const siteSettings = {...fallbackContent.siteSettings, ...(data.siteSettings || {})}
-  if (data.siteSettings?.openGraphImage?.image) {
+  if (data.siteSettings?.openGraphImage) {
     siteSettings.openGraphImageUrl = sanityImageUrl(data.siteSettings.openGraphImage, {width: 1200, height: 630, quality: 88})
   }
 
@@ -61,8 +62,29 @@ export function useCmsContent() {
   const [content, setContent] = useState(() => readCachedContent() || fallbackContent)
 
   useEffect(() => {
-    if (!sanityClient) return undefined
     const controller = new AbortController()
+
+    if (supabaseContentEnabled) {
+      const timer = window.setTimeout(() => controller.abort(), 8000)
+      fetchSupabaseContent({signal: controller.signal})
+        .then((data) => {
+          const normalized = normalizeCms(data || {})
+          setContent(normalized)
+          writeCachedContent(normalized)
+        })
+        .catch((error) => {
+          if (error?.name !== 'AbortError' && import.meta.env.DEV) {
+            console.info('Supabase content unavailable; using local fallback.')
+          }
+        })
+        .finally(() => window.clearTimeout(timer))
+      return () => {
+        window.clearTimeout(timer)
+        controller.abort()
+      }
+    }
+
+    if (!sanityClient) return undefined
 
     sanityClient
       .fetch(cmsContentQuery, {}, {signal: controller.signal})

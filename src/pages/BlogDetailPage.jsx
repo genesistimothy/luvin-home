@@ -13,13 +13,13 @@ function formatDate(value) {
 
 export default function BlogDetailPage() {
   const { slug } = useParams();
-  const { data: article, loading } = useSanityQuery(articleBySlugQuery, { slug });
+  const { data: article, loading } = useSanityQuery(articleBySlugQuery, { slug }, { type: "article", slug });
 
   if (loading) return null;
 
   if (!article) {
     return (
-      <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32">
+      <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32 lg:pt-40">
         <div className="mx-auto max-w-xl text-center">
           <p className="section-kicker">404</p>
           <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Article not found.</h1>
@@ -35,11 +35,11 @@ export default function BlogDetailPage() {
   }
 
   return (
-    <section className="section-shell bg-cream pt-32">
+    <section className="section-shell bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-3xl">
         <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Blog", to: "/blog" }, { label: article.title }]} />
 
-        <p className="mt-6 text-xs font-semibold uppercase tracking-[0.1em] text-cocoa/[0.45]">
+        <p className="mt-6 text-xs font-semibold uppercase tracking-[0.1em] text-cocoa/70">
           {formatDate(article.publishedAt)}
           {article.author ? ` · ${article.author}` : ""}
         </p>

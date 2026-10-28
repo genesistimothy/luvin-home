@@ -12,7 +12,7 @@ export default function WishlistPage() {
   const savedProducts = products.filter((product) => wishlist.includes(productSlug(product)));
 
   return (
-    <section className="section-shell bg-cream pt-32">
+    <section className="section-shell bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-7xl">
         <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Wishlist" }]} />
         <div className="mt-6">
@@ -24,14 +24,17 @@ export default function WishlistPage() {
 
         {savedProducts.length > 0 ? (
           <div className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {savedProducts.map((product) => (
-              <CatalogProductCard key={product._id || product.name} product={product} />
+            {savedProducts.map((product, index) => (
+              <CatalogProductCard
+                key={product._id || `${productSlug(product)}-${index}`}
+                product={product}
+              />
             ))}
           </div>
         ) : (
           <div className="mt-16 flex flex-col items-center gap-4 text-center">
             <HeartOff size={40} className="text-cocoa/30" aria-hidden="true" />
-            <p className="max-w-sm text-cocoa/60">
+            <p className="max-w-sm text-cocoa/70">
               No products saved yet. Browse the catalog and tap the heart icon to save your favorite
               pieces.
             </p>

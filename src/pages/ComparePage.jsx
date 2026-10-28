@@ -26,7 +26,7 @@ export default function ComparePage() {
     .filter(Boolean);
 
   return (
-    <section className="section-shell bg-cream pt-32">
+    <section className="section-shell bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-6xl">
         <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Compare" }]} />
         <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
@@ -37,7 +37,7 @@ export default function ComparePage() {
             </h1>
           </div>
           {compared.length > 0 && (
-            <button type="button" onClick={clearCompare} className="text-sm font-semibold text-clay hover:text-cocoa">
+            <button type="button" onClick={clearCompare} className="text-sm font-semibold text-clay-strong hover:text-cocoa">
               Clear All
             </button>
           )}
@@ -45,10 +45,10 @@ export default function ComparePage() {
 
         {compared.length >= 2 ? (
           <div className="mt-10 overflow-x-auto">
-            <table className="w-full min-w-[640px] border-collapse text-left text-sm">
+            <table className="w-full min-w-[640px] table-fixed break-words border-collapse text-left text-sm">
               <thead>
                 <tr>
-                  <th className="w-40 border-b border-oat/50 pb-4 align-bottom text-xs font-bold uppercase tracking-[0.15em] text-clay">
+                  <th className="w-40 border-b border-oat/50 pb-4 align-bottom text-xs font-bold uppercase tracking-[0.15em] text-clay-strong">
                     &nbsp;
                   </th>
                   {compared.map((product) => (
@@ -75,7 +75,7 @@ export default function ComparePage() {
                         </div>
                         <Link
                           to={`/products/${productSlug(product)}`}
-                          className="mt-3 block font-display text-lg font-normal normal-case tracking-normal text-cocoa hover:text-clay"
+                          className="mt-3 block font-display text-lg font-normal normal-case tracking-normal text-cocoa hover:text-clay-strong"
                         >
                           {product.name}
                         </Link>
@@ -87,7 +87,7 @@ export default function ComparePage() {
               <tbody>
                 {ROWS.map((row) => (
                   <tr key={row.label} className="border-b border-oat/40">
-                    <th scope="row" className="py-4 pr-4 align-top text-xs font-bold uppercase tracking-[0.15em] text-clay">
+                    <th scope="row" className="py-4 pr-4 align-top text-xs font-bold uppercase tracking-[0.15em] text-clay-strong">
                       {row.label}
                     </th>
                     {compared.map((product) => (
@@ -103,7 +103,7 @@ export default function ComparePage() {
         ) : (
           <div className="mt-16 flex flex-col items-center gap-4 text-center">
             <Scale size={40} className="text-cocoa/30" aria-hidden="true" />
-            <p className="max-w-sm text-cocoa/60">
+            <p className="max-w-sm text-cocoa/70">
               {compared.length === 1
                 ? "Choose at least one more product (up to 3) to compare."
                 : "Choose 2–3 products from the catalog to compare their specifications side by side."}

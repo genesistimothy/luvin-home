@@ -2,7 +2,7 @@ import Breadcrumb from "./Breadcrumb";
 
 export default function PlaceholderPage({ eyebrow = "Coming Soon", title, description, breadcrumbItems }) {
   return (
-    <section className="section-shell min-h-[60vh] bg-cream pt-32">
+    <section className="section-shell min-h-[60vh] bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-4xl">
         <Breadcrumb items={breadcrumbItems} />
         <p className="section-kicker mt-6">{eyebrow}</p>

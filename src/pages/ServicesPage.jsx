@@ -6,11 +6,11 @@ import { servicesQuery } from "../lib/queries";
 import { mergeServiceContent } from "../data/services";
 
 export default function ServicesPage() {
-  const { data } = useSanityQuery(servicesQuery);
+  const { data } = useSanityQuery(servicesQuery, {}, { type: "service" });
   const services = mergeServiceContent(data);
 
   return (
-    <section className="section-shell bg-cream pt-32">
+    <section className="section-shell bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-7xl">
         <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Services" }]} />
         <div className="mt-6 max-w-2xl">
@@ -29,13 +29,13 @@ export default function ServicesPage() {
             <Link
               key={service.slug}
               to={`/services/${service.slug}`}
-              className="group flex flex-col justify-between rounded-[1.5rem] border border-oat/[0.55] bg-linen/60 p-8 transition duration-500 hover:-translate-y-1 hover:border-clay/40 hover:bg-white/[0.85] hover:shadow-[0_28px_70px_rgba(62,44,35,0.1)]"
+              className="group flex flex-col justify-between rounded-[1.5rem] border border-oat/[0.55] bg-linen/60 p-8 transition-[transform,border-color,background-color] duration-200 ease-[var(--ease-premium)] motion-safe:hover:-translate-y-1 hover:border-clay/40 hover:bg-white/[0.85]"
             >
               <div>
                 <h2 className="font-display text-2xl tracking-[-0.02em] text-cocoa">{service.name}</h2>
                 <p className="mt-3 leading-7 text-cocoa/[0.68]">{service.summary}</p>
               </div>
-              <span className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-clay">
+              <span className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-clay-strong">
                 Learn More
                 <ArrowRight size={16} className="transition group-hover:translate-x-1" />
               </span>
