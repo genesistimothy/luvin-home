@@ -25,7 +25,7 @@ export const products = [
       "Thoughtfully proportioned for apartments, family rooms, and spaces that need to adapt.",
       "Quiet lines and grounded colours bring an easy sense of calm.",
     ],
-    price: "Rp 1.999.000",
+    price: 1999000,
     palette: ["#7A8060", "#B86F4D", "#827D75"],
   },
   {
@@ -40,7 +40,7 @@ export const products = [
       "Its sand-toned weave brings warmth without asking for attention.",
       "At home beside a window, in a reading corner, or within a relaxed living room.",
     ],
-    price: "Rp 4.099.000",
+    price: 4099000,
     palette: ["#D8C3A5"],
   },
   {
@@ -55,7 +55,7 @@ export const products = [
       "A quiet, neutral silhouette that settles naturally into the room.",
       "Cushioned for the everyday rhythm of conversation, rest, and togetherness.",
     ],
-    price: "Rp 8.199.000",
+    price: 8199000,
     palette: ["#D8C3A5"],
   },
   {
@@ -74,7 +74,7 @@ export const products = [
       "Carrara-inspired tones lend the room a quiet sense of occasion.",
       "Considered proportions keep dining intimate and effortless.",
     ],
-    price: "Rp 2.499.000",
+    price: 2499000,
     palette: ["#F4EFE7", "#9D6B50"],
   },
   {
@@ -88,7 +88,7 @@ export const products = [
       "A slender frame keeps the silhouette light and composed.",
       "Terracotta brings a warm, earthen note to the table.",
     ],
-    price: "Rp 400.000",
+    price: 400000,
     palette: ["#B86F4D"],
   },
   {
@@ -102,7 +102,7 @@ export const products = [
       "Its Carrara-inspired surface offers the beauty of stone with an easy temperament.",
       "A balanced footprint for modern rooms and intimate gatherings.",
     ],
-    price: "Rp 915.000",
+    price: 915000,
     palette: ["#F4EFE7"],
   },
 ];

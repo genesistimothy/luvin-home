@@ -14,7 +14,7 @@ function ProjectImage({ image, className }) {
 
 export default function ProjectDetailPage() {
   const { slug } = useParams();
-  const { data: project, loading } = useSanityQuery(projectBySlugQuery, { slug });
+  const { data: project, loading } = useSanityQuery(projectBySlugQuery, { slug }, { type: "project", slug });
 
   const relatedProducts = useMemo(
     () =>
@@ -29,7 +29,7 @@ export default function ProjectDetailPage() {
 
   if (!project) {
     return (
-      <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32">
+      <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32 lg:pt-40">
         <div className="mx-auto max-w-xl text-center">
           <p className="section-kicker">404</p>
           <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Project not found.</h1>
@@ -47,7 +47,7 @@ export default function ProjectDetailPage() {
   const hasBeforeAfter = project.beforeImage?.image?.asset && project.afterImage?.image?.asset;
 
   return (
-    <section className="section-shell bg-cream pt-32">
+    <section className="section-shell bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-6xl">
         <Breadcrumb
           items={[
@@ -68,13 +68,13 @@ export default function ProjectDetailPage() {
         {hasBeforeAfter ? (
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
             <div>
-              <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-clay">Before</p>
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-clay-strong">Before</p>
               <div className="aspect-[4/3] overflow-hidden rounded-[1.5rem] bg-oat">
                 <ProjectImage image={project.beforeImage} className="h-full w-full object-cover" />
               </div>
             </div>
             <div>
-              <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-clay">After</p>
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-clay-strong">After</p>
               <div className="aspect-[4/3] overflow-hidden rounded-[1.5rem] bg-oat">
                 <ProjectImage image={project.afterImage} className="h-full w-full object-cover" />
               </div>

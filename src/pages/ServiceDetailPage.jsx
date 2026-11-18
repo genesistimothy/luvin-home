@@ -10,7 +10,7 @@ import { mergeServiceContent } from "../data/services";
 export default function ServiceDetailPage() {
   const { slug } = useParams();
   const { siteSettings } = /** @type {any} */ (useOutletContext());
-  const { data } = useSanityQuery(serviceBySlugQuery, { slug });
+  const { data } = useSanityQuery(serviceBySlugQuery, { slug }, { type: "service", slug });
 
   const service = useMemo(() => {
     const merged = mergeServiceContent(data ? [data] : []);
@@ -19,7 +19,7 @@ export default function ServiceDetailPage() {
 
   if (!service) {
     return (
-      <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32">
+      <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32 lg:pt-40">
         <div className="mx-auto max-w-xl text-center">
           <p className="section-kicker">404</p>
           <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Service not found.</h1>
@@ -35,7 +35,7 @@ export default function ServiceDetailPage() {
   }
 
   return (
-    <section className="section-shell bg-cream pt-32">
+    <section className="section-shell bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-6xl">
         <Breadcrumb items={[{ label: "Home", to: "/" }, { label: "Services", to: "/services" }, { label: service.name }]} />
 

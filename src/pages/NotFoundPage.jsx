@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function NotFoundPage() {
   return (
-    <section className="section-shell flex min-h-[70vh] items-center bg-cream pt-32">
+    <section className="section-shell flex min-h-[70vh] items-center bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-xl text-center">
         <p className="section-kicker">404</p>
         <h1 className="mt-4 font-display text-[2.35rem] leading-[1.08] tracking-[-0.025em] text-cocoa sm:text-5xl">

@@ -86,6 +86,7 @@ Ubah status produk menjadi **Archived**, lalu Publish. Jangan menghapus produk y
 
 ```bash
 npm run dev
+npm run studio:install   # once, installs the Studio dependencies
 npm run studio
 ```
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { ArrowRight, Check, ChevronLeft, ChevronRight, Heart, Maximize2, MessageCircle, Scale, X } from "lucide-react";
 import Breadcrumb from "../components/Breadcrumb";
@@ -9,11 +9,48 @@ import { productSlug } from "../lib/slug";
 import { useSavedProducts } from "../context/SavedProductsContext";
 
 function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
+  const [isClosing, setIsClosing] = useState(false);
+  const closingRef = useRef(false);
+  const closeTimer = useRef(null);
+  const dialogRef = useRef(null);
+  const closeRef = useRef(null);
+  const previousFocus = useRef(null);
+
+  // Move focus into the dialog and restore it to the trigger on close.
+  useEffect(() => {
+    previousFocus.current = document.activeElement;
+    closeRef.current?.focus();
+    return () => previousFocus.current?.focus?.();
+  }, []);
+
+  const requestClose = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    setIsClosing(true);
+    closeTimer.current = window.setTimeout(onClose, 200);
+  }, [onClose]);
+
+  useEffect(() => () => window.clearTimeout(closeTimer.current), []);
+
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") requestClose();
       if (event.key === "ArrowRight") onNavigate((activeIndex + 1) % images.length);
       if (event.key === "ArrowLeft") onNavigate((activeIndex - 1 + images.length) % images.length);
+      if (event.key === "Tab" && dialogRef.current) {
+        const focusable = [...dialogRef.current.querySelectorAll("button:not([tabindex=\"-1\"])")]
+          .filter((element) => element.offsetParent !== null);
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
     };
     document.addEventListener("keydown", handleKeyDown);
     const { overflow } = document.body.style;
@@ -22,30 +59,32 @@ function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = overflow;
     };
-  }, [activeIndex, images.length, onClose, onNavigate]);
+  }, [activeIndex, images.length, onNavigate, requestClose]);
 
   const image = images[activeIndex];
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-label={image?.altText || "Product image"}
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-cocoa/95 p-5 backdrop-blur-sm"
+      className={`lightbox fixed inset-0 z-[70] flex items-center justify-center bg-cocoa/95 p-5 backdrop-blur-sm ${isClosing ? "is-closing" : ""}`}
     >
       <button
         type="button"
-        onClick={onClose}
+        onClick={requestClose}
         tabIndex={-1}
         aria-hidden="true"
         className="absolute inset-0 h-full w-full cursor-default"
       />
 
       <button
+        ref={closeRef}
         type="button"
-        onClick={onClose}
+        onClick={requestClose}
         aria-label="Close image viewer"
-        className="absolute right-5 top-5 inline-grid h-11 w-11 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10"
+        className="absolute right-5 top-5 inline-grid h-11 w-11 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10 motion-safe:active:scale-95"
       >
         <X size={20} />
       </button>
@@ -59,7 +98,7 @@ function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
               onNavigate((activeIndex - 1 + images.length) % images.length);
             }}
             aria-label="Previous image"
-            className="absolute left-3 top-1/2 inline-grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10 sm:left-6"
+            className="absolute left-3 top-1/2 inline-grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10 motion-safe:active:scale-95 sm:left-6"
           >
             <ChevronLeft size={22} />
           </button>
@@ -70,7 +109,7 @@ function ImageLightbox({ images, activeIndex, onClose, onNavigate }) {
               onNavigate((activeIndex + 1) % images.length);
             }}
             aria-label="Next image"
-            className="absolute right-3 top-1/2 inline-grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10 sm:right-6"
+            className="absolute right-3 top-1/2 inline-grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-cream/30 text-cream transition hover:border-cream/60 hover:bg-cream/10 motion-safe:active:scale-95 sm:right-6"
           >
             <ChevronRight size={22} />
           </button>
@@ -115,7 +154,7 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32">
+      <section className="section-shell flex min-h-[60vh] items-center bg-cream pt-32 lg:pt-40">
         <div className="mx-auto max-w-xl text-center">
           <p className="section-kicker">404</p>
           <h1 className="mt-4 font-display text-3xl text-cocoa sm:text-4xl">Product not found.</h1>
@@ -149,7 +188,7 @@ export default function ProductDetailPage() {
   const compareDisabled = !compared && compareFull;
 
   return (
-    <section className="section-shell bg-cream pt-32">
+    <section className="section-shell bg-cream pt-32 lg:pt-40">
       <div className="mx-auto max-w-6xl">
         <Breadcrumb
           items={[
@@ -173,10 +212,10 @@ export default function ProductDetailPage() {
                   <img
                     src={images[activeImage]?.url}
                     alt={images[activeImage]?.altText || product.name}
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                    className="media-zoom-sm h-full w-full object-cover"
                   />
-                  <span className="absolute inset-0 bg-cocoa/0 transition group-hover:bg-cocoa/10" />
-                  <span className="absolute right-4 top-4 inline-grid h-10 w-10 place-items-center rounded-full bg-cream/90 text-cocoa opacity-0 shadow-sm backdrop-blur-md transition group-hover:opacity-100">
+                  <span className="absolute inset-0 bg-cocoa/0 transition-colors duration-200 group-hover:bg-cocoa/10" />
+                  <span className="absolute right-4 top-4 inline-grid h-10 w-10 place-items-center rounded-full bg-cream/90 text-cocoa opacity-0 shadow-sm backdrop-blur-md transition-opacity duration-200 group-hover:opacity-100">
                     <Maximize2 size={16} />
                   </span>
                 </button>
@@ -220,7 +259,7 @@ export default function ProductDetailPage() {
             </h1>
 
             {(isUnavailable || isComingSoon) && (
-              <p className="mt-3 inline-block rounded-full bg-clay/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-clay">
+              <p className="mt-3 inline-block rounded-full bg-clay/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-clay-strong">
                 {isComingSoon ? "Coming soon" : "Sold out — enquire for availability"}
               </p>
             )}
@@ -231,7 +270,7 @@ export default function ProductDetailPage() {
 
             <div className="mt-8 flex items-baseline gap-3">
               {product.compareAtPrice && (
-                <p className="text-lg text-cocoa/40 line-through">{formatPrice(product.compareAtPrice, product.currency)}</p>
+                <p className="text-lg text-cocoa/70 line-through">{formatPrice(product.compareAtPrice, product.currency)}</p>
               )}
               <p className="font-display text-3xl tracking-[-0.02em] text-cocoa">{formatPrice(product.price, product.currency)}</p>
             </div>
@@ -250,7 +289,7 @@ export default function ProductDetailPage() {
                 type="button"
                 onClick={() => toggleWishlist(slug)}
                 aria-pressed={wishlisted}
-                className={`premium-button inline-flex items-center justify-center gap-2 border px-6 py-4 text-sm font-bold transition ${wishlisted ? "border-clay bg-clay/10 text-clay" : "border-cocoa/25 text-cocoa hover:border-clay/40 hover:text-clay"}`}
+                className={`premium-button inline-flex items-center justify-center gap-2 border px-6 py-4 text-sm font-bold transition ${wishlisted ? "border-clay bg-clay/10 text-clay-strong" : "border-cocoa/25 text-cocoa hover:border-clay/40 hover:text-clay-strong"}`}
               >
                 <Heart size={18} fill={wishlisted ? "currentColor" : "none"} />
                 {wishlisted ? "Saved" : "Wishlist"}
@@ -261,10 +300,10 @@ export default function ProductDetailPage() {
                 disabled={compareDisabled}
                 className={`premium-button inline-flex items-center justify-center gap-2 border px-6 py-4 text-sm font-bold transition ${
                   compared
-                    ? "border-clay bg-clay/10 text-clay"
+                    ? "border-clay bg-clay/10 text-clay-strong"
                     : compareDisabled
                       ? "cursor-not-allowed border-cocoa/10 text-cocoa/30"
-                      : "border-cocoa/25 text-cocoa hover:border-clay/40 hover:text-clay"
+                      : "border-cocoa/25 text-cocoa hover:border-clay/40 hover:text-clay-strong"
                 }`}
               >
                 {compared ? <Check size={18} /> : <Scale size={18} />}
@@ -274,11 +313,11 @@ export default function ProductDetailPage() {
 
             {specs.length > 0 && (
               <div className="mt-10 border-t border-oat/50 pt-8">
-                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Specifications</h2>
+                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay-strong">Specifications</h2>
                 <dl className="mt-4 divide-y divide-oat/40">
                   {specs.map((spec) => (
                     <div key={spec.label} className="flex justify-between gap-6 py-3 text-sm">
-                      <dt className="text-cocoa/[0.55]">{spec.label}</dt>
+                      <dt className="text-cocoa/70">{spec.label}</dt>
                       <dd className="text-right font-medium text-cocoa">{spec.value}</dd>
                     </div>
                   ))}
@@ -288,7 +327,7 @@ export default function ProductDetailPage() {
 
             {product.benefits?.length > 0 && (
               <div className="mt-8 border-t border-oat/50 pt-8">
-                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay">Made for Living</h2>
+                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay-strong">Made for Living</h2>
                 <ul className="mt-4 space-y-2.5 text-sm leading-6 text-cocoa/[0.68]">
                   {product.benefits.map((benefit) => (
                     <li key={benefit} className="flex gap-2">

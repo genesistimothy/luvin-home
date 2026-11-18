@@ -1,5 +1,5 @@
 export const fieldInputClass =
-  "w-full rounded-xl border border-oat/60 bg-white/70 px-4 py-3 text-sm text-cocoa placeholder:text-cocoa/40 focus:border-clay/50 focus:outline-none";
+  "w-full rounded-xl border border-oat/60 bg-white/70 px-4 py-3 text-sm text-cocoa placeholder:text-cocoa/70 focus:border-clay/50 focus:outline-none";
 
 /**
  * @param {{label: string, htmlFor?: string, error?: string, hint?: string, children: any}} props
@@ -14,7 +14,7 @@ export default function FormField({ label, htmlFor, error, hint, children }) {
       {error ? (
         <p className="mt-1.5 text-xs font-semibold text-red-600">{error}</p>
       ) : (
-        hint && <p className="mt-1.5 text-xs text-cocoa/50">{hint}</p>
+        hint && <p className="mt-1.5 text-xs text-cocoa/70">{hint}</p>
       )}
     </div>
   );

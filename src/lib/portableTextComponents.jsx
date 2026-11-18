@@ -20,4 +20,16 @@ export const portableTextComponents = {
     bullet: ({ children }) => <ul className="mt-5 list-disc space-y-2 pl-6 text-cocoa/75">{children}</ul>,
     number: ({ children }) => <ol className="mt-5 list-decimal space-y-2 pl-6 text-cocoa/75">{children}</ol>,
   },
+  marks: {
+    link: ({ value, children }) => {
+      const raw = String(value?.href || "");
+      const safe = /^(https?:|mailto:|tel:|\/(?!\/))/.test(raw) ? raw : "#";
+      const external = /^https?:/.test(safe);
+      return (
+        <a href={safe} {...(external ? { rel: "noopener noreferrer" } : {})}>
+          {children}
+        </a>
+      );
+    },
+  },
 };

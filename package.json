@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "lint": "eslint src sanity api tests --max-warnings=0",
+    "lint": "eslint src sanity api tests scripts --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.js",
     "build": "vite build",
@@ -13,30 +13,36 @@
     "studio": "cd sanity && sanity dev",
     "studio:build": "cd sanity && sanity build dist --yes",
     "studio:deploy": "cd sanity && sanity deploy",
-    "cms:migrate": "cd sanity && sanity exec migrations/importExistingContent.mjs --with-user-token"
+    "cms:migrate": "cd sanity && sanity exec migrations/importExistingContent.mjs --with-user-token",
+    "studio:install": "cd sanity && npm ci",
+    "cms:seed": "node --env-file=.env.local scripts/seed-supabase-content.mjs",
+    "preflight:cloud": "node --env-file=.env.cloud scripts/preflight-production.mjs",
+    "cms:seed:cloud": "node --env-file=.env.cloud scripts/seed-supabase-content.mjs",
+    "build:cloud": "vite build --mode cloud"
   },
   "dependencies": {
-    "@portabletext/react": "^8.0.0",
-    "@sanity/client": "^7.23.1",
+    "@portabletext/react": "^8.0.1",
+    "@sanity/client": "^7.27.0",
     "@sanity/image-url": "^2.1.1",
-    "@vitejs/plugin-react": "^4.3.4",
     "lucide-react": "^0.468.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^6.30.6",
-    "typescript": "^5.7.2",
-    "vite": "^6.0.5"
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.0.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.17"
+    "postcss": "^8.5.31",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.5"
   }
 }
