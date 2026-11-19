@@ -26,6 +26,7 @@
     }
   ],
   "rewrites": [
+    {"source": "/api/erp-sync", "destination": "/api/keepalive"},
     {"source": "/((?!api/).*)", "destination": "/index.html"}
   ],
   "crons": [

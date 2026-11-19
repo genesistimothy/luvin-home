@@ -1,10 +1,25 @@
 import {requireAdmin} from '../../_lib/auth.js'
+import {isErpManaged, lockErpFields, mergeAdminEdit} from '../../_lib/erp.js'
 import {json, readJson} from '../../_lib/http.js'
 import {validateProductInput} from '../../_lib/product.js'
 import {productFromRow, resolveCollection} from '../../_lib/productStore.js'
-import {contentRow, patchContentRow} from '../../_lib/supabase.js'
+import {contentRow, patchContentRow, patchContentRowIfUnchanged} from '../../_lib/supabase.js'
 
 const ID_RE = /^[a-zA-Z0-9._-]{1,128}$/
+const ERP_CONFLICT = 'This product was just updated from the ERP. Reload the page and try again.'
+
+/**
+ * ERP-managed rows can change at any moment (the ERP syncs in the background),
+ * so write them only if nothing changed since they were read; otherwise a stale
+ * copy of the ERP fields could overwrite a fresh sync.
+ */
+async function saveProduct(row, patch) {
+  if (!isErpManaged(row.data)) {
+    await patchContentRow(row.id, patch)
+    return true
+  }
+  return patchContentRowIfUnchanged(row.id, row.updated_at, patch)
+}
 
 function productId(req) {
   const id = String(req.query?.id || '')
@@ -25,24 +40,27 @@ export default async function handler(req, res) {
 
     if (req.method === 'PATCH') {
       const body = await readJson(req)
-      const {product, collectionId, errors} = validateProductInput(body.product || {})
+      // Name, SKU, price, colours and stock come from the ERP for synced products; the form cannot change them.
+      const {product, collectionId, errors} = validateProductInput(lockErpFields(body.product || {}, row.data))
       if (errors) return json(res, 400, {error: errors.join(' '), fields: errors})
 
       const collection = await resolveCollection(collectionId)
-      const data = {
-        ...row.data,
-        ...product,
+      const data = mergeAdminEdit(row.data, product, {
         category: collection?.name || null,
         collection,
         galleryImages: row.data.galleryImages || [],
-      }
+      })
       const status = body.action === 'publish' ? 'published' : 'draft'
-      await patchContentRow(id, {data, slug: data.slug, status, display_order: data.displayOrder})
+      if (!(await saveProduct(row, {data, slug: data.slug, status, display_order: data.displayOrder}))) {
+        return json(res, 409, {error: ERP_CONFLICT})
+      }
       return json(res, 200, {id, status})
     }
 
     if (req.method === 'DELETE') {
-      await patchContentRow(id, {data: {...row.data, status: 'archived'}, status: 'archived'})
+      if (!(await saveProduct(row, {data: {...row.data, status: 'archived'}, status: 'archived'}))) {
+        return json(res, 409, {error: ERP_CONFLICT})
+      }
       return json(res, 200, {id, status: 'archived'})
     }
     return json(res, 405, {error: 'Method not allowed.'})
