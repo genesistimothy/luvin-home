@@ -54,6 +54,46 @@ export async function patchContentRow(id, patch) {
   })
 }
 
+/** The product row that already carries this ERP product id, if any. */
+export async function contentRowByErpId(erpProdukId) {
+  const params = new URLSearchParams({select: '*', type: 'eq.product', limit: '1'})
+  params.set('data->erp->>produkId', `eq.${erpProdukId}`)
+  const response = await request(`/rest/v1/content?${params}`)
+  const rows = await response.json()
+  return rows[0] || null
+}
+
+/**
+ * Insert a row unless its id exists. True when a row was inserted. A taken
+ * (type, slug) still throws with status 409.
+ */
+export async function insertContentRowIfAbsent(row) {
+  const response = await request('/rest/v1/content?on_conflict=id', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', Prefer: 'resolution=ignore-duplicates,return=representation'},
+    body: JSON.stringify([row]),
+  })
+  const rows = await response.json()
+  return rows.length > 0
+}
+
+/**
+ * Patch a row only if nobody changed it since it was read (compare-and-set on
+ * updated_at). True when the patch applied.
+ */
+export async function patchContentRowIfUnchanged(id, expectedUpdatedAt, patch) {
+  const response = await request(
+    `/rest/v1/content?id=eq.${encodeURIComponent(id)}&updated_at=eq.${encodeURIComponent(expectedUpdatedAt)}`,
+    {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json', Prefer: 'return=representation'},
+      body: JSON.stringify({...patch, updated_at: new Date().toISOString()}),
+    },
+  )
+  const rows = await response.json()
+  return rows.length > 0
+}
+
 
 
 export async function insertInquiry(row) {
