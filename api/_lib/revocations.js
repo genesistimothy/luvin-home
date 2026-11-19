@@ -1,45 +1,40 @@
-import {sanityReadClient, sanityWriteClient} from './sanity.js'
+import {insertSessionRevocation, sessionRevocationExists} from './supabase.js'
 
 /**
  * Server-side session revocation.
  *
  * Sessions are stateless signed cookies, so the only way to end one before its
- * exp is to remember that it ended. Logout writes a small document keyed by the
- * token's jti; requireAdmin checks for it. Documents carry the token's expiry so
- * they can be pruned later without guessing.
+ * exp is to remember that it ended. Logout stores the token's jti with its
+ * expiry; requireAdmin checks for it. The store is Supabase
+ * (public.session_revocations, service role only).
  */
 
-export const REVOCATION_TYPE = 'sessionRevocation'
-
-/** @param {string} jti */
-export const revocationId = (jti) => `session-revocation-${jti}`
+const supabaseStore = {
+  insert: insertSessionRevocation,
+  exists: sessionRevocationExists,
+}
 
 /**
- * Record a session as ended. Idempotent: logging out twice creates one document.
+ * Record a session as ended. Idempotent: logging out twice keeps one row.
  * @param {{jti?: string, exp?: number}} session
- * @param {import('@sanity/client').SanityClient} [client]
+ * @param {{insert: (row: {jti: string, expires_at: string}) => Promise<unknown>}} [store]
  */
-export async function revokeSession(session, client = sanityWriteClient()) {
+export async function revokeSession(session, store = supabaseStore) {
   if (!session?.jti) return false
-  await client.createIfNotExists({
-    _id: revocationId(session.jti),
-    _type: REVOCATION_TYPE,
+  await store.insert({
     jti: session.jti,
-    expiresAt: new Date(Number(session.exp) || Date.now()).toISOString(),
+    expires_at: new Date(Number(session.exp) || Date.now()).toISOString(),
   })
   return true
 }
 
 /**
- * Whether a session id has been revoked.
+ * Whether a session id has been revoked. Throws if the store cannot answer;
+ * callers must fail closed.
  * @param {string} jti
- * @param {import('@sanity/client').SanityClient} [client]
+ * @param {{exists: (jti: string) => Promise<boolean>}} [store]
  */
-export async function isSessionRevoked(jti, client = sanityReadClient()) {
+export async function isSessionRevoked(jti, store = supabaseStore) {
   if (!jti) return false
-  const found = await client.fetch(
-    `*[_id == $id && _type == $type][0]{_id}`,
-    {id: revocationId(jti), type: REVOCATION_TYPE},
-  )
-  return Boolean(found)
+  return Boolean(await store.exists(jti))
 }

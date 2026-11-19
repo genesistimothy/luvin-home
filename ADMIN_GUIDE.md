@@ -24,7 +24,6 @@ Server-only variables:
 - `SANITY_PROJECT_ID`
 - `SANITY_DATASET`
 - `SANITY_API_VERSION`
-- `SANITY_WRITE_TOKEN`
 - `ADMIN_ALLOWED_EMAILS` — comma-separated Google emails
 - `ADMIN_SESSION_SECRET` — random value of at least 32 characters
 - `GOOGLE_CLIENT_ID`

@@ -77,3 +77,28 @@ export async function uploadReferenceImage(buffer, contentType, filename) {
 export async function keepAlive() {
   await request('/rest/v1/inquiries?select=id&limit=1')
 }
+
+/** Idempotent: revoking the same session twice keeps one row. */
+export async function insertSessionRevocation(row) {
+  await request('/rest/v1/session_revocations?on_conflict=jti', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', Prefer: 'resolution=ignore-duplicates,return=minimal'},
+    body: JSON.stringify(row),
+  })
+}
+
+/** @param {string} jti */
+export async function sessionRevocationExists(jti) {
+  const response = await request(`/rest/v1/session_revocations?select=jti&jti=eq.${encodeURIComponent(jti)}&limit=1`)
+  const rows = await response.json()
+  return rows.length > 0
+}
+
+/** Drop revocations whose token would already be rejected for being expired. */
+export async function pruneSessionRevocations() {
+  const cutoff = encodeURIComponent(new Date().toISOString())
+  await request(`/rest/v1/session_revocations?expires_at=lt.${cutoff}`, {
+    method: 'DELETE',
+    headers: {Prefer: 'return=minimal'},
+  })
+}

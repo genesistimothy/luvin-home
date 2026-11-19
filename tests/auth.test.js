@@ -78,7 +78,7 @@ test('a revoked session is rejected', async () => {
 test('an unavailable revocation store fails closed', async () => {
   const res = response()
   const session = await requireAdmin(request(sessionCookie(freshToken())), res, {
-    isRevoked: async () => { throw new Error('sanity down') },
+    isRevoked: async () => { throw new Error('store down') },
   })
   assert.equal(session, null)
   assert.equal(res.statusCode, 503)
