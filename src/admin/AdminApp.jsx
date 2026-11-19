@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from 'react'
-import {BarChart3, Boxes, ExternalLink, FileText, LogOut, Menu, Settings, ShoppingBag, X} from 'lucide-react'
+import {BarChart3, Boxes, FileText, LogOut, Menu, Settings, ShoppingBag, X} from 'lucide-react'
 import {adminRequest} from './adminApi'
 import {DashboardPage} from './DashboardPage'
 import {ProductsPage} from './ProductsPage'
@@ -23,7 +23,7 @@ function LoginPage() {
   const params = new URLSearchParams(window.location.search)
   return <main className="admin-auth-page">
     <section className="admin-auth-card">
-      <div className="admin-brand-mark">LH</div>
+      <div className="admin-brand-mark"><img src="/luvin-logo-mark.svg" alt="Luvin Home" /></div>
       <p className="admin-eyebrow">LUVIN HOME</p>
       <h1>Welcome back.</h1>
       <p>Sign in with your approved Google account to manage the Luvin collection.</p>
@@ -39,7 +39,7 @@ function LoginPage() {
 function AccessDeniedPage() {
   return <main className="admin-auth-page">
     <section className="admin-auth-card">
-      <div className="admin-brand-mark">LH</div>
+      <div className="admin-brand-mark"><img src="/luvin-logo-mark.svg" alt="Luvin Home" /></div>
       <p className="admin-eyebrow">ACCESS DENIED</p>
       <h1>This account is not approved.</h1>
       <p>Ask the Luvin Home owner to add your Google email to the admin allowlist.</p>
@@ -61,12 +61,11 @@ const navigation = [
   {label: 'Settings', path: '/admin/settings', icon: Settings},
 ]
 
-function PlaceholderPage({title, contentLink = false}) {
+function PlaceholderPage({title}) {
   return <div className="admin-page admin-placeholder-page">
     <p className="admin-eyebrow">COMING SOON</p>
     <h1>{title}</h1>
     <p>This workspace is reserved for the next Luvin Admin release.</p>
-    {contentLink && <a className="admin-secondary-button" href="https://luvin-home.sanity.studio" target="_blank" rel="noreferrer">Open Sanity Studio <ExternalLink size={16}/></a>}
   </div>
 }
 
@@ -78,14 +77,14 @@ function Shell({user, path, onLogout}) {
     if (path === '/admin/products/new') return <ProductFormPage id={null}/>
     if (path.startsWith('/admin/products/')) return <ProductFormPage id={decodeURIComponent(path.split('/').pop())}/>
     if (path === '/admin/categories') return <PlaceholderPage title="Categories"/>
-    if (path === '/admin/content') return <PlaceholderPage title="Content" contentLink/>
+    if (path === '/admin/content') return <PlaceholderPage title="Content"/>
     if (path === '/admin/settings') return <PlaceholderPage title="Settings"/>
     return <DashboardPage/>
   }, [path])
 
   return <div className="admin-root">
     <aside className={`admin-sidebar ${menuOpen ? 'is-open' : ''}`}>
-      <div className="admin-sidebar-brand"><span className="admin-brand-mark">LH</span><span><strong>LUVIN HOME</strong><small>Editorial workspace</small></span></div>
+      <div className="admin-sidebar-brand"><span className="admin-brand-mark"><img src="/luvin-logo-mark.svg" alt="Luvin Home" /></span><span><strong>LUVIN HOME</strong><small>Editorial workspace</small></span></div>
       <button className="admin-sidebar-close" aria-label="Close admin navigation" onClick={() => setMenuOpen(false)}><X/></button>
       <nav aria-label="Admin navigation">
         {navigation.map(({label, path: itemPath, icon: Icon}) => {
@@ -93,7 +92,7 @@ function Shell({user, path, onLogout}) {
           return <AdminLink key={itemPath} to={itemPath} onClick={() => setMenuOpen(false)} className={active ? 'is-active' : ''}><Icon size={18}/>{label}</AdminLink>
         })}
       </nav>
-      <div className="admin-sidebar-footer"><span>Sanity connected</span><small>Production dataset</small></div>
+      <div className="admin-sidebar-footer"><span>Supabase connected</span><small>Production</small></div>
     </aside>
     {menuOpen && <button className="admin-sidebar-backdrop" aria-label="Close admin navigation" onClick={() => setMenuOpen(false)}/>} 
     <div className="admin-workspace">
