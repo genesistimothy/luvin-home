@@ -1,41 +1,43 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import {REVOCATION_TYPE, isSessionRevoked, revocationId, revokeSession} from '../api/_lib/revocations.js'
+import {isSessionRevoked, revokeSession} from '../api/_lib/revocations.js'
 
 const session = {jti: 'abc123', exp: Date.now() + 3_600_000}
 
-const readClient = (found) => ({fetch: async () => found})
-const writeClient = (onCreate) => ({createIfNotExists: async (doc) => { onCreate?.(doc); return doc }})
+const readStore = (found) => ({exists: async () => found})
+const writeStore = (onInsert) => ({insert: async (row) => { onInsert?.(row); return row }})
 
-test('revocation id is derived from the session id', () => {
-  assert.equal(revocationId('abc123'), 'session-revocation-abc123')
-})
-
-test('revoking writes one document carrying the token expiry', async () => {
+test('revoking stores the session id with the token expiry', async () => {
   let written
-  const result = await revokeSession(session, writeClient((doc) => { written = doc }))
+  const result = await revokeSession(session, writeStore((row) => { written = row }))
   assert.equal(result, true)
-  assert.equal(written._id, 'session-revocation-abc123')
-  assert.equal(written._type, REVOCATION_TYPE)
   assert.equal(written.jti, 'abc123')
-  assert.equal(written.expiresAt, new Date(session.exp).toISOString())
+  assert.equal(written.expires_at, new Date(session.exp).toISOString())
 })
 
 test('a session without a jti is not revocable', async () => {
   let called = false
-  const result = await revokeSession({email: 'owner@example.com'}, writeClient(() => { called = true }))
+  const result = await revokeSession({email: 'owner@example.com'}, writeStore(() => { called = true }))
   assert.equal(result, false)
   assert.equal(called, false)
 })
 
-test('isSessionRevoked reports whether the document exists', async () => {
-  assert.equal(await isSessionRevoked('abc123', readClient(null)), false)
-  assert.equal(await isSessionRevoked('abc123', readClient({_id: 'x'})), true)
+test('a failed write surfaces so the caller can decide', async () => {
+  await assert.rejects(revokeSession(session, {insert: async () => { throw new Error('store down') }}), /store down/)
+})
+
+test('isSessionRevoked reports whether the row exists', async () => {
+  assert.equal(await isSessionRevoked('abc123', readStore(false)), false)
+  assert.equal(await isSessionRevoked('abc123', readStore(true)), true)
 })
 
 test('isSessionRevoked without a jti never queries', async () => {
   let called = false
-  const result = await isSessionRevoked('', {fetch: async () => { called = true; return null }})
+  const result = await isSessionRevoked('', {exists: async () => { called = true; return false }})
   assert.equal(result, false)
   assert.equal(called, false)
+})
+
+test('isSessionRevoked propagates store errors so the gate fails closed', async () => {
+  await assert.rejects(isSessionRevoked('abc123', {exists: async () => { throw new Error('store down') }}), /store down/)
 })

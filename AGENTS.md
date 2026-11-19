@@ -91,8 +91,9 @@ npm run build:cloud    # production build using .env.cloud
 
 - `api/*.js` are ESM Vercel functions `(req, res)`. Use `json`, `redirect`, `readJson`, and
   `parseCookies` from `api/_lib/http.js`; auth/session helpers live in `api/_lib/`.
-- Only `VITE_*` values are public. Never expose `SANITY_WRITE_TOKEN`, `ADMIN_SESSION_SECRET`,
-  `GOOGLE_CLIENT_SECRET`, or the allowlist. Admin access is checked against
+- Only `VITE_*` values are public. Never expose `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_SESSION_SECRET`,
+  `GOOGLE_CLIENT_SECRET`, or the allowlist. Session revocations live in Supabase
+  (`public.session_revocations`, service role only); the app no longer needs a Sanity token. Admin access is checked against
   `ADMIN_ALLOWED_EMAILS` with a signed session cookie.
 - New public routes go in `src/App.jsx`; Vercel’s catch-all rewrite handles deep links.
 
@@ -134,4 +135,4 @@ npm run build:cloud    # production build using .env.cloud
 - `package-lock.json` is the only lockfile. `npm ci` is the install path; do not add a second
   package manager's lockfile to this repo.
 - Sanity schema limits already exist (product name 120, price ≥ 0, active-product required
-  fields). Change the schema and `validateProductInput` in `api/_lib/sanity.js` together.
+  fields). Change the schema and `validateProductInput` in `api/_lib/product.js` together.
