@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from 'react'
-import {BarChart3, Boxes, ExternalLink, FileText, LogOut, Menu, Settings, ShoppingBag, X} from 'lucide-react'
+import {BarChart3, Boxes, FileText, LogOut, Menu, Settings, ShoppingBag, X} from 'lucide-react'
 import {adminRequest} from './adminApi'
 import {DashboardPage} from './DashboardPage'
 import {ProductsPage} from './ProductsPage'
@@ -61,12 +61,11 @@ const navigation = [
   {label: 'Settings', path: '/admin/settings', icon: Settings},
 ]
 
-function PlaceholderPage({title, contentLink = false}) {
+function PlaceholderPage({title}) {
   return <div className="admin-page admin-placeholder-page">
     <p className="admin-eyebrow">COMING SOON</p>
     <h1>{title}</h1>
     <p>This workspace is reserved for the next Luvin Admin release.</p>
-    {contentLink && <a className="admin-secondary-button" href="https://luvin-home.sanity.studio" target="_blank" rel="noreferrer">Open Sanity Studio <ExternalLink size={16}/></a>}
   </div>
 }
 
@@ -78,7 +77,7 @@ function Shell({user, path, onLogout}) {
     if (path === '/admin/products/new') return <ProductFormPage id={null}/>
     if (path.startsWith('/admin/products/')) return <ProductFormPage id={decodeURIComponent(path.split('/').pop())}/>
     if (path === '/admin/categories') return <PlaceholderPage title="Categories"/>
-    if (path === '/admin/content') return <PlaceholderPage title="Content" contentLink/>
+    if (path === '/admin/content') return <PlaceholderPage title="Content"/>
     if (path === '/admin/settings') return <PlaceholderPage title="Settings"/>
     return <DashboardPage/>
   }, [path])

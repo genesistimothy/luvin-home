@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react'
-import {ArrowRight, ExternalLink, Plus} from 'lucide-react'
+import {ArrowRight, Plus} from 'lucide-react'
 import {adminRequest, formatDate} from './adminApi'
 import {AdminLink} from './AdminApp'
 
@@ -18,7 +18,7 @@ export function DashboardPage() {
       <section className="admin-panel"><div className="admin-panel-title"><div><p className="admin-eyebrow">RECENTLY UPDATED</p><h2>Latest product activity</h2></div><AdminLink to="/admin/products">View all <ArrowRight size={15}/></AdminLink></div>
         {data.recentProducts?.length ? <div className="admin-recent-list">{data.recentProducts.map((product) => <AdminLink to={`/admin/products/${product._id.replace(/^drafts\./,'')}`} key={product._id}><span><strong>{product.name}</strong><small>{product.category || 'Uncategorised'}</small></span><span><small>{formatDate(product._updatedAt)}</small><em className={`admin-status admin-status-${product.status}`}>{product.status}</em></span></AdminLink>)}</div> : <EmptyState title="No products yet" text="Create the first product to begin your collection."/>}
       </section>
-      <aside className="admin-panel admin-quick-panel"><p className="admin-eyebrow">QUICK ACTIONS</p><h2>Keep the collection moving.</h2><AdminLink to="/admin/products/new" className="admin-secondary-button"><Plus size={16}/> Add Product</AdminLink><a className="admin-secondary-button" href="https://luvin-home.sanity.studio" target="_blank" rel="noreferrer">Open Sanity Studio <ExternalLink size={16}/></a></aside>
+      <aside className="admin-panel admin-quick-panel"><p className="admin-eyebrow">QUICK ACTIONS</p><h2>Keep the collection moving.</h2><AdminLink to="/admin/products/new" className="admin-secondary-button"><Plus size={16}/> Add Product</AdminLink></aside>
     </div>
   </div>
 }
