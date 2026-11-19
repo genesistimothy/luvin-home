@@ -92,8 +92,11 @@ export function validateErpPayload(body) {
         productSkus.add(key)
         seenSkus.add(key)
       }
+      // An empty colour is allowed: the product then shows no colour label for that variant.
       const colour = typeof variant.colour === 'string' ? variant.colour.trim() : ''
-      if (!colour || colour.length > 60 || CONTROL_RE.test(colour)) fail(`${vat}.colour must be 1-60 characters.`)
+      if (typeof variant.colour !== 'string' || colour.length > 60 || CONTROL_RE.test(colour)) {
+        fail(`${vat}.colour must be a string of at most 60 characters (an empty string means no colour label).`)
+      }
       if (!Number.isSafeInteger(variant.price) || variant.price < 0 || variant.price > MAX_PRICE) {
         fail(`${vat}.price must be an integer from 0 to ${MAX_PRICE} (whole rupiah).`)
       }
@@ -120,7 +123,7 @@ export function validateErpPayload(body) {
 export function deriveErpFields(product, syncedAt) {
   const variants = product.variants.map(({sku, colour, price, available}) => ({sku, colour, price, available}))
   const colours = []
-  for (const variant of variants) if (!colours.includes(variant.colour)) colours.push(variant.colour)
+  for (const variant of variants) if (variant.colour && !colours.includes(variant.colour)) colours.push(variant.colour)
   return {
     name: product.name,
     price: Math.min(...variants.map((variant) => variant.price)),

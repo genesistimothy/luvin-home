@@ -61,7 +61,7 @@ Validation is strict. **Unknown fields are rejected at every level**, and every 
 | `products[].name` | string | 1–120 characters after trimming, no control characters. |
 | `products[].variants` | array | 1 to 20 items. |
 | `variants[].sku` | string | The ERP's SKU for this colour. 1–64 characters from `A-Z a-z 0-9 . _ -`. Unique across the whole request (case-insensitive). |
-| `variants[].colour` | string | 1–60 characters after trimming, no control characters. |
+| `variants[].colour` | string | 0–60 characters after trimming, no control characters. The key is required, but the value may be an empty string: the website then shows no colour label for that variant (see "What visitors see"). |
 | `variants[].price` | integer | Whole rupiah, 0 to 10,000,000,000. `0` shows as "Price on request". |
 | `variants[].available` | boolean | `true` or `false` only. |
 
@@ -87,7 +87,7 @@ For every product in `products`, in order, exactly one of these outcomes applies
 
 A `failed` product does not stop the others: the rest of the batch is still applied. Fix the mapping on the ERP side (or ask the website owner) and resend.
 
-**Derived fields** (so existing pages keep working): `price` = lowest variant price, `stockStatus` = `inStock` if any colour is available otherwise `soldOut`, `colors` = the variant colour names. The full ERP data is stored under `data.erp` as `{produkId, variants, syncedAt}`; `syncedAt` is the time of the last change that was applied.
+**Derived fields** (so existing pages keep working): `price` = lowest variant price, `stockStatus` = `inStock` if any colour is available otherwise `soldOut`, `colors` = the variant colour names (empty colours are left out, duplicates are listed once). The full ERP data is stored under `data.erp` as `{produkId, variants, syncedAt}`; `syncedAt` is the time of the last change that was applied.
 
 ## Response
 
@@ -137,10 +137,30 @@ Same counts, plus the failing ids. The products that did not fail **were applied
 ## What visitors see
 
 - **Colour options:** the product page lists every colour with its price. A colour that is not available stays visible with a **Habis** label.
+  - A product with a **single variant** still shows its colour.
+  - A variant whose colour is **empty** shows no colour label: just its price (and **Habis** if it is not available).
+  - If **none** of a product's variants has a colour, the colour list is not shown at all; the headline price and the product-level **Habis** still apply.
 - **Cards and listings:** the lowest variant price, prefixed with **mulai dari** when the colours have different prices. A product whose colours are all unavailable shows **Habis**.
 - **Never shown:** stock numbers. The website's product code still appears in the specifications, as before.
 - A draft stays invisible until the owner publishes it. Publishing needs a product code, a photo, a category and a material or benefit in `/admin`.
 - In `/admin`, for synced products the name, colours, prices and stock status are read-only ("Diatur dari ERP") and admin saves cannot overwrite them. The product code, photos, description, category and slug stay editable.
+
+## Initial mapping (approved by the owner, 19 Nov 2026)
+
+Send `websiteProductId` for these six; the website keeps its product codes (`LUV-001` ... `LUV-006`), its slugs and its photos, descriptions and materials. Names change to the ERP names. All six ERP prices are higher than the current website prices, so every website price goes up on the first sync.
+
+| Product code | `websiteProductId` | ERP product | ERP SKUs (colour) |
+|---|---|---|---|
+| LUV-001 | `product-alder-sofa-bed` | Alder Sofa Bed | `LH-ALD-SB-GRY`, `LH-ALD-SB-OLV`, `LH-ALD-SB-TRC` |
+| LUV-002 | `product-sierra-woven-sofa-armchair` | Arlo Armchair | `LH-ARL-ARM` |
+| LUV-003 | `product-sierra-woven-sofa-3-seater` | Arlo Sofa Leather 3-Seater | `LH-ARL-3S` |
+| LUV-004 | `product-aurelia-131-dining-set` | Elora Dining Set | `LH-ELR-SET-TRC`, `LH-ELR-SET-CHR` |
+| LUV-005 | `product-arden-dining-chair` | Elora Dining Chair | `LH-ELR-CH-TRC`, `LH-ELR-CH-CHR` |
+| LUV-006 | `product-aurelia-131-sintered-stone-dining-table` | Elora Dining Table | `LH-ELR-131-TBL` |
+
+- **Elora Dining Chair Set 4** (`LH-ELR-SET4-TRC`, `LH-ELR-SET4-CHR`) has no website product: send it with `websiteProductId: null` and the website creates a hidden draft (empty product code).
+- `LH-ARL-ARM`, `LH-ARL-3S` and `LH-ELR-131-TBL` have no colour in the ERP yet. Until the owner fills one in, send an empty colour: the website then shows no colour label for them.
+- Materials and descriptions stay website-owned and are never touched by the sync (the Arlo products are already corrected to leather in the admin).
 
 ## Operational notes
 

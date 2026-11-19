@@ -109,7 +109,7 @@ export function ProductFormPage({id = null}) {
           {erpManaged
             ? <div className="admin-field is-wide"><span>Colours</span>
                 <table className="admin-erp-variants"><thead><tr><th>Colour</th><th>ERP SKU</th><th>Price</th><th>Availability</th></tr></thead>
-                  <tbody>{erpVariants.map((variant) => <tr key={variant.sku}><td>{variant.colour}</td><td>{variant.sku}</td><td>{formatRupiah(variant.price)}</td><td>{variant.available ? 'Available' : 'Habis'}</td></tr>)}</tbody></table>
+                  <tbody>{erpVariants.map((variant) => <tr key={variant.sku}><td>{variant.colour || '—'}</td><td>{variant.sku}</td><td>{formatRupiah(variant.price)}</td><td>{variant.available ? 'Available' : 'Habis'}</td></tr>)}</tbody></table>
                 <small>{erpNote}{product.erp.syncedAt ? ` · last synced ${formatDate(product.erp.syncedAt)}` : ''}</small></div>
             : <Field label="Colors / variants" hint="One per line." wide><textarea rows={4} value={toLines(product.colors)} onChange={(event) => update('colors', fromLines(event.target.value))}/></Field>}
           <Field label="Benefits" hint="One per line." wide><textarea rows={4} value={toLines(product.benefits)} onChange={(event) => update('benefits', fromLines(event.target.value))}/></Field>

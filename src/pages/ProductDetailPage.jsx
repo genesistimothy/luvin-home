@@ -5,7 +5,7 @@ import Breadcrumb from "../components/Breadcrumb";
 import ProductVisualPlaceholder from "../components/ProductVisualPlaceholder";
 import { createWhatsAppLink } from "../config/contact";
 import { formatPrice } from "../lib/format";
-import { erpPriceInfo, erpVariants } from "../lib/erpVariants";
+import { erpPriceInfo, erpVariants, hasColourLabels } from "../lib/erpVariants";
 import { productSlug } from "../lib/slug";
 import { useSavedProducts } from "../context/SavedProductsContext";
 
@@ -287,14 +287,16 @@ export default function ProductDetailPage() {
               </p>
             </div>
 
-            {variants.length > 0 && (
+            {hasColourLabels(product) && (
               <div className="mt-6">
                 <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay-strong">Color options</h2>
                 <ul className="mt-3 divide-y divide-oat/40 overflow-hidden rounded-2xl border border-oat/50 bg-cream">
                   {variants.map((variant) => (
                     <li key={variant.sku} className="flex items-center justify-between gap-4 px-4 py-3 text-sm">
-                      <span className={`font-medium ${variant.available ? "text-cocoa" : "text-cocoa/50"}`}>{variant.colour}</span>
-                      <span className="flex items-center gap-3">
+                      {variant.colour?.trim() && (
+                        <span className={`font-medium ${variant.available ? "text-cocoa" : "text-cocoa/50"}`}>{variant.colour}</span>
+                      )}
+                      <span className="ml-auto flex items-center gap-3">
                         <span className={variant.available ? "text-cocoa" : "text-cocoa/50"}>
                           {formatPrice(variant.price, product.currency)}
                         </span>

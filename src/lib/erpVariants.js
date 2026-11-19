@@ -10,6 +10,15 @@ export function erpVariants(product) {
 }
 
 /**
+ * Whether the colour list is worth showing: at least one variant has a colour
+ * label. A single variant with a colour still shows it; variants whose colour
+ * is empty show no label, and a product where none has one skips the list.
+ */
+export function hasColourLabels(product) {
+  return erpVariants(product).some((variant) => String(variant.colour ?? "").trim() !== "");
+}
+
+/**
  * Card/detail display facts for a product with ERP variants.
  * - lowest: lowest known variant price (null if none is above zero)
  * - differs: variants have more than one known price, so show "mulai dari"

@@ -14,7 +14,7 @@ import {
 } from '../api/_lib/erp.js'
 import {handleErpSync} from '../api/_lib/erpSync.js'
 import {validateProductInput} from '../api/_lib/product.js'
-import {erpPriceInfo} from '../src/lib/erpVariants.js'
+import {erpPriceInfo, hasColourLabels} from '../src/lib/erpVariants.js'
 
 const SECRET = 'test-erp-secret-with-enough-length'
 const NOW = '2026-11-20T03:00:00.000Z'
@@ -184,7 +184,9 @@ test('required fields, types and ranges are enforced', () => {
   bad(() => payload([erpProduct({variants: [variant({price: 1.5})]})]))
   bad(() => payload([erpProduct({variants: [variant({price: '1000'})]})]))
   bad(() => payload([erpProduct({variants: [variant({available: 'yes'})]})]))
-  bad(() => payload([erpProduct({variants: [variant({colour: ''})]})]))
+  bad(() => payload([erpProduct({variants: [variant({colour: null})]})]))
+  bad(() => payload([erpProduct({variants: [variant({colour: 7})]})]))
+  bad(() => payload([erpProduct({variants: [variant({colour: 'x'.repeat(61)})]})]))
   bad(() => payload([erpProduct({variants: [variant({sku: 'a b'})]})]))
   bad(() => ({mode: 'sync', products: []}))
   bad(() => ({mode: 'full'}))
@@ -214,6 +216,40 @@ test('an invalid payload is a 400 with details and writes nothing', async () => 
   assert.equal(res.statusCode, 400)
   assert.ok(res.json.details.length > 0)
   assert.equal(store.writes, 0)
+})
+
+test('an empty colour is accepted and stored as an empty string; the key must still be present', async () => {
+  for (const colour of ['', '   ']) {
+    const result = validateErpPayload(payload([erpProduct({variants: [variant({colour})]})]))
+    assert.ok('payload' in result, JSON.stringify(colour))
+    assert.equal(result.payload.products[0].variants[0].colour, '')
+  }
+  const noKey = variant()
+  delete noKey.colour
+  assert.ok('errors' in validateErpPayload(payload([erpProduct({variants: [noKey]})])))
+
+  const store = fakeStore()
+  const res = await run(payload([erpProduct({variants: [variant({sku: 'LH-ARL-ARM', colour: '', price: 4_499_000})]})]), store)
+  assert.equal(res.statusCode, 200)
+  const draft = store.rows.get(draftIdFor('P-100'))
+  assert.equal(draft.data.erp.variants[0].colour, '')
+  assert.deepEqual(draft.data.colors, [], 'an empty colour is not listed as a colour')
+  assert.equal(draft.data.price, 4_499_000)
+})
+
+test('empty colours are left out of the derived colour list, labelled ones are kept', () => {
+  const derived = deriveErpFields(erpProduct({variants: [variant({colour: ''}), variant({sku: 'B', colour: 'Krem'}), variant({sku: 'C', colour: 'Krem'})]}), NOW)
+  assert.deepEqual(derived.colors, ['Krem'])
+  assert.equal(derived.erp.variants.length, 3, 'every variant is still stored')
+})
+
+test('colour labels: a single labelled variant shows its colour, empty colours show none, no labels skips the list', () => {
+  const only = (...variants) => ({erp: {variants}})
+  assert.equal(hasColourLabels(only(variant())), true, 'a single variant still shows its colour')
+  assert.equal(hasColourLabels(only(variant({colour: ''}))), false, 'a single variant with an empty colour shows no label')
+  assert.equal(hasColourLabels(only(variant({colour: '   '}))), false)
+  assert.equal(hasColourLabels(only(variant({colour: ''}), variant({sku: 'B', colour: 'Krem'}))), true, 'mixed: the labelled one shows')
+  assert.equal(hasColourLabels({}), false, 'products without ERP data are unaffected')
 })
 
 // ---- derived fields ----------------------------------------------------
