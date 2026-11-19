@@ -33,7 +33,7 @@ export const draftIdFor = (erpProdukId) => `product-erp-${erpProdukId}`
 
 /**
  * Strict validation. Unknown fields are rejected at every level.
- * @param {unknown} body
+ * @param {any} body
  * @returns {{errors: string[]} | {payload: {mode: 'full'|'partial', products: Array<{erpProdukId: string, websiteProductId: string|null, name: string, variants: Array<{sku: string, colour: string, price: number, available: boolean}>}>}}}
  */
 export function validateErpPayload(body) {

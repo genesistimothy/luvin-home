@@ -95,6 +95,10 @@ npm run build:cloud    # production build using .env.cloud
   `GOOGLE_CLIENT_SECRET`, or the allowlist. Session revocations live in Supabase
   (`public.session_revocations`, service role only); the app no longer needs a Sanity token. Admin access is checked against
   `ADMIN_ALLOWED_EMAILS` with a signed session cookie.
+- `POST /api/erp-sync` (Bearer `ERP_SYNC_SECRET`, fail closed with 503 if unset) receives product
+  name, SKUs, colours, prices and availability from the ERP. It is served by `api/keepalive.js`
+  through a `vercel.json` rewrite because the Hobby plan allows only 12 functions (all in use).
+  Contract: `docs/erp-sync-contract.md`. ERP-owned fields are locked in the admin editor.
 - New public routes go in `src/App.jsx`; Vercel’s catch-all rewrite handles deep links.
 
 ## Public endpoints

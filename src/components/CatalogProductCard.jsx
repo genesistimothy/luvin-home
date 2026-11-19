@@ -3,12 +3,16 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Check, Heart, Scale } from "lucide-react";
 import ProductVisualPlaceholder from "./ProductVisualPlaceholder";
 import { formatPrice } from "../lib/format";
+import { erpPriceInfo } from "../lib/erpVariants";
 import { productSlug } from "../lib/slug";
 import { sanityImageUrl, sanityImageSrcSet } from "../lib/sanityImage";
 import { useSavedProducts } from "../context/SavedProductsContext";
 
 export default function CatalogProductCard({ product }) {
-  const isUnavailable = product.status === "soldOut" || product.stockStatus === "soldOut";
+  const erp = erpPriceInfo(product);
+  const isUnavailable = erp.hasVariants
+    ? erp.allSoldOut
+    : product.status === "soldOut" || product.stockStatus === "soldOut";
   const isComingSoon = product.status === "comingSoon";
   const slug = productSlug(product);
   const name = product.name?.trim() || "Untitled product";
@@ -67,11 +71,16 @@ export default function CatalogProductCard({ product }) {
           <p className="mt-1.5 break-words text-sm text-cocoa/70">{product.dimensions}</p>
         )}
         {(isUnavailable || isComingSoon) && (
-          <p className="mt-2 text-xs font-semibold text-clay-strong">{isComingSoon ? "Coming soon" : "Sold out"}</p>
+          <p className="mt-2 text-xs font-semibold text-clay-strong">
+            {isComingSoon ? "Coming soon" : erp.hasVariants ? "Habis" : "Sold out"}
+          </p>
         )}
         <div className="mt-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-3 pt-6">
           <p className="min-w-0 break-words font-display text-xl tracking-[-0.02em] text-cocoa">
-            {formatPrice(product.price, product.currency)}
+            {erp.hasVariants && erp.differs && (
+              <span className="mr-1.5 font-sans text-xs font-medium tracking-normal text-cocoa/70">mulai dari</span>
+            )}
+            {formatPrice(erp.hasVariants ? erp.lowest : product.price, product.currency)}
           </p>
           <Link
             to={`/products/${slug}`}

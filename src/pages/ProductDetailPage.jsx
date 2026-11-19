@@ -5,6 +5,7 @@ import Breadcrumb from "../components/Breadcrumb";
 import ProductVisualPlaceholder from "../components/ProductVisualPlaceholder";
 import { createWhatsAppLink } from "../config/contact";
 import { formatPrice } from "../lib/format";
+import { erpPriceInfo, erpVariants } from "../lib/erpVariants";
 import { productSlug } from "../lib/slug";
 import { useSavedProducts } from "../context/SavedProductsContext";
 
@@ -137,9 +138,11 @@ function buildSpecs(product) {
   if (product.dimensions) specs.push({ label: "Dimensions", value: product.dimensions });
   if (product.weight) specs.push({ label: "Weight", value: product.weight });
   if (product.materials?.length) specs.push({ label: "Material", value: product.materials.join(", ") });
-  if (product.colors?.length) specs.push({ label: "Color Options", value: product.colors.join(", ") });
+  // Products synced from the ERP list their colours (and per-colour SKUs) in the colour options instead.
+  const hasErpVariants = erpVariants(product).length > 0;
+  if (product.colors?.length && !hasErpVariants) specs.push({ label: "Color Options", value: product.colors.join(", ") });
   if (product.leadTime) specs.push({ label: "Production Estimate", value: product.leadTime });
-  if (product.sku) specs.push({ label: "SKU", value: product.sku });
+  if (product.sku && !hasErpVariants) specs.push({ label: "SKU", value: product.sku });
   return specs;
 }
 
@@ -175,7 +178,11 @@ export default function ProductDetailPage() {
     ...(product.galleryImageUrls || []),
   ];
 
-  const isUnavailable = product.status === "soldOut" || product.stockStatus === "soldOut";
+  const erp = erpPriceInfo(product);
+  const variants = erpVariants(product);
+  const isUnavailable = erp.hasVariants
+    ? erp.allSoldOut
+    : product.status === "soldOut" || product.stockStatus === "soldOut";
   const isComingSoon = product.status === "comingSoon";
   const message =
     product.whatsAppMessage
@@ -260,7 +267,7 @@ export default function ProductDetailPage() {
 
             {(isUnavailable || isComingSoon) && (
               <p className="mt-3 inline-block rounded-full bg-clay/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-clay-strong">
-                {isComingSoon ? "Coming soon" : "Sold out — enquire for availability"}
+                {isComingSoon ? "Coming soon" : erp.hasVariants ? "Habis" : "Sold out — enquire for availability"}
               </p>
             )}
 
@@ -272,8 +279,36 @@ export default function ProductDetailPage() {
               {product.compareAtPrice && (
                 <p className="text-lg text-cocoa/70 line-through">{formatPrice(product.compareAtPrice, product.currency)}</p>
               )}
-              <p className="font-display text-3xl tracking-[-0.02em] text-cocoa">{formatPrice(product.price, product.currency)}</p>
+              <p className="font-display text-3xl tracking-[-0.02em] text-cocoa">
+                {erp.hasVariants && erp.differs && (
+                  <span className="mr-2 font-sans text-sm font-medium tracking-normal text-cocoa/70">mulai dari</span>
+                )}
+                {formatPrice(erp.hasVariants ? erp.lowest : product.price, product.currency)}
+              </p>
             </div>
+
+            {variants.length > 0 && (
+              <div className="mt-6">
+                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-clay-strong">Color options</h2>
+                <ul className="mt-3 divide-y divide-oat/40 overflow-hidden rounded-2xl border border-oat/50 bg-cream">
+                  {variants.map((variant) => (
+                    <li key={variant.sku} className="flex items-center justify-between gap-4 px-4 py-3 text-sm">
+                      <span className={`font-medium ${variant.available ? "text-cocoa" : "text-cocoa/50"}`}>{variant.colour}</span>
+                      <span className="flex items-center gap-3">
+                        <span className={variant.available ? "text-cocoa" : "text-cocoa/50"}>
+                          {formatPrice(variant.price, product.currency)}
+                        </span>
+                        {!variant.available && (
+                          <span className="rounded-full bg-clay/10 px-2.5 py-0.5 text-[0.68rem] font-semibold uppercase tracking-[0.08em] text-clay-strong">
+                            Habis
+                          </span>
+                        )}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <div className="mt-7 flex flex-wrap gap-3">
               <a
