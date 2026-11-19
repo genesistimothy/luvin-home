@@ -63,6 +63,15 @@ export async function contentRowByErpId(erpProdukId) {
   return rows[0] || null
 }
 
+/** The erpProdukId of every product row that is linked to the ERP. Read-only. */
+export async function contentErpProdukIds() {
+  const params = new URLSearchParams({select: 'produkId:data->erp->>produkId', type: 'eq.product'})
+  params.set('data->erp->>produkId', 'not.is.null')
+  const response = await request(`/rest/v1/content?${params}`)
+  const rows = await response.json()
+  return rows.map((row) => row.produkId).filter(Boolean)
+}
+
 /**
  * Insert a row unless its id exists. True when a row was inserted. A taken
  * (type, slug) still throws with status 409.

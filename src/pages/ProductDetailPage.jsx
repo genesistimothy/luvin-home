@@ -138,11 +138,11 @@ function buildSpecs(product) {
   if (product.dimensions) specs.push({ label: "Dimensions", value: product.dimensions });
   if (product.weight) specs.push({ label: "Weight", value: product.weight });
   if (product.materials?.length) specs.push({ label: "Material", value: product.materials.join(", ") });
-  // Products synced from the ERP list their colours (and per-colour SKUs) in the colour options instead.
+  // Products synced from the ERP list their colours in the colour options instead.
   const hasErpVariants = erpVariants(product).length > 0;
   if (product.colors?.length && !hasErpVariants) specs.push({ label: "Color Options", value: product.colors.join(", ") });
   if (product.leadTime) specs.push({ label: "Production Estimate", value: product.leadTime });
-  if (product.sku && !hasErpVariants) specs.push({ label: "SKU", value: product.sku });
+  if (product.sku) specs.push({ label: "SKU", value: product.sku });
   return specs;
 }
 

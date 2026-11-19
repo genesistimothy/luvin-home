@@ -88,13 +88,13 @@ export function ProductFormPage({id = null}) {
     <AdminLink to="/admin/products" className="admin-back-link"><ArrowLeft size={16}/> Back to products</AdminLink>
     <div className="admin-page-heading"><div><p className="admin-eyebrow">{isNew ? 'NEW PRODUCT' : 'PRODUCT EDITOR'}</p><h1>{title}</h1><p>Changes go live on the public catalogue when published.</p></div><div className="admin-form-actions"><button disabled={!!state.saving || state.uploading || state.archiving} className="admin-secondary-button" onClick={() => save('draft')}>{state.saving === 'draft' ? <LoaderCircle className="admin-spin" size={16}/> : <Save size={16}/>} Save Draft</button><button disabled={!!state.saving || state.uploading || state.archiving} className="admin-primary-button" onClick={() => save('publish')}>{state.saving === 'publish' ? <LoaderCircle className="admin-spin" size={17}/> : <Send size={16}/>} Publish</button></div></div>
     {state.error && <div className="admin-alert admin-alert-error">{state.error}</div>}{state.success && <div className="admin-alert admin-alert-success">{state.success}</div>}
-    {erpManaged && <div className="admin-alert admin-alert-info"><strong>Diatur dari ERP.</strong> Name, SKUs, colours, prices and stock status are synced from the ERP and cannot be edited here. Photos, description, category and slug are yours.</div>}
+    {erpManaged && <div className="admin-alert admin-alert-info"><strong>Diatur dari ERP.</strong> Name, colours (with their SKUs), prices and stock status are synced from the ERP and cannot be edited here. Product code, photos, description, category and slug are yours.</div>}
     <div className="admin-form-layout">
       <div className="admin-form-main">
         <section className="admin-panel admin-form-section"><div><p className="admin-eyebrow">IDENTITY</p><h2>Product essentials</h2></div><div className="admin-form-grid">
           <Field label="Product name" wide hint={erpNote}><input required readOnly={erpManaged} value={product.name} onChange={(event) => { update('name', event.target.value); if (!slugTouched) setProduct((current) => ({...current, slug: slugify(event.target.value)})) }}/></Field>
           <Field label="Slug" hint="Used as the stable URL-friendly identifier."><input required value={product.slug || ''} onChange={(event) => { setSlugTouched(true); update('slug', slugify(event.target.value)) }}/></Field>
-          <Field label="SKU" hint={erpNote}><input readOnly={erpManaged} value={product.sku || ''} onChange={(event) => update('sku', event.target.value)}/></Field>
+          <Field label="SKU" hint={erpManaged ? 'Your product code (for example LUV-001). Per-colour ERP SKUs are listed under Colours.' : ''}><input value={product.sku || ''} onChange={(event) => update('sku', event.target.value)}/></Field>
           <Field label="Category"><select value={product.collection?.id || product.collection?._id || product.collection?._ref || ''} onChange={(event) => update('collection', event.target.value ? {id: event.target.value} : null)}><option value="">Choose category</option>{categories.map((item) => <option key={item._id} value={item._id}>{item.name}</option>)}</select></Field>
           <Field label="Status"><select value={product.status} onChange={(event) => update('status', event.target.value)}>{['draft','active','soldOut','comingSoon','archived'].map((item) => <option key={item} value={item}>{item}</option>)}</select></Field>
           <Field label="Sort order"><input type="number" min="0" value={product.displayOrder} onChange={(event) => update('displayOrder', event.target.value)}/></Field>
@@ -108,7 +108,7 @@ export function ProductFormPage({id = null}) {
           <Field label="Materials" hint="One per line." wide><textarea rows={4} value={toLines(product.materials)} onChange={(event) => update('materials', fromLines(event.target.value))}/></Field>
           {erpManaged
             ? <div className="admin-field is-wide"><span>Colours</span>
-                <table className="admin-erp-variants"><thead><tr><th>Colour</th><th>SKU</th><th>Price</th><th>Availability</th></tr></thead>
+                <table className="admin-erp-variants"><thead><tr><th>Colour</th><th>ERP SKU</th><th>Price</th><th>Availability</th></tr></thead>
                   <tbody>{erpVariants.map((variant) => <tr key={variant.sku}><td>{variant.colour}</td><td>{variant.sku}</td><td>{formatRupiah(variant.price)}</td><td>{variant.available ? 'Available' : 'Habis'}</td></tr>)}</tbody></table>
                 <small>{erpNote}{product.erp.syncedAt ? ` · last synced ${formatDate(product.erp.syncedAt)}` : ''}</small></div>
             : <Field label="Colors / variants" hint="One per line." wide><textarea rows={4} value={toLines(product.colors)} onChange={(event) => update('colors', fromLines(event.target.value))}/></Field>}

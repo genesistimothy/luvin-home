@@ -110,8 +110,10 @@ export function validateErpPayload(body) {
 
 /**
  * The ERP-owned fields of a product row, derived from the payload.
- * `colors`, `sku`, `price` and `stockStatus` are the legacy fields the site
- * already reads; `erp` is the source of truth.
+ * `colors`, `price` and `stockStatus` are the legacy fields the site already
+ * reads; `erp` is the source of truth. `data.sku` is the website's own product
+ * code (LUV-001 ...) and is never derived or written by the sync: the
+ * per-colour ERP SKUs live only in `erp.variants`.
  * @param {{erpProdukId: string, name: string, variants: Array<{sku: string, colour: string, price: number, available: boolean}>}} product
  * @param {string} syncedAt ISO timestamp
  */
@@ -121,7 +123,6 @@ export function deriveErpFields(product, syncedAt) {
   for (const variant of variants) if (!colours.includes(variant.colour)) colours.push(variant.colour)
   return {
     name: product.name,
-    sku: variants[0].sku,
     price: Math.min(...variants.map((variant) => variant.price)),
     currency: 'IDR',
     stockStatus: variants.some((variant) => variant.available) ? 'inStock' : 'soldOut',
@@ -132,7 +133,6 @@ export function deriveErpFields(product, syncedAt) {
 
 const canonical = (data) => JSON.stringify({
   name: data?.name,
-  sku: data?.sku,
   price: data?.price,
   currency: data?.currency,
   stockStatus: data?.stockStatus,
@@ -144,8 +144,11 @@ const canonical = (data) => JSON.stringify({
 /** True when applying `derived` would not change anything (syncedAt is ignored). */
 export const sameErpState = (data, derived) => canonical(data) === canonical(derived)
 
-/** Keys written by a sync and locked in the admin for ERP-managed products. */
-export const ERP_OWNED_KEYS = ['name', 'sku', 'price', 'currency', 'stockStatus', 'colors', 'erp']
+/**
+ * Keys written by a sync and locked in the admin for ERP-managed products.
+ * `sku` (the website product code) is deliberately not here: it stays editable.
+ */
+export const ERP_OWNED_KEYS = ['name', 'price', 'currency', 'stockStatus', 'colors', 'erp']
 
 /** @param {Record<string, any>} data */
 export const erpOwnedFields = (data) => Object.fromEntries(ERP_OWNED_KEYS.filter((key) => key in data).map((key) => [key, data[key]]))
@@ -168,6 +171,17 @@ export function lockErpFields(input, data) {
 export function mergeAdminEdit(data, product, extra = {}) {
   const merged = {...data, ...product, ...extra}
   return isErpManaged(data) ? {...merged, ...erpOwnedFields(data)} : merged
+}
+
+/**
+ * ERP product ids that map to a website row but are absent from this payload.
+ * Report only: the sync never changes or deletes those rows.
+ * @param {string[]} mappedIds erpProdukId of every row that carries data.erp.produkId
+ * @param {string[]} payloadIds erpProdukId of every product in the payload
+ */
+export function missingErpIds(mappedIds, payloadIds) {
+  const present = new Set(payloadIds)
+  return [...new Set(mappedIds)].filter((id) => !present.has(id)).sort()
 }
 
 const baseSlug = (name) => (
@@ -196,6 +210,7 @@ export function draftRowFor(product, derived, slug) {
     data: {
       ...derived,
       slug,
+      sku: '', // the product code is the owner's to fill in, in /admin
       status: 'draft',
       featured: false,
       displayOrder: 100,
