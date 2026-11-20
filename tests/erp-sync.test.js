@@ -18,7 +18,21 @@ import {erpPriceInfo, hasColourLabels} from '../src/lib/erpVariants.js'
 
 const SECRET = 'test-erp-secret-with-enough-length'
 const NOW = '2026-11-20T03:00:00.000Z'
-const clone = (value) => (value === null || value === undefined ? value : JSON.parse(JSON.stringify(value)))
+// Postgres jsonb does not keep the key order you wrote: it stores object keys shorter-first, then
+// alphabetically ({sku, colour, price, available} comes back as {sku, price, colour, available}).
+// The test store behaves the same way, so tests see what the real database returns.
+const jsonbLike = (value) => {
+  if (Array.isArray(value)) return value.map(jsonbLike)
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.keys(value)
+        .sort((a, b) => a.length - b.length || (a < b ? -1 : a > b ? 1 : 0))
+        .map((key) => [key, jsonbLike(value[key])]),
+    )
+  }
+  return value
+}
+const clone = (value) => (value === null || value === undefined ? value : jsonbLike(JSON.parse(JSON.stringify(value))))
 
 const variant = (overrides = {}) => ({sku: 'ELO-HIT', colour: 'Hitam', price: 1_500_000, available: true, ...overrides})
 const erpProduct = (overrides = {}) => ({
@@ -307,6 +321,42 @@ test('the name changes but the slug never does', async () => {
   assert.equal(row.data.name, 'Completely Different Name')
   assert.equal(row.slug, 'aurelia-131-dining-set')
   assert.equal(row.data.slug, 'aurelia-131-dining-set')
+})
+
+test('change detection ignores the key order the database stores (jsonb reorders keys)', async () => {
+  const store = fakeStore([websiteRow()])
+  const body = payload([erpProduct({websiteProductId: 'product-aurelia'})])
+  const first = await run(body, store)
+  assert.equal(first.json.updated, 1)
+
+  // the stored variants now have the database's key order, not the order the website writes
+  const stored = store.rows.get('product-aurelia').data.erp.variants[0]
+  assert.deepEqual(Object.keys(stored), ['sku', 'price', 'colour', 'available'])
+  assert.notDeepEqual(Object.keys(stored), Object.keys(deriveErpFields(erpProduct(), NOW).erp.variants[0]))
+
+  const writes = store.writes
+  const second = await run(body, store)
+  assert.deepEqual({u: second.json.updated, n: second.json.unchanged}, {u: 0, n: 1})
+  assert.equal(store.writes, writes, 'an unchanged product must not be written again')
+})
+
+test('sameErpState: key order never matters, real differences always do', () => {
+  const derived = deriveErpFields(erpProduct(), NOW)
+  const reordered = JSON.parse(JSON.stringify(derived))
+  reordered.erp.variants = reordered.erp.variants.map(({available, price, colour, sku}) => ({available, price, colour, sku}))
+  assert.equal(sameErpState(reordered, derived), true)
+
+  const flip = (change) => {
+    const copy = JSON.parse(JSON.stringify(derived))
+    change(copy.erp.variants[0])
+    return copy
+  }
+  assert.equal(sameErpState(flip((v) => { v.available = !v.available }), derived), false)
+  assert.equal(sameErpState(flip((v) => { v.price += 1 }), derived), false)
+  assert.equal(sameErpState(flip((v) => { v.colour = 'Lain' }), derived), false)
+  assert.equal(sameErpState(flip((v) => { v.sku = 'LAIN-1' }), derived), false)
+  assert.equal(sameErpState({...reordered, name: 'Nama lain'}, derived), false)
+  assert.equal(sameErpState({}, derived), false)
 })
 
 test('a replayed request is idempotent: nothing is written the second time', async () => {

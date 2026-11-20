@@ -134,6 +134,11 @@ export function deriveErpFields(product, syncedAt) {
   }
 }
 
+// Variants are compared field by field, never as JSON text: Postgres jsonb stores object keys in its
+// own order (shorter first, then alphabetical), so the same variant reads back as
+// {sku, price, colour, available} although the sync writes {sku, colour, price, available}.
+const variantFields = (variant) => [variant?.sku, variant?.colour, variant?.price, variant?.available]
+
 const canonical = (data) => JSON.stringify({
   name: data?.name,
   price: data?.price,
@@ -141,7 +146,7 @@ const canonical = (data) => JSON.stringify({
   stockStatus: data?.stockStatus,
   colors: data?.colors,
   produkId: data?.erp?.produkId,
-  variants: data?.erp?.variants,
+  variants: Array.isArray(data?.erp?.variants) ? data.erp.variants.map(variantFields) : undefined,
 })
 
 /** True when applying `derived` would not change anything (syncedAt is ignored). */
